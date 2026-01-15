@@ -10,7 +10,6 @@ package frc.robot;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -41,25 +40,27 @@ public final class Constants {
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
-    public static final SensorDirectionValue ENCODER_DIRECTION = SensorDirectionValue.Clockwise_Positive;
+    public static final SensorDirectionValue ENCODER_DIRECTION =
+        SensorDirectionValue.Clockwise_Positive;
     public static final double ENCODER_OFFSET = 0.0;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
 
     public static final double STATOR_LIMIT = 0.0;
     public static final double SUPPLY_LIMIT = 0.0;
 
+    public static final double MOTION_MAGIC_CRUISE_VELOCITY = 0.0;
+    public static final double MOTION_MAGIC_ACCELERATION = 0.0;
+
     public static final Rotation2d FORWARD_SOFT_LIMIT = new Rotation2d(0.0);
+    public static final Rotation2d REVERSE_SOFT_LIMIT = new Rotation2d(0.0);
+
+    public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+    public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
 
     public static final Slot0Configs PID =
-    new Slot0Configs()
-    .withKP(0.0)
-    .withKD(0.0)
-    .withKV(0.0)
-    .withKS(0.0)
-    .withKG(0.0);
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKV(0.0).withKS(0.0).withKG(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
   }
 
   public static class Hood {
@@ -69,24 +70,23 @@ public final class Constants {
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
-    public static final SensorDirectionValue ENCODER_DIRECTION = SensorDirectionValue.Clockwise_Positive;
+    public static final SensorDirectionValue ENCODER_DIRECTION =
+        SensorDirectionValue.Clockwise_Positive;
     public static final double ENCODER_OFFSET = 0.0;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
 
     public static final double STATOR_LIMIT = 0.0;
     public static final double SUPPLY_LIMIT = 0.0;
 
-    public static final Slot0Configs PID = 
-    new Slot0Configs()
-    .withKP(0.0)
-    .withKD(0.0)
-    .withKS(0.0)
-    .withKV(0.0);
+    public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+    public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+
+    public static final Slot0Configs PID =
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
   }
-    
+
   public static class Hopper {
     public static final String CANBUS = "rio";
     public static final int MOTOR_ID = 0;
@@ -96,15 +96,10 @@ public final class Constants {
     public static final double STATOR_LIMIT = 0.0;
     public static final double SUPPLY_LIMIT = 0.0;
 
-    public static final Slot0Configs PID = 
-    new Slot0Configs()
-    .withKP(0.0)
-    .withKD(0.0)
-    .withKS(0.0)
-    .withKV(0.0);
+    public static final Slot0Configs PID =
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
   }
 
   public static class Intake {
@@ -115,22 +110,18 @@ public final class Constants {
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
-    public static final SensorDirectionValue ENCODER_DIRECTION = SensorDirectionValue.Clockwise_Positive;
+    public static final SensorDirectionValue ENCODER_DIRECTION =
+        SensorDirectionValue.Clockwise_Positive;
     public static final double ENCODER_OFFSET = 0.0;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
 
     public static final double STATOR_LIMIT = 0.0;
     public static final double SUPPLY_LIMIT = 0.0;
 
-    public static final Slot0Configs PID = 
-    new Slot0Configs()
-    .withKP(0.0)
-    .withKD(0.0)
-    .withKS(0.0)
-    .withKV(0.0);
+    public static final Slot0Configs PID =
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-    
   }
 
   public static class Loader {
@@ -143,14 +134,9 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 0.0;
 
     public static final Slot0Configs PID =
-        new Slot0Configs()
-        .withKP(0.0)
-        .withKD(0.0)
-        .withKV(0.0)
-        .withKS(0.0);
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKV(0.0).withKS(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
   }
 
   public static class Shooter {
@@ -163,13 +149,8 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 0.0;
 
     public static final Slot0Configs PID =
-        new Slot0Configs()
-        .withKP(0.0)
-        .withKD(0.0)
-        .withKV(0.0)
-        .withKS(0.0);
+        new Slot0Configs().withKP(0.0).withKD(0.0).withKV(0.0).withKS(0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
   }
 }

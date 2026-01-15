@@ -28,7 +28,7 @@ public interface IntakeIO {
 
   public default void runVelocity(double velocityRadsPerSec) {}
 
-  public default void setPID(double kP, double kD) {}
-
   public default void stop() {}
+
+  public default void setPID(double kP, double kD) {}
 }

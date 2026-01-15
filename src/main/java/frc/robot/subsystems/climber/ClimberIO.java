@@ -23,5 +23,7 @@ public interface ClimberIO {
 
   public default void runPosition(double positionRads) {}
 
+  public default void stop() {}
+
   public default void setPID(double kP, double kD) {}
 }

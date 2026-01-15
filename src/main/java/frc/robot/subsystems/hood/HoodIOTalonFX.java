@@ -9,84 +9,82 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.Constants;
 
 public class HoodIOTalonFX implements HoodIO {
-    
-    private final TalonFX hood;
-    private final TalonFXConfiguration config;
 
-    private final CANcoder encoder;
-    private final CANcoderConfiguration encoderConfig;
+  private final TalonFX hood;
+  private final TalonFXConfiguration config;
 
-    private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-    private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
+  private final CANcoder encoder;
+  private final CANcoderConfiguration encoderConfig;
 
-    public HoodIOTalonFX(){
-        hood = new TalonFX(Constants.Hood.MOTOR_ID);
-        config = new TalonFXConfiguration();
-        
-        encoder = new CANcoder(Constants.Hood.ENCODER_ID);
-        encoderConfig = new CANcoderConfiguration();
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
+  private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
 
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_LIMIT;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_LIMIT;
+  public HoodIOTalonFX() {
+    hood = new TalonFX(Constants.Hood.MOTOR_ID);
+    config = new TalonFXConfiguration();
 
-        config.Feedback.FeedbackRemoteSensorID = Constants.Hood.ENCODER_ID;
-        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        config.Feedback.RotorToSensorRatio = Constants.Hood.ROTOR_TO_MECHANISM_GEAR_RATIO;
-        config.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
+    encoder = new CANcoder(Constants.Hood.ENCODER_ID);
+    encoderConfig = new CANcoderConfiguration();
 
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = Constants.Hood.INVERTED;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_LIMIT;
 
-        config.Slot0 = Constants.Hood.PID;
+    config.Feedback.FeedbackRemoteSensorID = Constants.Hood.ENCODER_ID;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.RotorToSensorRatio = Constants.Hood.ROTOR_TO_MECHANISM_GEAR_RATIO;
+    config.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
-        encoderConfig.MagnetSensor.SensorDirection = Constants.Hood.ENCODER_DIRECTION;
-        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = Constants.Hood.ENCODER_DISCONTINUITY_POINT;
-        encoderConfig.MagnetSensor.MagnetOffset = Constants.Hood.ENCODER_OFFSET;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted = Constants.Hood.INVERTED;
 
-        hood.getConfigurator().apply(config);
-        encoder.getConfigurator().apply(encoderConfig);
+    config.Slot0 = Constants.Hood.PID;
 
-    }
+    encoderConfig.MagnetSensor.SensorDirection = Constants.Hood.ENCODER_DIRECTION;
+    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+        Constants.Hood.ENCODER_DISCONTINUITY_POINT;
+    encoderConfig.MagnetSensor.MagnetOffset = Constants.Hood.ENCODER_OFFSET;
 
-    @Override
-    public void updateInputs(HoodIOInputs inputs) {
-        inputs.connected = hood.isConnected();
-        inputs.tempCelsius = hood.getDeviceTemp().getValueAsDouble();
-        inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
-        inputs.absolutePositionRads = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-        inputs.rotorPositionRads = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
-        inputs.statorCurrentAmps = hood.getStatorCurrent().getValueAsDouble();
-        inputs.supplyCurrentAmps = hood.getSupplyCurrent().getValueAsDouble();
-    }
+    hood.getConfigurator().apply(config);
+    encoder.getConfigurator().apply(encoderConfig);
+  }
 
-    @Override
-    public void runDutyCycle(double percent) {
-        hood.setControl(dutyCycle.withOutput(percent));
-    }
+  @Override
+  public void updateInputs(HoodIOInputs inputs) {
+    inputs.connected = hood.isConnected();
+    inputs.tempCelsius = hood.getDeviceTemp().getValueAsDouble();
+    inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
+    inputs.absolutePositionRads =
+        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.rotorPositionRads = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
+    inputs.statorCurrentAmps = hood.getStatorCurrent().getValueAsDouble();
+    inputs.supplyCurrentAmps = hood.getSupplyCurrent().getValueAsDouble();
+  }
 
-    @Override
-    public void runPosition(double positionRads) {
-        hood.setControl(positionDutyCycle.withPosition(positionRads));
-    }
+  @Override
+  public void runDutyCycle(double percent) {
+    hood.setControl(dutyCycle.withOutput(percent));
+  }
 
-    @Override
-    public void stop() {
-        hood.setControl(new NeutralOut());
-    }
+  @Override
+  public void runPosition(double positionRads) {
+    hood.setControl(positionDutyCycle.withPosition(positionRads));
+  }
 
-    @Override
-    public void setPID(double kP, double kD) {
-        
-    }
+  @Override
+  public void stop() {
+    hood.setControl(new NeutralOut());
+  }
 
-
+  @Override
+  public void setPID(double kP, double kD) {
+    config.Slot0.kP = kP;
+    config.Slot0.kD = kD;
+    hood.getConfigurator().apply(config);
+  }
 }
