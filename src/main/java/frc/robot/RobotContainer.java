@@ -130,7 +130,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
-    // Reset gyro to 0° when Start and Back buttons are pressed
+    // Reset gyro to 0 when Start and Back buttons are pressed
     driver
         .start()
         .and(driver.back())
