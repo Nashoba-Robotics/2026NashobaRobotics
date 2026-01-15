@@ -302,7 +302,7 @@ public class TunerConstants {
      * @param odometryStandardDeviation The standard deviation for odometry calculation in the form
      *     [x, y, theta], with units in meters and radians
      * @param visionStandardDeviation The standard deviation for vision calculation in the form [x,
-     *     y, theta]ᵀ, with units in meters and radians
+     *     y, theta], with units in meters and radians
      * @param modules Constants for each specific module
      */
     public TunerSwerveDrivetrain(
