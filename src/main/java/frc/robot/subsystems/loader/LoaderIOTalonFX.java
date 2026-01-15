@@ -1,5 +1,3 @@
 package frc.robot.subsystems.loader;
 
-public class LoaderIOTalonFX implements LoaderIO {
-    
-}
+public class LoaderIOTalonFX implements LoaderIO {}

@@ -1,5 +1,3 @@
 package frc.robot.subsystems.loader;
 
-public class Loader {
-    
-}
+public class Loader {}
