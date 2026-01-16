@@ -1,26 +1,25 @@
-package frc.robot.subsystems.loader;
+package frc.robot.subsystems.hood;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface LoaderIO {
+public interface HoodIO {
 
   @AutoLog
-  public static class LoaderIOInputs {
+  public static class HoodIOInputs {
     public boolean connected = false;
     public double tempCelsius = 0.0;
-    public double velocityRadsPerSec = 0.0;
+    public double absolutePositionRads = 0.0;
+    public double rotorPositionRads = 0.0;
     public double appliedVolts = 0.0;
     public double statorCurrentAmps = 0.0;
     public double supplyCurrentAmps = 0.0;
-    // temporary values
-
   }
 
-  public default void updateInputs(LoaderIOInputs inputs) {}
+  public default void updateInputs(HoodIOInputs inputs) {}
 
   public default void runDutyCycle(double percent) {}
 
-  public default void runVelocity(double velocityRadsPerSec) {}
+  public default void runPosition(double positionRads) {}
 
   public default void stop() {}
 
