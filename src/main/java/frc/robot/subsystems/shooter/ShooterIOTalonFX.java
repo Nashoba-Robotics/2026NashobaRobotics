@@ -1,3 +1,69 @@
 package frc.robot.subsystems.shooter;
 
-public class ShooterIOTalonFX implements ShooterIO {}
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
+
+public class ShooterIOTalonFX implements ShooterIO {
+        
+  private final TalonFX shooter;
+  private final TalonFXConfiguration config;
+
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
+  private final VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(0);
+
+  public ShooterIOTalonFX() {
+    shooter = new TalonFX(Constants.Loader.MOTOR_ID);
+    config = new TalonFXConfiguration();
+
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.Shooter.SUPPLY_LIMIT;
+
+    config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    config.Slot0 = Constants.Climber.PID;
+
+    shooter.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void updateInputs(ShooterIOInputs inputs) {
+    inputs.connected = shooter.isConnected();
+    inputs.tempCelsius = shooter.getDeviceTemp().getValueAsDouble();
+    inputs.appliedVolts = shooter.getMotorVoltage().getValueAsDouble();
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(shooter.getVelocity().getValueAsDouble());
+    inputs.statorCurrentAmps = shooter.getStatorCurrent().getValueAsDouble();
+    inputs.supplyCurrentAmps = shooter.getSupplyCurrent().getValueAsDouble();
+  }
+
+  @Override
+  public void runDutyCycle(double percent) {
+    shooter.setControl(dutyCycle.withOutput(percent));
+  }
+
+  @Override
+  public void runVelocity(double velocityRadsPerSec) {
+    shooter.setControl(velocityDutyCycle.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+  }
+
+  @Override
+  public void stop() {
+    shooter.setControl(new NeutralOut());
+  }
+
+  @Override
+  public void setPID(double kP, double kD) {
+    config.Slot0.kP = kP;
+    config.Slot0.kD = kD;
+    shooter.getConfigurator().apply(config);
+  }
+}
