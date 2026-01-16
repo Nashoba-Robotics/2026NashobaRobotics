@@ -29,6 +29,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -38,6 +39,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  public static final LoggedTunableNumber kP = new LoggedTunableNumber("Tuning/Climber/kP", 0);
+
   // Subsystems
   private final Drive drive;
   private final Vision vision;
