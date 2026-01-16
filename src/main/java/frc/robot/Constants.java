@@ -108,15 +108,18 @@ public final class Constants {
     public static final int ROLLER_MOTOR_ID = 0;
     public static final int DEPLOY_ENCODER_ID = 0;
 
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue DEPLOY_INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue ROLLER_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final SensorDirectionValue ENCODER_DIRECTION =
         SensorDirectionValue.Clockwise_Positive;
     public static final double ENCODER_OFFSET = 0.0;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
 
-    public static final double STATOR_LIMIT = 0.0;
-    public static final double SUPPLY_LIMIT = 0.0;
+    public static final double DEPLOY_STATOR_LIMIT = 0.0;
+    public static final double DEPLOY_SUPPLY_LIMIT = 0.0;
+    public static final double ROLLER_STATOR_LIMIT = 0.0;
+    public static final double ROLLER_SUPPLY_LIMIT = 0.0;
 
     public static final Slot0Configs PID =
         new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);

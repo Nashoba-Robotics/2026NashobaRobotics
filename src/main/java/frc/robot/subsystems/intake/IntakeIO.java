@@ -28,7 +28,13 @@ public interface IntakeIO {
 
   public default void runVelocity(double velocityRadsPerSec) {}
 
-  public default void stop() {}
+  public default void runPosition(double positionRads) {}
 
-  public default void setPID(double kP, double kD) {}
+  public default void deployStop() {}
+
+  public default void rollerStop() {}
+
+  public default void deploySetPID(double kP, double kD) {}
+
+  public default void rollerSetPID(double kP, double kD) {}
 }
