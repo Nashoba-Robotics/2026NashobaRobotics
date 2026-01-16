@@ -27,10 +27,10 @@ public class LoaderIOTalonFX implements LoaderIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = Constants.Loader.SUPPLY_LIMIT;
 
-    config.MotorOutput.Inverted = Constants.Climber.INVERTED;
+    config.MotorOutput.Inverted = Constants.Loader.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.Slot0 = Constants.Climber.PID;
+    config.Slot0 = Constants.Loader.PID;
 
     loader.getConfigurator().apply(config);
   }

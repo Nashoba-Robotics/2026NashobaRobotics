@@ -30,7 +30,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.Slot0 = Constants.Climber.PID;
+    config.Slot0 = Constants.Shooter.PID;
 
     shooter.getConfigurator().apply(config);
   }
