@@ -39,8 +39,9 @@ public class ShooterIOTalonFX implements ShooterIO {
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.connected = shooter.isConnected();
     inputs.tempCelsius = shooter.getDeviceTemp().getValueAsDouble();
+    inputs.velocityRadPerSec = Units.rotationsToRadians(shooter.getVelocity().getValueAsDouble());
+    inputs.velocitySetpointRadPerSec = Units.rotationsToRadians(shooter.getClosedLoopOutput().getValueAsDouble());
     inputs.appliedVolts = shooter.getMotorVoltage().getValueAsDouble();
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(shooter.getVelocity().getValueAsDouble());
     inputs.statorCurrentAmps = shooter.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = shooter.getSupplyCurrent().getValueAsDouble();
   }
@@ -51,8 +52,8 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void runVelocity(double velocityRadsPerSec) {
-    shooter.setControl(velocityDutyCycle.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+  public void runVelocity(double velocityRadPerSec) {
+    shooter.setControl(velocityDutyCycle.withVelocity(Units.radiansToRotations(velocityRadPerSec)));
   }
 
   @Override

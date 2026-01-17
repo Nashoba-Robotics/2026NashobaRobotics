@@ -75,37 +75,43 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.deployConnected = deploy.isConnected();
-    inputs.deployTempCelsius = deploy.getDeviceTemp().getValueAsDouble();
-    inputs.deployAppliedVolts = deploy.getMotorVoltage().getValueAsDouble();
-    inputs.deployPositionRads = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
-    inputs.deployVelocityRadsPerSec =
-        Units.rotationsToRadians(deploy.getVelocity().getValueAsDouble());
-    inputs.deployStatorCurrentAmps = deploy.getStatorCurrent().getValueAsDouble();
-    inputs.deploySupplyCurrentAmps = deploy.getSupplyCurrent().getValueAsDouble();
-
     inputs.rollerConnected = roller.isConnected();
     inputs.rollerTempCelsius = roller.getDeviceTemp().getValueAsDouble();
-    inputs.rollerAppliedVolts = roller.getMotorVoltage().getValueAsDouble();
-    inputs.rollerVelocityRadsPerSec =
+    inputs.rollerVelocityRadPerSec =
         Units.rotationsToRadians(roller.getVelocity().getValueAsDouble());
+    inputs.rollerAppliedVolts = roller.getMotorVoltage().getValueAsDouble();
     inputs.rollerStatorCurrentAmps = roller.getStatorCurrent().getValueAsDouble();
     inputs.rollerSupplyCurrentAmps = roller.getSupplyCurrent().getValueAsDouble();
+
+    inputs.deployConnected = deploy.isConnected();
+    inputs.deployTempCelsius = deploy.getDeviceTemp().getValueAsDouble();
+    inputs.deployPositionRad = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
+    inputs.deployPositionSetpointRad = Units.rotationsToRadians(deploy.getClosedLoopOutput().getValueAsDouble());
+    inputs.deployVelocityRadPerSec =
+        Units.rotationsToRadians(deploy.getVelocity().getValueAsDouble());
+    inputs.deployAppliedVolts = deploy.getMotorVoltage().getValueAsDouble();
+    inputs.deployStatorCurrentAmps = deploy.getStatorCurrent().getValueAsDouble();
+    inputs.deploySupplyCurrentAmps = deploy.getSupplyCurrent().getValueAsDouble();
   }
 
   @Override
-  public void runDutyCycle(double percent) {
+  public void runRollerDutyCycle(double percent) {
     roller.setControl(dutyCycle.withOutput(percent));
   }
 
   @Override
-  public void runVelocity(double velocityRadsPerSec) {
-    roller.setControl(velocityDutyCylcle.withVelocity(velocityRadsPerSec));
+  public void runDeployDutyCycle(double percent) {
+    deploy.setControl(dutyCycle.withOutput(percent));
   }
 
   @Override
-  public void runPosition(double positionRads) {
-    deploy.setControl(positionDutyCycle.withPosition(positionRads));
+  public void runDeployPosition(double positionRad) {
+    deploy.setControl(positionDutyCycle.withPosition(positionRad));
+  }
+  
+  @Override
+  public void rollerStop() {
+    roller.setControl(new NeutralOut());
   }
 
   @Override
@@ -114,21 +120,9 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void rollerStop() {
-    roller.setControl(new NeutralOut());
-  }
-
-  @Override
   public void deploySetPID(double kP, double kD) {
     deployConfig.Slot0.kP = kP;
     deployConfig.Slot0.kD = kD;
     deploy.getConfigurator().apply(deployConfig);
-  }
-
-  @Override
-  public void rollerSetPID(double kP, double kD) {
-    rollerConfig.Slot0.kP = kP;
-    rollerConfig.Slot0.kD = kD;
-    roller.getConfigurator().apply(rollerConfig);
   }
 }

@@ -58,10 +58,12 @@ public class HoodIOTalonFX implements HoodIO {
   public void updateInputs(HoodIOInputs inputs) {
     inputs.connected = hood.isConnected();
     inputs.tempCelsius = hood.getDeviceTemp().getValueAsDouble();
-    inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
-    inputs.absolutePositionRads =
+    inputs.absolutePositionRad =
         Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-    inputs.rotorPositionRads = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
+    inputs.rotorPositionRad = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
+    inputs.positionSetpointRad = Units.rotationsToRadians(hood.getClosedLoopReference().getValueAsDouble());
+    inputs.velocityRadPerSec = Units.rotationsToRadians(hood.getVelocity().getValueAsDouble());
+    inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = hood.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = hood.getSupplyCurrent().getValueAsDouble();
   }
@@ -72,8 +74,8 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void runPosition(double positionRads) {
-    hood.setControl(positionDutyCycle.withPosition(positionRads));
+  public void runPosition(double positionRad) {
+    hood.setControl(positionDutyCycle.withPosition(positionRad));
   }
 
   @Override

@@ -12,7 +12,6 @@ public interface ShooterIO {
     public double appliedVolts = 0.0;
     public double statorCurrentAmps = 0.0;
     public double supplyCurrentAmps = 0.0;
-    // temporary values
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}

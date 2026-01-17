@@ -38,7 +38,7 @@ public class HopperIOTalonFX implements HopperIO {
   public void updateInputs(HopperIOInputs inputs) {
     inputs.connected = hopper.isConnected();
     inputs.tempCelsius = hopper.getDeviceTemp().getValueAsDouble();
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(hopper.getVelocity().getValueAsDouble());
+    inputs.velocityRadPerSec = Units.rotationsToRadians(hopper.getVelocity().getValueAsDouble());
     inputs.appliedVolts = hopper.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = hopper.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = hopper.getSupplyCurrent().getValueAsDouble();
@@ -50,19 +50,8 @@ public class HopperIOTalonFX implements HopperIO {
   }
 
   @Override
-  public void runVelocity(double velocityRadsPerSec) {
-    hopper.set(Units.radiansToRotations(velocityRadsPerSec));
-  }
-
-  @Override
   public void stop() {
     hopper.setControl(new NeutralOut());
   }
 
-  @Override
-  public void setPID(double kP, double kD) {
-    config.Slot0.kP = kP;
-    config.Slot0.kD = kD;
-    hopper.getConfigurator().apply(config);
-  }
 }

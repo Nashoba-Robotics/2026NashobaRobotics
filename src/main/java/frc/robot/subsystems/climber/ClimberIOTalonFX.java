@@ -68,11 +68,12 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void updateInputs(ClimberIOInputs inputs) {
     inputs.connected = climber.isConnected();
     inputs.tempCelsius = climber.getDeviceTemp().getValueAsDouble();
-    inputs.absolutePositionRads =
+    inputs.velocityRadPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
+    inputs.absolutePositionRad =
         Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-    inputs.rotorPositionRads = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
+    inputs.rotorPositionRad = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
+    inputs.positionSetpointRad = Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
     inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
     inputs.statorCurrentAmps = climber.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = climber.getSupplyCurrent().getValueAsDouble();
   }
@@ -83,8 +84,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   }
 
   @Override
-  public void runPosition(double positionRads) {
-    climber.setControl(positionDutyCycle.withPosition(Units.radiansToRotations(positionRads)));
+  public void runPosition(double positionRad) {
+    climber.setControl(positionDutyCycle.withPosition(Units.radiansToRotations(positionRad)));
   }
 
   @Override
