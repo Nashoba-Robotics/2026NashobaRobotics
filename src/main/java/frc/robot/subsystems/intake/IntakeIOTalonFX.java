@@ -5,7 +5,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -15,8 +14,8 @@ import frc.robot.Constants;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
-  private final TalonFX deploy;
   private final TalonFX roller;
+  private final TalonFX deploy;
   private final TalonFXConfiguration deployConfig;
   private final TalonFXConfiguration rollerConfig;
 
@@ -25,13 +24,13 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
   private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
-  private final VelocityDutyCycle velocityDutyCylcle = new VelocityDutyCycle(0);
 
   public IntakeIOTalonFX() {
-    deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
     roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID);
-    deployConfig = new TalonFXConfiguration();
+    deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
+
     rollerConfig = new TalonFXConfiguration();
+    deployConfig = new TalonFXConfiguration();
 
     encoder = new CANcoder(Constants.Intake.DEPLOY_ENCODER_ID);
     encoderConfig = new CANcoderConfiguration();
@@ -61,7 +60,12 @@ public class IntakeIOTalonFX implements IntakeIO {
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
     deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    deployConfig.Slot0 = Constants.Intake.PID;
+    deployConfig.Slot0.kP = Constants.Intake.kP;
+    deployConfig.Slot0.kD = Constants.Intake.kD;
+    deployConfig.Slot0.kS = Constants.Intake.kS;
+    deployConfig.Slot0.kG = Constants.Intake.kG;
+    deployConfig.Slot0.kV = Constants.Intake.kV;
+    deployConfig.Slot0.kA = Constants.Intake.kA;
 
     deploy.getConfigurator().apply(deployConfig);
 
@@ -86,7 +90,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.deployConnected = deploy.isConnected();
     inputs.deployTempCelsius = deploy.getDeviceTemp().getValueAsDouble();
     inputs.deployPositionRad = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
-    inputs.deployPositionSetpointRad = Units.rotationsToRadians(deploy.getClosedLoopOutput().getValueAsDouble());
+    inputs.deployPositionSetpointRad =
+        Units.rotationsToRadians(deploy.getClosedLoopOutput().getValueAsDouble());
     inputs.deployVelocityRadPerSec =
         Units.rotationsToRadians(deploy.getVelocity().getValueAsDouble());
     inputs.deployAppliedVolts = deploy.getMotorVoltage().getValueAsDouble();
@@ -108,7 +113,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void runDeployPosition(double positionRad) {
     deploy.setControl(positionDutyCycle.withPosition(positionRad));
   }
-  
+
   @Override
   public void rollerStop() {
     roller.setControl(new NeutralOut());
@@ -123,6 +128,15 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void deploySetPID(double kP, double kD) {
     deployConfig.Slot0.kP = kP;
     deployConfig.Slot0.kD = kD;
+    deploy.getConfigurator().apply(deployConfig);
+  }
+
+  @Override
+  public void deploySetFeedForward(double kS, double kG, double kV, double kA) {
+    deployConfig.Slot0.kS = kS;
+    deployConfig.Slot0.kG = kG;
+    deployConfig.Slot0.kV = kV;
+    deployConfig.Slot0.kA = kA;
     deploy.getConfigurator().apply(deployConfig);
   }
 }

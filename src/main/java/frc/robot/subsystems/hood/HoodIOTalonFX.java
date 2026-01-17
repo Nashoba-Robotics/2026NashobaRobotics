@@ -43,7 +43,12 @@ public class HoodIOTalonFX implements HoodIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = Constants.Hood.INVERTED;
 
-    config.Slot0 = Constants.Hood.PID;
+    config.Slot0.kP = Constants.Hood.kP;
+    config.Slot0.kD = Constants.Hood.kD;
+    config.Slot0.kS = Constants.Hood.kS;
+    config.Slot0.kG = Constants.Hood.kG;
+    config.Slot0.kV = Constants.Hood.kV;
+    config.Slot0.kA = Constants.Hood.kA;
 
     encoderConfig.MagnetSensor.SensorDirection = Constants.Hood.ENCODER_DIRECTION;
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
@@ -58,10 +63,10 @@ public class HoodIOTalonFX implements HoodIO {
   public void updateInputs(HoodIOInputs inputs) {
     inputs.connected = hood.isConnected();
     inputs.tempCelsius = hood.getDeviceTemp().getValueAsDouble();
-    inputs.absolutePositionRad =
-        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.absolutePositionRad = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
     inputs.rotorPositionRad = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
-    inputs.positionSetpointRad = Units.rotationsToRadians(hood.getClosedLoopReference().getValueAsDouble());
+    inputs.positionSetpointRad =
+        Units.rotationsToRadians(hood.getClosedLoopReference().getValueAsDouble());
     inputs.velocityRadPerSec = Units.rotationsToRadians(hood.getVelocity().getValueAsDouble());
     inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = hood.getStatorCurrent().getValueAsDouble();
@@ -87,6 +92,15 @@ public class HoodIOTalonFX implements HoodIO {
   public void setPID(double kP, double kD) {
     config.Slot0.kP = kP;
     config.Slot0.kD = kD;
+    hood.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void setFeedForward(double kS, double kG, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kG = kG;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
     hood.getConfigurator().apply(config);
   }
 }

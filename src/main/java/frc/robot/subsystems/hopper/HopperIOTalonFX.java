@@ -53,5 +53,4 @@ public class HopperIOTalonFX implements HopperIO {
   public void stop() {
     hopper.setControl(new NeutralOut());
   }
-
 }

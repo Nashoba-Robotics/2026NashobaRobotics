@@ -53,7 +53,12 @@ public class ClimberIOTalonFX implements ClimberIO {
     config.Feedback.RotorToSensorRatio = Constants.Climber.ROTOR_TO_MECHANISM_GEAR_RATIO;
     config.Feedback.SensorToMechanismRatio = Constants.Climber.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
-    config.Slot0 = Constants.Climber.PID;
+    config.Slot0.kP = Constants.Climber.kP;
+    config.Slot0.kD = Constants.Climber.kD;
+    config.Slot0.kS = Constants.Climber.kS;
+    config.Slot0.kG = Constants.Climber.kG;
+    config.Slot0.kV = Constants.Climber.kV;
+    config.Slot0.kA = Constants.Climber.kA;
 
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
         Constants.Climber.ENCODER_DISCONTINUITY_POINT;
@@ -68,11 +73,11 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void updateInputs(ClimberIOInputs inputs) {
     inputs.connected = climber.isConnected();
     inputs.tempCelsius = climber.getDeviceTemp().getValueAsDouble();
-    inputs.velocityRadPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
-    inputs.absolutePositionRad =
-        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.absolutePositionRad = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
     inputs.rotorPositionRad = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
-    inputs.positionSetpointRad = Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
+    inputs.positionSetpointRad =
+        Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
+    inputs.velocityRadPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
     inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = climber.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = climber.getSupplyCurrent().getValueAsDouble();
@@ -97,6 +102,15 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void setPID(double kP, double kD) {
     config.Slot0.kP = kP;
     config.Slot0.kD = kD;
+    climber.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void setFeedForward(double kS, double kG, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kG = kG;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
     climber.getConfigurator().apply(config);
   }
 }

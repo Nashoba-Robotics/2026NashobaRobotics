@@ -6,12 +6,11 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class ShooterIOTalonFX implements ShooterIO {
-        
+
   private final TalonFX shooter;
   private final TalonFXConfiguration config;
 
@@ -30,7 +29,12 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.Slot0 = Constants.Shooter.PID;
+    config.Slot0.kP = Constants.Shooter.kP;
+    config.Slot0.kD = Constants.Shooter.kD;
+    config.Slot0.kS = Constants.Shooter.kS;
+    config.Slot0.kG = Constants.Shooter.kG;
+    config.Slot0.kV = Constants.Shooter.kV;
+    config.Slot0.kA = Constants.Shooter.kA;
 
     shooter.getConfigurator().apply(config);
   }
@@ -40,7 +44,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     inputs.connected = shooter.isConnected();
     inputs.tempCelsius = shooter.getDeviceTemp().getValueAsDouble();
     inputs.velocityRadPerSec = Units.rotationsToRadians(shooter.getVelocity().getValueAsDouble());
-    inputs.velocitySetpointRadPerSec = Units.rotationsToRadians(shooter.getClosedLoopOutput().getValueAsDouble());
+    inputs.velocitySetpointRadPerSec =
+        Units.rotationsToRadians(shooter.getClosedLoopOutput().getValueAsDouble());
     inputs.appliedVolts = shooter.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = shooter.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = shooter.getSupplyCurrent().getValueAsDouble();
@@ -65,6 +70,15 @@ public class ShooterIOTalonFX implements ShooterIO {
   public void setPID(double kP, double kD) {
     config.Slot0.kP = kP;
     config.Slot0.kD = kD;
+    shooter.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void setFeedForward(double kS, double kG, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kG = kG;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
     shooter.getConfigurator().apply(config);
   }
 }

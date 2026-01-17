@@ -6,12 +6,11 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class LoaderIOTalonFX implements LoaderIO {
-    
+
   private final TalonFX loader;
   private final TalonFXConfiguration config;
 
