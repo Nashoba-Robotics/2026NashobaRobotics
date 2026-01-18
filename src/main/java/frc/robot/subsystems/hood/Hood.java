@@ -1,5 +1,8 @@
 package frc.robot.subsystems.hood;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -16,15 +19,17 @@ public class Hood extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Hood/kD", Constants.Hood.kD);
   private static final LoggedTunableNumber kS =
       new LoggedTunableNumber("Tuning/Hood/kS", Constants.Hood.kS);
-  private static final LoggedTunableNumber kG =
-      new LoggedTunableNumber("Tuning/Hood/kG", Constants.Hood.kG);
   private static final LoggedTunableNumber kV =
       new LoggedTunableNumber("Tuning/Hood/kV", Constants.Hood.kV);
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Hood/kA", Constants.Hood.kA);
 
-  public Hood(HoodIO hoodIO) {
-    io = hoodIO;
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert disconnected =
+      new Alert("Hood motor disconnected!", Alert.AlertType.kWarning);
+
+  public Hood(HoodIO io) {
+    this.io = io;
   }
 
   @Override
@@ -32,14 +37,13 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
+    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());
     }
-    if (kS.hasChanged(hashCode())
-        || kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())) {
-      io.setFeedForward(kS.get(), kG.get(), kV.get(), kA.get());
+    if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
+      io.setFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
   }
 }

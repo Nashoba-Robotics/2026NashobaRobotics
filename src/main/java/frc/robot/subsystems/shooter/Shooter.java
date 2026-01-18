@@ -1,5 +1,8 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -16,15 +19,17 @@ public class Shooter extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Shooter/kD", Constants.Shooter.kD);
   private static final LoggedTunableNumber kS =
       new LoggedTunableNumber("Tuning/Shooter/kS", Constants.Shooter.kS);
-  private static final LoggedTunableNumber kG =
-      new LoggedTunableNumber("Tuning/Shooter/kG", Constants.Shooter.kG);
   private static final LoggedTunableNumber kV =
       new LoggedTunableNumber("Tuning/Shooter/kV", Constants.Shooter.kV);
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Shooter/kA", Constants.Shooter.kA);
 
-  public Shooter(ShooterIO shooterIO) {
-    io = shooterIO;
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert disconnected =
+      new Alert("Shooter motor disconnected!", Alert.AlertType.kWarning);
+
+  public Shooter(ShooterIO io) {
+    this.io = io;
   }
 
   @Override
@@ -32,14 +37,13 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
 
+    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());
     }
-    if (kS.hasChanged(hashCode())
-        || kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())) {
-      io.setFeedForward(kS.get(), kG.get(), kV.get(), kA.get());
+    if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
+      io.setFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
   }
 }

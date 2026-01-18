@@ -8,10 +8,10 @@ public interface ClimberIO {
   public static class ClimberIOInputs {
     public boolean connected = false;
     public double tempCelsius = 0.0;
-    public double absolutePositionRad = 0.0;
-    public double rotorPositionRad = 0.0;
-    public double positionSetpointRad = 0.0;
-    public double velocityRadPerSec = 0.0;
+    public double absolutePositionRads = 0.0;
+    public double rotorPositionRads = 0.0;
+    public double positionSetpointRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double statorCurrentAmps = 0.0;
     public double supplyCurrentAmps = 0.0;
@@ -21,7 +21,7 @@ public interface ClimberIO {
 
   public default void runDutyCycle(double percent) {}
 
-  public default void runPosition(double positionRad) {}
+  public default void runPosition(double positionRads) {}
 
   public default void stop() {}
 

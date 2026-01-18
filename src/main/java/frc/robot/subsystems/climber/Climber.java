@@ -1,5 +1,8 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,14 +28,20 @@ public class Climber extends SubsystemBase {
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Climber/kA", Constants.Climber.kA);
 
-  public Climber(ClimberIO climberIO) {
-    io = climberIO;
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert disconnected =
+      new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
+
+  public Climber(ClimberIO io) {
+    this.io = io;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
+
+    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());
@@ -45,11 +54,11 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public Command runPositionCommand(double positionRad) {
-    return run(() -> io.runPosition(positionRad))
+  public Command runPositionCommand(double positionRads) {
+    return run(() -> io.runPosition(positionRads))
         .until(
             () ->
                 Util.epsilonEquals(
-                    positionRad, inputs.rotorPositionRad, Constants.Climber.TOLERANCE));
+                    positionRads, inputs.rotorPositionRads, Constants.Climber.TOLERANCE));
   }
 }

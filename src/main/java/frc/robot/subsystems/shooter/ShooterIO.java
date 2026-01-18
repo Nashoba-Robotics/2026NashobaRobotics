@@ -8,8 +8,8 @@ public interface ShooterIO {
   public static class ShooterIOInputs {
     public boolean connected = false;
     public double tempCelsius = 0.0;
-    public double velocityRadPerSec = 0.0;
-    public double velocitySetpointRadPerSec = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double velocitySetpointRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double statorCurrentAmps = 0.0;
     public double supplyCurrentAmps = 0.0;
@@ -19,7 +19,7 @@ public interface ShooterIO {
 
   public default void runDutyCycle(double percent) {}
 
-  public default void runVelocity(double velocityRadPerSec) {}
+  public default void runVelocity(double velocityRadsPerSec) {}
 
   public default void stop() {}
 

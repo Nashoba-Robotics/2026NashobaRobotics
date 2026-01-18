@@ -134,6 +134,21 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
+    Pose2d targetPose = new Pose2d(5, 5, Rotation2d.kZero);
+
+    driver
+        .leftBumper()
+        .onTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driver.getLeftY(),
+                () -> -driver.getLeftX(),
+                () ->
+                    targetPose
+                        .getTranslation()
+                        .minus(drive.getPose().getTranslation())
+                        .getAngle()));
+
     // Reset gyro to 0 when Start and Back buttons are pressed
     driver
         .start()

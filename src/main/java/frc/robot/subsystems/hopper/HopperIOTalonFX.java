@@ -14,7 +14,7 @@ public class HopperIOTalonFX implements HopperIO {
   private final TalonFX hopper;
   private final TalonFXConfiguration config;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
   public HopperIOTalonFX() {
     hopper = new TalonFX(Constants.Hopper.MOTOR_ID);
@@ -38,7 +38,7 @@ public class HopperIOTalonFX implements HopperIO {
   public void updateInputs(HopperIOInputs inputs) {
     inputs.connected = hopper.isConnected();
     inputs.tempCelsius = hopper.getDeviceTemp().getValueAsDouble();
-    inputs.velocityRadPerSec = Units.rotationsToRadians(hopper.getVelocity().getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(hopper.getVelocity().getValueAsDouble());
     inputs.appliedVolts = hopper.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = hopper.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = hopper.getSupplyCurrent().getValueAsDouble();

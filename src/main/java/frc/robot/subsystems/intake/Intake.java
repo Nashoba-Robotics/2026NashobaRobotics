@@ -1,5 +1,8 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -16,15 +19,19 @@ public class Intake extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Intake/kD", Constants.Intake.kD);
   private static final LoggedTunableNumber kS =
       new LoggedTunableNumber("Tuning/Intake/kS", Constants.Intake.kS);
-  private static final LoggedTunableNumber kG =
-      new LoggedTunableNumber("Tuning/Intake/kG", Constants.Intake.kG);
   private static final LoggedTunableNumber kV =
       new LoggedTunableNumber("Tuning/Intake/kV", Constants.Intake.kV);
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Intake/kA", Constants.Intake.kA);
 
-  public Intake(IntakeIO intakeIO) {
-    io = intakeIO;
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert rollerDisconnected =
+      new Alert("IntakeRoller motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert deployDisconnected =
+      new Alert("IntakeDeploy motor disconnected!", Alert.AlertType.kWarning);
+
+  public Intake(IntakeIO io) {
+    this.io = io;
   }
 
   @Override
@@ -32,14 +39,14 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
+    rollerDisconnected.set(!motorConnectedDebouncer.calculate(inputs.rollerConnected));
+    deployDisconnected.set(!motorConnectedDebouncer.calculate(inputs.deployConnected));
+
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.deploySetPID(kP.get(), kD.get());
     }
-    if (kS.hasChanged(hashCode())
-        || kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())) {
-      io.deploySetFeedForward(kS.get(), kG.get(), kV.get(), kA.get());
+    if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
+      io.deploySetFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
   }
 }

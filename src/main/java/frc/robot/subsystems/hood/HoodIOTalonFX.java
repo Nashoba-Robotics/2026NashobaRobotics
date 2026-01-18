@@ -3,7 +3,7 @@ package frc.robot.subsystems.hood;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,8 +20,8 @@ public class HoodIOTalonFX implements HoodIO {
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-  private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public HoodIOTalonFX() {
     hood = new TalonFX(Constants.Hood.MOTOR_ID);
@@ -46,7 +46,6 @@ public class HoodIOTalonFX implements HoodIO {
     config.Slot0.kP = Constants.Hood.kP;
     config.Slot0.kD = Constants.Hood.kD;
     config.Slot0.kS = Constants.Hood.kS;
-    config.Slot0.kG = Constants.Hood.kG;
     config.Slot0.kV = Constants.Hood.kV;
     config.Slot0.kA = Constants.Hood.kA;
 
@@ -63,11 +62,12 @@ public class HoodIOTalonFX implements HoodIO {
   public void updateInputs(HoodIOInputs inputs) {
     inputs.connected = hood.isConnected();
     inputs.tempCelsius = hood.getDeviceTemp().getValueAsDouble();
-    inputs.absolutePositionRad = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-    inputs.rotorPositionRad = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
-    inputs.positionSetpointRad =
+    inputs.absolutePositionRads =
+        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.rotorPositionRads = Units.rotationsToRadians(hood.getPosition().getValueAsDouble());
+    inputs.positionSetpointRads =
         Units.rotationsToRadians(hood.getClosedLoopReference().getValueAsDouble());
-    inputs.velocityRadPerSec = Units.rotationsToRadians(hood.getVelocity().getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(hood.getVelocity().getValueAsDouble());
     inputs.appliedVolts = hood.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = hood.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = hood.getSupplyCurrent().getValueAsDouble();
@@ -79,8 +79,8 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void runPosition(double positionRad) {
-    hood.setControl(positionDutyCycle.withPosition(positionRad));
+  public void runPosition(double positionRads) {
+    hood.setControl(positionVoltage.withPosition(positionRads));
   }
 
   @Override

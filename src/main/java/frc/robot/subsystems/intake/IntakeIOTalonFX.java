@@ -3,7 +3,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -22,8 +22,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-  private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public IntakeIOTalonFX() {
     roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID);
@@ -63,7 +63,6 @@ public class IntakeIOTalonFX implements IntakeIO {
     deployConfig.Slot0.kP = Constants.Intake.kP;
     deployConfig.Slot0.kD = Constants.Intake.kD;
     deployConfig.Slot0.kS = Constants.Intake.kS;
-    deployConfig.Slot0.kG = Constants.Intake.kG;
     deployConfig.Slot0.kV = Constants.Intake.kV;
     deployConfig.Slot0.kA = Constants.Intake.kA;
 
@@ -81,7 +80,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.rollerConnected = roller.isConnected();
     inputs.rollerTempCelsius = roller.getDeviceTemp().getValueAsDouble();
-    inputs.rollerVelocityRadPerSec =
+    inputs.rollerVelocityRadsPerSec =
         Units.rotationsToRadians(roller.getVelocity().getValueAsDouble());
     inputs.rollerAppliedVolts = roller.getMotorVoltage().getValueAsDouble();
     inputs.rollerStatorCurrentAmps = roller.getStatorCurrent().getValueAsDouble();
@@ -89,10 +88,10 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     inputs.deployConnected = deploy.isConnected();
     inputs.deployTempCelsius = deploy.getDeviceTemp().getValueAsDouble();
-    inputs.deployPositionRad = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
-    inputs.deployPositionSetpointRad =
+    inputs.deployPositionRads = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
+    inputs.deployPositionSetpointRads =
         Units.rotationsToRadians(deploy.getClosedLoopOutput().getValueAsDouble());
-    inputs.deployVelocityRadPerSec =
+    inputs.deployVelocityRadsPerSec =
         Units.rotationsToRadians(deploy.getVelocity().getValueAsDouble());
     inputs.deployAppliedVolts = deploy.getMotorVoltage().getValueAsDouble();
     inputs.deployStatorCurrentAmps = deploy.getStatorCurrent().getValueAsDouble();
@@ -110,8 +109,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void runDeployPosition(double positionRad) {
-    deploy.setControl(positionDutyCycle.withPosition(positionRad));
+  public void runDeployPosition(double positionRads) {
+    deploy.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)));
   }
 
   @Override

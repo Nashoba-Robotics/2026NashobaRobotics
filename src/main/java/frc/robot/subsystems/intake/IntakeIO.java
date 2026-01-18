@@ -8,16 +8,16 @@ public interface IntakeIO {
   public static class IntakeIOInputs {
     public boolean rollerConnected = false;
     public double rollerTempCelsius = 0.0;
-    public double rollerVelocityRadPerSec = 0.0;
+    public double rollerVelocityRadsPerSec = 0.0;
     public double rollerAppliedVolts = 0.0;
     public double rollerStatorCurrentAmps = 0.0;
     public double rollerSupplyCurrentAmps = 0.0;
 
     public boolean deployConnected = false;
     public double deployTempCelsius = 0.0;
-    public double deployPositionRad = 0.0;
-    public double deployPositionSetpointRad = 0.0;
-    public double deployVelocityRadPerSec = 0.0;
+    public double deployPositionRads = 0.0;
+    public double deployPositionSetpointRads = 0.0;
+    public double deployVelocityRadsPerSec = 0.0;
     public double deployAppliedVolts = 0.0;
     public double deployStatorCurrentAmps = 0.0;
     public double deploySupplyCurrentAmps = 0.0;
@@ -29,7 +29,7 @@ public interface IntakeIO {
 
   public default void runDeployDutyCycle(double percent) {}
 
-  public default void runDeployPosition(double positionRad) {}
+  public default void runDeployPosition(double positionRads) {}
 
   public default void rollerStop() {}
 

@@ -3,7 +3,7 @@ package frc.robot.subsystems.climber;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,8 +20,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-  private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public ClimberIOTalonFX() {
     climber = new TalonFX(Constants.Climber.MOTOR_ID);
@@ -73,11 +73,12 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void updateInputs(ClimberIOInputs inputs) {
     inputs.connected = climber.isConnected();
     inputs.tempCelsius = climber.getDeviceTemp().getValueAsDouble();
-    inputs.absolutePositionRad = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-    inputs.rotorPositionRad = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
-    inputs.positionSetpointRad =
+    inputs.absolutePositionRads =
+        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.rotorPositionRads = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
+    inputs.positionSetpointRads =
         Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
-    inputs.velocityRadPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
     inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = climber.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = climber.getSupplyCurrent().getValueAsDouble();
@@ -89,8 +90,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   }
 
   @Override
-  public void runPosition(double positionRad) {
-    climber.setControl(positionDutyCycle.withPosition(Units.radiansToRotations(positionRad)));
+  public void runPosition(double positionRads) {
+    climber.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)));
   }
 
   @Override

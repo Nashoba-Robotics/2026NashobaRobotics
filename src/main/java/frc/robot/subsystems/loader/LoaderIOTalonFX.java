@@ -14,7 +14,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   private final TalonFX loader;
   private final TalonFXConfiguration config;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
   public LoaderIOTalonFX() {
     loader = new TalonFX(Constants.Loader.MOTOR_ID);
@@ -38,7 +38,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   public void updateInputs(LoaderIOInputs inputs) {
     inputs.connected = loader.isConnected();
     inputs.tempCelsius = loader.getDeviceTemp().getValueAsDouble();
-    inputs.velocityRadPerSec = Units.rotationsToRadians(loader.getVelocity().getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(loader.getVelocity().getValueAsDouble());
     inputs.appliedVolts = loader.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = loader.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = loader.getSupplyCurrent().getValueAsDouble();
