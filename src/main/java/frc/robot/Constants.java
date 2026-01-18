@@ -65,8 +65,6 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double GEAR_RATIO = 0.0;
-
     public static final double TOLERANCE = 0.0;
   }
 
@@ -94,7 +92,6 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double GEAR_RATIO = 0.0;
   }
 
   public static class Hopper {
@@ -128,13 +125,17 @@ public final class Constants {
     public static final double ROLLER_STATOR_LIMIT = 0.0;
     public static final double ROLLER_SUPPLY_LIMIT = 0.0;
 
+    public static final double ROLLER_SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+
+    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+    public static final double DEPLOY_ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
+
     public static final double kP = 0.0;
     public static final double kD = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double GEAR_RATIO = 0.0;
   }
 
   public static class Loader {

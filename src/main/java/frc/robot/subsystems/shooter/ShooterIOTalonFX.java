@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
@@ -28,6 +29,9 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.RotorToSensorRatio = Constants.Shooter.GEAR_RATIO;
 
     config.Slot0.kP = Constants.Shooter.kP;
     config.Slot0.kD = Constants.Shooter.kD;
