@@ -41,7 +41,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     rollerConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
 
     rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    rollerConfig.Feedback.SensorToMechanismRatio = Constants.Hopper.GEAR_RATIO;
+    rollerConfig.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_SENSOR_TO_MECHANISM_GEAR_RATIO;
 
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -55,7 +55,8 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     deployConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     deployConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.DEPLOY_ENCODER_ID;
-    deployConfig.Feedback.RotorToSensorRatio = Constants.Intake.GEAR_RATIO;
+    deployConfig.Feedback.RotorToSensorRatio = Constants.Intake.DEPLOY_ROTOR_TO_MECHANISM_GEAR_RATIO;
+    deployConfig.Feedback.SensorToMechanismRatio = Constants.Intake.DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO;
 
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
     deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
