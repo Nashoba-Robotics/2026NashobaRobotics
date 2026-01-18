@@ -3,20 +3,18 @@ package frc.robot.subsystems.loader;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class LoaderIOTalonFX implements LoaderIO {
-    
+
   private final TalonFX loader;
   private final TalonFXConfiguration config;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-  private final VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
   public LoaderIOTalonFX() {
     loader = new TalonFX(Constants.Loader.MOTOR_ID);
@@ -27,10 +25,11 @@ public class LoaderIOTalonFX implements LoaderIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = Constants.Loader.SUPPLY_LIMIT;
 
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.SensorToMechanismRatio = Constants.Loader.GEAR_RATIO;
+
     config.MotorOutput.Inverted = Constants.Loader.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    config.Slot0 = Constants.Loader.PID;
 
     loader.getConfigurator().apply(config);
   }
@@ -39,8 +38,8 @@ public class LoaderIOTalonFX implements LoaderIO {
   public void updateInputs(LoaderIOInputs inputs) {
     inputs.connected = loader.isConnected();
     inputs.tempCelsius = loader.getDeviceTemp().getValueAsDouble();
-    inputs.appliedVolts = loader.getMotorVoltage().getValueAsDouble();
     inputs.velocityRadsPerSec = Units.rotationsToRadians(loader.getVelocity().getValueAsDouble());
+    inputs.appliedVolts = loader.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = loader.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = loader.getSupplyCurrent().getValueAsDouble();
   }
@@ -51,19 +50,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   }
 
   @Override
-  public void runVelocity(double velocityRadsPerSec) {
-    loader.setControl(velocityDutyCycle.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
-  }
-
-  @Override
   public void stop() {
     loader.setControl(new NeutralOut());
-  }
-
-  @Override
-  public void setPID(double kP, double kD) {
-    config.Slot0.kP = kP;
-    config.Slot0.kD = kD;
-    loader.getConfigurator().apply(config);
   }
 }

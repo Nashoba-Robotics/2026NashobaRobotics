@@ -3,7 +3,7 @@ package frc.robot.subsystems.climber;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,8 +20,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
-  private final MotionMagicDutyCycle positionDutyCycle = new MotionMagicDutyCycle(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public ClimberIOTalonFX() {
     climber = new TalonFX(Constants.Climber.MOTOR_ID);
@@ -53,7 +53,12 @@ public class ClimberIOTalonFX implements ClimberIO {
     config.Feedback.RotorToSensorRatio = Constants.Climber.ROTOR_TO_MECHANISM_GEAR_RATIO;
     config.Feedback.SensorToMechanismRatio = Constants.Climber.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
-    config.Slot0 = Constants.Climber.PID;
+    config.Slot0.kP = Constants.Climber.kP;
+    config.Slot0.kD = Constants.Climber.kD;
+    config.Slot0.kS = Constants.Climber.kS;
+    config.Slot0.kG = Constants.Climber.kG;
+    config.Slot0.kV = Constants.Climber.kV;
+    config.Slot0.kA = Constants.Climber.kA;
 
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
         Constants.Climber.ENCODER_DISCONTINUITY_POINT;
@@ -71,8 +76,10 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.absolutePositionRads =
         Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
-    inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
+    inputs.positionSetpointRads =
+        Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
+    inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
     inputs.statorCurrentAmps = climber.getStatorCurrent().getValueAsDouble();
     inputs.supplyCurrentAmps = climber.getSupplyCurrent().getValueAsDouble();
   }
@@ -84,7 +91,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void runPosition(double positionRads) {
-    climber.setControl(positionDutyCycle.withPosition(Units.radiansToRotations(positionRads)));
+    climber.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)));
   }
 
   @Override
@@ -96,6 +103,15 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void setPID(double kP, double kD) {
     config.Slot0.kP = kP;
     config.Slot0.kD = kD;
+    climber.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void setFeedForward(double kS, double kG, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kG = kG;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
     climber.getConfigurator().apply(config);
   }
 }

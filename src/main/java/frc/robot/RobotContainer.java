@@ -30,6 +30,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.ShootingCalculator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -134,7 +135,22 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
-    // Reset gyro to 0 when Start and Back buttons are pressed
+    Pose2d targetPose = new Pose2d(5, 5, Rotation2d.kZero);
+
+    driver
+        .leftBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driver.getLeftY(),
+                () -> -driver.getLeftX(),
+                () ->
+                    Rotation2d.fromRadians(
+                        ShootingCalculator.makeSetpoint(drive, targetPose).driveAngleRads()),
+                () ->
+                    ShootingCalculator.makeSetpoint(drive, targetPose).driveVelocityRadsPerSec()));
+
+    // Reset gyro to 0 when Start and Back buttons are presseds
     driver
         .start()
         .and(driver.back())

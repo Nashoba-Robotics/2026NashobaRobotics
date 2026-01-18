@@ -14,7 +14,7 @@ public class HopperIOTalonFX implements HopperIO {
   private final TalonFX hopper;
   private final TalonFXConfiguration config;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
+  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
   public HopperIOTalonFX() {
     hopper = new TalonFX(Constants.Hopper.MOTOR_ID);
@@ -50,19 +50,7 @@ public class HopperIOTalonFX implements HopperIO {
   }
 
   @Override
-  public void runVelocity(double velocityRadsPerSec) {
-    hopper.set(Units.radiansToRotations(velocityRadsPerSec));
-  }
-
-  @Override
   public void stop() {
     hopper.setControl(new NeutralOut());
-  }
-
-  @Override
-  public void setPID(double kP, double kD) {
-    config.Slot0.kP = kP;
-    config.Slot0.kD = kD;
-    hopper.getConfigurator().apply(config);
   }
 }

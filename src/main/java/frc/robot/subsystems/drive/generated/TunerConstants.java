@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
@@ -41,10 +40,12 @@ public class TunerConstants {
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
-  private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
+  private static final ClosedLoopOutputType kSteerClosedLoopOutput =
+      ClosedLoopOutputType.TorqueCurrentFOC;
   // The closed-loop output type to use for the drive motors;
   // This affects the PID/FF gains for the drive motors
-  private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+  private static final ClosedLoopOutputType kDriveClosedLoopOutput =
+      ClosedLoopOutputType.TorqueCurrentFOC;
 
   // The type of motor used for the drive motor
   private static final DriveMotorArrangement kDriveMotorType =
