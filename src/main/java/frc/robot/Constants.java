@@ -23,6 +23,8 @@ public final class Constants {
   public static final boolean tuningMode = false;
   public static final boolean disableHAL = false;
 
+  public static final double loopTime = 0.02;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -92,6 +94,9 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
+    public static final double GEAR_RATIO = 0.0;
+
+    public static final double TOLERANCE = 0.0;
   }
 
   public static class Hopper {
@@ -136,6 +141,9 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
+    public static final double GEAR_RATIO = 0.0;
+
+    public static final double DEPLOY_TOLERANCE = 0.0;
   }
 
   public static class Loader {

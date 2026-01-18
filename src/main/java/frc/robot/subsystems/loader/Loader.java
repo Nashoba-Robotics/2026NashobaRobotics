@@ -33,5 +33,7 @@ public class Loader extends SubsystemBase{
         return run(() -> io.runDutyCycle(percent));
     }
 
-    
+    public Command stopCommand(){
+    return runOnce(() -> io.stop());
+  }
 }

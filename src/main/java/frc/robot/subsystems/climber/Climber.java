@@ -61,4 +61,8 @@ public class Climber extends SubsystemBase {
                 Util.epsilonEquals(
                     positionRads, inputs.rotorPositionRads, Constants.Climber.TOLERANCE));
   }
+
+  public Command stopCommand(){
+    return runOnce(() -> io.stop());
+  }
 }
