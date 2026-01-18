@@ -23,6 +23,8 @@ public final class Constants {
   public static final boolean tuningMode = false;
   public static final boolean disableHAL = false;
 
+  public static final double loopTime = 0.02;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
