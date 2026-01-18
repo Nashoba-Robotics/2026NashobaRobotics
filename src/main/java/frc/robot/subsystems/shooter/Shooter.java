@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -45,5 +46,13 @@ public class Shooter extends SubsystemBase {
     if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
       io.setFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
+  }
+
+  public Command runVelocityCommand(double velocityRadsPerSec){
+    return run(() -> io.runVelocity(velocityRadsPerSec));
+  }
+
+  public Command stopCommand(){
+    return runOnce(() -> io.stop());
   }
 }

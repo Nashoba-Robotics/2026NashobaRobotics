@@ -3,9 +3,11 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Util;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -48,5 +50,29 @@ public class Intake extends SubsystemBase {
     if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
       io.deploySetFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
+  }
+
+  public Command runRollerDutyCycleCommand(double percent){
+        return run(() -> io.runRollerDutyCycle(percent));
+    }
+
+  public Command runDeployDutyCycleCommand(double percent){
+        return run(() -> io.runDeployDutyCycle(percent));
+    }
+
+  public Command runDeployPositionCommand(double positionRads) {
+    return run(() -> io.runDeployPosition(positionRads))
+        .until(
+            () ->
+                Util.epsilonEquals(
+                    positionRads, inputs.deployRotorPositionRads, Constants.Intake.DEPLOY_TOLERANCE));
+  }
+
+  public Command rollerStopCommand(){
+    return runOnce(() -> io.rollerStop());
+  }
+
+  public Command deployStopCommand(){
+    return runOnce(() -> io.deployStop());
   }
 }

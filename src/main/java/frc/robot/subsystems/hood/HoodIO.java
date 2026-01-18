@@ -21,7 +21,7 @@ public interface HoodIO {
 
   public default void runDutyCycle(double percent) {}
 
-  public default void runPosition(double positionRads) {}
+  public default void runPosition(double positionRads, double velocityRadsPerSec) {}
 
   public default void stop() {}
 

@@ -47,8 +47,8 @@ public class ShootingCalculator {
     distanceShooterVelocityMap.put(0.0, 0.0);
 
     distanceTimeOfFlightMap.put(0.0, 0.0);
-    distanceTimeOfFlightMap.put(5.0, 2.5);
-    distanceTimeOfFlightMap.put(10.0, 3.0);
+    distanceTimeOfFlightMap.put(0.0, 0.0);
+    distanceTimeOfFlightMap.put(0.0, 0.0);
   }
 
   public static ShooterSetpoint makeSetpoint(Drive drive, Pose2d target) {
@@ -77,6 +77,7 @@ public class ShootingCalculator {
     if (Double.isNaN(lastDriveAngleRads)) lastDriveAngleRads = driveAngleRads;
     if (Double.isNaN(lastHoodAngleRads)) lastHoodAngleRads = hoodAngleRads;
 
+    //TODO: Maybe find Acceleration for shooterVelocity 
     driveVelocityRadsPerSec =
         driveAngleFilter.calculate((driveAngleRads - lastDriveAngleRads) / Constants.loopTime);
     hoodVelocityRadsPerSec =

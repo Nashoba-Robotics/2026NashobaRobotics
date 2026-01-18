@@ -33,4 +33,8 @@ public class Hopper extends SubsystemBase {
     public Command runDutyCycleCommand(double percent){
         return run(() -> io.runDutyCycle(percent));
     }
+
+    public Command stopCommand(){
+    return runOnce(() -> io.stop());
+  }
 }
