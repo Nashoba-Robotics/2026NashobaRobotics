@@ -28,8 +28,12 @@ public class Hood extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Hood/kA", Constants.Hood.kA);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert disconnected =
+  private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+
+  private final Alert hoodMotorDisconnected =
       new Alert("Hood motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert hoodEncoderDisconnected =
+      new Alert("Hood encoder disconnected!", Alert.AlertType.kWarning);
 
   public Hood(HoodIO io) {
     this.io = io;
@@ -40,7 +44,8 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
-    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    hoodMotorDisconnected.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
+    hoodEncoderDisconnected.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

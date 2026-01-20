@@ -13,7 +13,7 @@ public class Loader extends SubsystemBase {
   private final LoaderIOInputsAutoLogged inputs = new LoaderIOInputsAutoLogged();
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert loaderDisconnected =
+  private final Alert loaderMotorDisconnected =
       new Alert("Loader motor disconnected!", Alert.AlertType.kWarning);
 
   public Loader(LoaderIO io) {
@@ -24,7 +24,8 @@ public class Loader extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Loader", inputs);
-    loaderDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+
+    loaderMotorDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
   public Command runDutyCycleCommand(double percent) {

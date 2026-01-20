@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Shooter/kA", Constants.Shooter.kA);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert disconnected =
+  private final Alert shooterMotorDisconnectedAlert =
       new Alert("Shooter motor disconnected!", Alert.AlertType.kWarning);
 
   public Shooter(ShooterIO io) {
@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
 
-    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    shooterMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

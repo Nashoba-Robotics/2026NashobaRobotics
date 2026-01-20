@@ -29,8 +29,12 @@ public class Climber extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Climber/kA", Constants.Climber.kA);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert disconnected =
+  private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+
+  private final Alert climberMotorDisconnected =
       new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert climberEncoderDisconnected =
+      new Alert("Climber encoder disconnected!", Alert.AlertType.kWarning);
 
   public Climber(ClimberIO io) {
     this.io = io;
@@ -41,7 +45,8 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
 
-    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    climberMotorDisconnected.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
+    climberEncoderDisconnected.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

@@ -84,56 +84,56 @@ public class HoodIOTalonFX implements HoodIO {
     supplyCurrent = hood.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-      1 / Constants.loopTime,
-      temp,
-      absolutePosition,
-      rotorPosition,
-      positionSetpoint,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+        1 / Constants.loopTime,
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
     hood.optimizeBusUtilization();
+    encoder.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(
-    false,
-    temp,
-    absolutePosition,
-    rotorPosition,
-    positionSetpoint,
-    velocity,
-    appliedVolts,
-    statorCurrent,
-    supplyCurrent);
+        false,
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
   }
 
   @Override
   public void updateInputs(HoodIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-      temp,
-      absolutePosition,
-      rotorPosition,
-      positionSetpoint,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
 
-    inputs.connected = BaseStatusSignal.isAllGood(
-      temp,
-      absolutePosition,
-      rotorPosition,
-      positionSetpoint,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+    inputs.motorConnected =
+        BaseStatusSignal.isAllGood(
+            temp,
+            rotorPosition,
+            positionSetpoint,
+            velocity,
+            appliedVolts,
+            statorCurrent,
+            supplyCurrent);
+    inputs.encoderConnected = BaseStatusSignal.isAllGood(absolutePosition);
     inputs.tempCelsius = temp.getValueAsDouble();
-    inputs.absolutePositionRads =
-        Units.rotationsToRadians(absolutePosition.getValueAsDouble());
+    inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());
-    inputs.positionSetpointRads =
-        Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
+    inputs.positionSetpointRads = Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
