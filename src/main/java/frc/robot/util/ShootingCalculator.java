@@ -77,7 +77,6 @@ public class ShootingCalculator {
     if (Double.isNaN(lastDriveAngleRads)) lastDriveAngleRads = driveAngleRads;
     if (Double.isNaN(lastHoodAngleRads)) lastHoodAngleRads = hoodAngleRads;
 
-    // TODO: Maybe find Acceleration for shooterVelocity
     driveVelocityRadsPerSec =
         driveAngleFilter.calculate((driveAngleRads - lastDriveAngleRads) / Constants.loopTime);
     hoodVelocityRadsPerSec =
