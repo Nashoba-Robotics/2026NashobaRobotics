@@ -91,7 +91,6 @@ public final class Constants {
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
-
   }
 
   public static class Hopper {
@@ -135,7 +134,6 @@ public final class Constants {
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
-
   }
 
   public static class Loader {
