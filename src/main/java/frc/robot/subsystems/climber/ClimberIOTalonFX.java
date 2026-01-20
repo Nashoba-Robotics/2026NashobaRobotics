@@ -1,5 +1,7 @@
 package frc.robot.subsystems.climber;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -10,7 +12,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.util.PhoenixUtil;
 
 public class ClimberIOTalonFX implements ClimberIO {
 
@@ -19,6 +27,15 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
+
+  private final StatusSignal<Temperature> temp;
+  private final StatusSignal<Angle> absolutePosition;
+  private final StatusSignal<Angle> rotorPosition;
+  private final StatusSignal<Double> positionSetpoint;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVolts;
+  private final StatusSignal<Current> statorCurrent;
+  private final StatusSignal<Current> supplyCurrent;
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
   private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
@@ -65,23 +82,73 @@ public class ClimberIOTalonFX implements ClimberIO {
     encoderConfig.MagnetSensor.MagnetOffset = Constants.Climber.ENCODER_OFFSET;
     encoderConfig.MagnetSensor.SensorDirection = Constants.Climber.ENCODER_DIRECTION;
 
-    climber.getConfigurator().apply(config);
-    encoder.getConfigurator().apply(encoderConfig);
+    PhoenixUtil.tryUntilOk(5, () -> climber.getConfigurator().apply(config, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(encoderConfig, 0.25));
+
+    temp = climber.getDeviceTemp();
+    absolutePosition = encoder.getAbsolutePosition();
+    rotorPosition = climber.getPosition();
+    positionSetpoint = climber.getClosedLoopReference();
+    velocity = climber.getVelocity();
+    appliedVolts = climber.getMotorVoltage();
+    statorCurrent = climber.getStatorCurrent();
+    supplyCurrent = climber.getSupplyCurrent();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        1 / Constants.loopTime,
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
+    climber.optimizeBusUtilization();
+    encoder.optimizeBusUtilization();
+
+    PhoenixUtil.registerSignals(
+        false,
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-    inputs.connected = climber.isConnected();
-    inputs.tempCelsius = climber.getDeviceTemp().getValueAsDouble();
-    inputs.absolutePositionRads =
-        Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
-    inputs.rotorPositionRads = Units.rotationsToRadians(climber.getPosition().getValueAsDouble());
-    inputs.positionSetpointRads =
-        Units.rotationsToRadians(climber.getClosedLoopReference().getValueAsDouble());
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(climber.getVelocity().getValueAsDouble());
-    inputs.appliedVolts = climber.getMotorVoltage().getValueAsDouble();
-    inputs.statorCurrentAmps = climber.getStatorCurrent().getValueAsDouble();
-    inputs.supplyCurrentAmps = climber.getSupplyCurrent().getValueAsDouble();
+    BaseStatusSignal.refreshAll(
+        temp,
+        absolutePosition,
+        rotorPosition,
+        positionSetpoint,
+        velocity,
+        appliedVolts,
+        statorCurrent,
+        supplyCurrent);
+
+    inputs.motorConnected =
+        BaseStatusSignal.isAllGood(
+            temp,
+            rotorPosition,
+            positionSetpoint,
+            velocity,
+            appliedVolts,
+            statorCurrent,
+            supplyCurrent);
+    inputs.encoderConnected = BaseStatusSignal.isAllGood(absolutePosition);
+    inputs.tempCelsius = temp.getValueAsDouble();
+    inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
+    inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());
+    inputs.positionSetpointRads = Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.appliedVolts = appliedVolts.getValueAsDouble();
+    inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
   }
 
   @Override

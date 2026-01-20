@@ -1,39 +1,38 @@
 package frc.robot.subsystems.loader;
 
-
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
-public class Loader extends SubsystemBase{
-    
-    private final LoaderIO io;
-    private final LoaderIOInputsAutoLogged inputs = new LoaderIOInputsAutoLogged();
+public class Loader extends SubsystemBase {
 
-    private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-    private final Alert loaderDisconnected = new Alert("Loader motor disconnected!", Alert.AlertType.kWarning);
+  private final LoaderIO io;
+  private final LoaderIOInputsAutoLogged inputs = new LoaderIOInputsAutoLogged();
 
-    public Loader(LoaderIO io){
-        this.io = io;        
-    }
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert loaderMotorDisconnectedAlert =
+      new Alert("Loader motor disconnected!", Alert.AlertType.kWarning);
 
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Loader", inputs);
-        loaderDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+  public Loader(LoaderIO io) {
+    this.io = io;
+  }
 
-    }
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Loader", inputs);
 
-    public Command runDutyCycleCommand(double percent){
-        return run(() -> io.runDutyCycle(percent));
-    }
+    loaderMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+  }
 
-    public Command stopCommand(){
+  public Command runDutyCycleCommand(double percent) {
+    return run(() -> io.runDutyCycle(percent));
+  }
+
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
   }
 }

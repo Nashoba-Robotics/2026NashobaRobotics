@@ -8,9 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Util;
-
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
@@ -30,8 +28,12 @@ public class Hood extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Hood/kA", Constants.Hood.kA);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert disconnected =
+  private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+
+  private final Alert hoodMotorDisconnectedAlert =
       new Alert("Hood motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert hoodEncoderDisconnectedAlert =
+      new Alert("Hood encoder disconnected!", Alert.AlertType.kWarning);
 
   public Hood(HoodIO io) {
     this.io = io;
@@ -42,7 +44,8 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
-    disconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    hoodMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
+    hoodEncoderDisconnectedAlert.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());
@@ -59,12 +62,13 @@ public class Hood extends SubsystemBase {
                 Util.epsilonEquals(
                     positionRads, inputs.rotorPositionRads, Constants.Hood.TOLERANCE));
   }
-  
-  public Command runTrackedPositionCommand(DoubleSupplier positionRads, DoubleSupplier velocityRadsPerSec) {
+
+  public Command runTrackedPositionCommand(
+      DoubleSupplier positionRads, DoubleSupplier velocityRadsPerSec) {
     return run(() -> io.runPosition(positionRads.getAsDouble(), velocityRadsPerSec.getAsDouble()));
   }
 
-  public Command stopCommand(){
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
   }
 }
