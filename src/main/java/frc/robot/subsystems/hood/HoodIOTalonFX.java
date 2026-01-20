@@ -80,7 +80,10 @@ public class HoodIOTalonFX implements HoodIO {
 
   @Override
   public void runPosition(double positionRads, double velocityRadsPerSec) {
-    hood.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)).withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+    hood.setControl(
+        positionVoltage
+            .withPosition(Units.radiansToRotations(positionRads))
+            .withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }
 
   @Override
