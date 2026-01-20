@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Loader;
+package frc.robot.subsystems.loader;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;

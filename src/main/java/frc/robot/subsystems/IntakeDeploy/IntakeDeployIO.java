@@ -1,4 +1,4 @@
-package frc.robot.subsystems.IntakeDeploy;
+package frc.robot.subsystems.intakeDeploy;
 
 import org.littletonrobotics.junction.AutoLog;
 
