@@ -29,9 +29,9 @@ public class IntakeDeploy extends SubsystemBase {
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
 
-  private final Alert intakeDeployMotorDisconnected =
+  private final Alert intakeDeployMotorDisconnectedAlert =
       new Alert("IntakeDeploy motor disconnected!", Alert.AlertType.kWarning);
-  private final Alert intakeDeployEncoderDisconnected =
+  private final Alert intakeDeployEncoderDisconnectedAlert =
       new Alert("IntakeDeploy encoder disconnected!", Alert.AlertType.kWarning);
 
   public IntakeDeploy(IntakeDeployIO io) {
@@ -43,9 +43,8 @@ public class IntakeDeploy extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakeDeploy", inputs);
 
-    intakeDeployMotorDisconnected.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
-    intakeDeployEncoderDisconnected.set(
-        !encoderConnectedDebouncer.calculate(inputs.encoderConnected));
+    intakeDeployMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
+    intakeDeployEncoderDisconnectedAlert.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

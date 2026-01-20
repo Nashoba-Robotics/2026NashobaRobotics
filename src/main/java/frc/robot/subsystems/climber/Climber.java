@@ -31,9 +31,9 @@ public class Climber extends SubsystemBase {
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
 
-  private final Alert climberMotorDisconnected =
+  private final Alert climberMotorDisconnectedAlert =
       new Alert("Climber motor disconnected!", Alert.AlertType.kWarning);
-  private final Alert climberEncoderDisconnected =
+  private final Alert climberEncoderDisconnectedAlert =
       new Alert("Climber encoder disconnected!", Alert.AlertType.kWarning);
 
   public Climber(ClimberIO io) {
@@ -45,8 +45,8 @@ public class Climber extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
 
-    climberMotorDisconnected.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
-    climberEncoderDisconnected.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
+    climberMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
+    climberEncoderDisconnectedAlert.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

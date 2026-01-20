@@ -12,8 +12,8 @@ public class Hopper extends SubsystemBase {
   private final HopperIO io;
   private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
 
-  private final Debouncer motorConectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert hopperMotorDisconnected =
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert hopperMotorDisconnectedAlert =
       new Alert("Hopper motor disconnected!", Alert.AlertType.kWarning);
 
   public Hopper(HopperIO io) {
@@ -25,7 +25,7 @@ public class Hopper extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hopper", inputs);
 
-    hopperMotorDisconnected.set(!motorConectedDebouncer.calculate(inputs.connected));
+    hopperMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
   public Command runDutyCycleCommand(double percent) {
