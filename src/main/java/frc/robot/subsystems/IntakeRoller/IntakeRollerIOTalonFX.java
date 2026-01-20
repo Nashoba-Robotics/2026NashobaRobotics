@@ -56,37 +56,19 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     supplyCurrent = roller.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-      1/Constants.loopTime,
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
+        1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
     roller.optimizeBusUtilization();
 
-    PhoenixUtil.registerSignals(
-      false, 
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
-
+    PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
   }
 
   @Override
   public void updateInputs(IntakeRollerIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+    BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
-    inputs.connected = BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+    inputs.connected =
+        BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
     inputs.tempCelsius = temp.getValueAsDouble();
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();

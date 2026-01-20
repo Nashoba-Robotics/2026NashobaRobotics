@@ -23,7 +23,6 @@ public class HopperIOTalonFX implements HopperIO {
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
-
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -54,36 +53,19 @@ public class HopperIOTalonFX implements HopperIO {
     supplyCurrent = hopper.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-      1/Constants.loopTime,
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
+        1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
     hopper.optimizeBusUtilization();
 
-    PhoenixUtil.registerSignals(
-      false, 
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
+    PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
   }
 
   @Override
   public void updateInputs(HopperIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+    BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
-    inputs.connected = BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+    inputs.connected =
+        BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
     inputs.tempCelsius = temp.getValueAsDouble();
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();

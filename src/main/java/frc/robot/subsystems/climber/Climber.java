@@ -46,7 +46,8 @@ public class Climber extends SubsystemBase {
     Logger.processInputs("Climber", inputs);
 
     climberMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
-    climberEncoderDisconnectedAlert.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
+    climberEncoderDisconnectedAlert.set(
+        !encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

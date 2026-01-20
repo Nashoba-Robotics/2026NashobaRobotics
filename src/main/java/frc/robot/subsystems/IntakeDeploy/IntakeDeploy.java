@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.IntakeDeploy.IntakeDeployIOInputsAutoLogged;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Util;
 import org.littletonrobotics.junction.Logger;
@@ -44,8 +43,10 @@ public class IntakeDeploy extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakeDeploy", inputs);
 
-    intakeDeployMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
-    intakeDeployEncoderDisconnectedAlert.set(!encoderConnectedDebouncer.calculate(inputs.encoderConnected));
+    intakeDeployMotorDisconnectedAlert.set(
+        !motorConnectedDebouncer.calculate(inputs.motorConnected));
+    intakeDeployEncoderDisconnectedAlert.set(
+        !encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
     if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kD.get());

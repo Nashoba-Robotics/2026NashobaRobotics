@@ -44,7 +44,7 @@ public class LoaderIOTalonFX implements LoaderIO {
     config.MotorOutput.Inverted = Constants.Loader.INVERTED;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    PhoenixUtil.tryUntilOk(5,() -> loader.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> loader.getConfigurator().apply(config));
 
     temp = loader.getDeviceTemp();
     velocity = loader.getVelocity();
@@ -53,36 +53,19 @@ public class LoaderIOTalonFX implements LoaderIO {
     supplyCurrent = loader.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-      1/Constants.loopTime,
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
+        1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
     loader.optimizeBusUtilization();
 
-    PhoenixUtil.registerSignals(
-      false, 
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent
-    );
+    PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
   }
 
   @Override
   public void updateInputs(LoaderIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-      temp,
-      velocity,
-      appliedVolts,
-      statorCurrent,
-      supplyCurrent);
+    BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
-    inputs.connected = BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+    inputs.connected =
+        BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
     inputs.tempCelsius = temp.getValueAsDouble();
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
