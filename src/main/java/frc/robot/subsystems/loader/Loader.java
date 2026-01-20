@@ -1,4 +1,4 @@
-package frc.robot.subsystems.IntakeLoader;
+package frc.robot.subsystems.Loader;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -27,16 +27,11 @@ public class Loader extends SubsystemBase {
     loaderDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
-<<<<<<< HEAD
   public Command runDutyCycleCommand(double percent) {
     return run(() -> io.runDutyCycle(percent));
-=======
-    public Command runDutyCycleCommand(double percent){
-        return run(() -> io.runDutyCycle(percent));
-    }
+  }
 
-    public Command stopCommand(){
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
->>>>>>> 2b56edb10612de976fb28b156bc053f2ac78733c
   }
 }

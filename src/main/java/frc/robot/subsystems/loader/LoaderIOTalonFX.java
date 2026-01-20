@@ -1,4 +1,4 @@
-package frc.robot.subsystems.IntakeLoader;
+package frc.robot.subsystems.Loader;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
