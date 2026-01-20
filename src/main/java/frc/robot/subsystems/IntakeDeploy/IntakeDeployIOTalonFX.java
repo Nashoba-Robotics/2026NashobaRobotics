@@ -14,10 +14,8 @@ import frc.robot.Constants;
 
 public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
-  private final TalonFX roller;
   private final TalonFX deploy;
   private final TalonFXConfiguration deployConfig;
-  private final TalonFXConfiguration rollerConfig;
 
   private final CANcoder encoder;
   private final CANcoderConfiguration encoderConfig;
@@ -26,28 +24,11 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public IntakeDeployIOTalonFX() {
-    roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID);
     deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
-
-    rollerConfig = new TalonFXConfiguration();
     deployConfig = new TalonFXConfiguration();
 
     encoder = new CANcoder(Constants.Intake.DEPLOY_ENCODER_ID);
     encoderConfig = new CANcoderConfiguration();
-
-    rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rollerConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
-    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
-
-    rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    rollerConfig.Feedback.SensorToMechanismRatio =
-        Constants.Intake.ROLLER_SENSOR_TO_MECHANISM_GEAR_RATIO;
-
-    rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
-    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    roller.getConfigurator().apply(rollerConfig);
 
     deployConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     deployConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.DEPLOY_STATOR_LIMIT;

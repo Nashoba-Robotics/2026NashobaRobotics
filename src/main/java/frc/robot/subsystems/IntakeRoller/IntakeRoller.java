@@ -3,6 +3,7 @@ package frc.robot.subsystems.IntakeRoller;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,8 +23,16 @@ public class IntakeRoller extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Roller", inputs);
+    Logger.processInputs("IntakeRoller", inputs);
 
     rollerDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
+  }
+
+  public Command runDutyCycleCommand(double percent) {
+    return run(() -> io.runDutyCycle(percent));
+  }
+
+  public Command stopCommand() {
+    return runOnce(() -> io.stop());
   }
 }

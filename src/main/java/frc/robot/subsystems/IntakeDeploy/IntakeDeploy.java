@@ -37,7 +37,7 @@ public class IntakeDeploy extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Deploy", inputs);
+    Logger.processInputs("IntakeDeploy", inputs);
 
     deployDisconnected.set(!motorConnectedDebouncer.calculate(inputs.connected));
 
@@ -49,11 +49,7 @@ public class IntakeDeploy extends SubsystemBase {
     }
   }
 
-  public Command runDeployDutyCycleCommand(double percent) {
-    return run(() -> io.runDutyCycle(percent));
-  }
-
-  public Command runDeployPositionCommand(double positionRads) {
+  public Command runPositionCommand(double positionRads) {
     return run(() -> io.runPosition(positionRads))
         .until(
             () ->
@@ -61,7 +57,7 @@ public class IntakeDeploy extends SubsystemBase {
                     positionRads, inputs.rotorPositionRads, Constants.Intake.DEPLOY_TOLERANCE));
   }
 
-  public Command deployStopCommand() {
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
   }
 }
