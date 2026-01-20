@@ -3,8 +3,8 @@ package frc.robot.subsystems.hood;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -21,7 +21,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final CANcoderConfiguration encoderConfig;
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
-  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
+  private final PositionVoltage positionVoltage = new PositionVoltage(0).withEnableFOC(true);
 
   public HoodIOTalonFX() {
     hood = new TalonFX(Constants.Hood.MOTOR_ID);
@@ -79,8 +79,8 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void runPosition(double positionRads) {
-    hood.setControl(positionVoltage.withPosition(positionRads));
+  public void runPosition(double positionRads, double velocityRadsPerSec) {
+    hood.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)).withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }
 
   @Override

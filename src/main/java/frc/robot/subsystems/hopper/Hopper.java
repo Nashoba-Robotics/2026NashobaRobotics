@@ -28,7 +28,11 @@ public class Hopper extends SubsystemBase {
     motorDisconnectedAlert.set(!motorConectedDebouncer.calculate(inputs.connected));
   }
 
-  public Command runDutyCycleCommand(double percent) {
-    return run(() -> io.runDutyCycle(percent));
+    public Command runDutyCycleCommand(double percent){
+        return run(() -> io.runDutyCycle(percent));
+    }
+
+    public Command stopCommand(){
+    return runOnce(() -> io.stop());
   }
 }

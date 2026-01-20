@@ -8,7 +8,8 @@ public interface DeployIO {
   public static class DeployIOInputs {
     public boolean deployConnected = false;
     public double deployTempCelsius = 0.0;
-    public double deployPositionRads = 0.0;
+    public double deployAbsolutePositionRads = 0.0;
+    public double deployRotorPositionRads = 0.0;
     public double deployPositionSetpointRads = 0.0;
     public double deployVelocityRadsPerSec = 0.0;
     public double deployAppliedVolts = 0.0;

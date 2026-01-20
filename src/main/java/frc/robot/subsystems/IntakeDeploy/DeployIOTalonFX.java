@@ -84,7 +84,8 @@ public class DeployIOTalonFX implements DeployIO {
   public void updateInputs(DeployIOInputs inputs) {
     inputs.deployConnected = deploy.isConnected();
     inputs.deployTempCelsius = deploy.getDeviceTemp().getValueAsDouble();
-    inputs.deployPositionRads = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
+    inputs.deployAbsolutePositionRads = Units.rotationsToRadians(encoder.getPosition().getValueAsDouble());
+    inputs.deployRotorPositionRads = Units.rotationsToRadians(deploy.getPosition().getValueAsDouble());
     inputs.deployPositionSetpointRads =
         Units.rotationsToRadians(deploy.getClosedLoopOutput().getValueAsDouble());
     inputs.deployVelocityRadsPerSec =

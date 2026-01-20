@@ -3,9 +3,14 @@ package frc.robot.subsystems.hood;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Util;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
@@ -45,5 +50,21 @@ public class Hood extends SubsystemBase {
     if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
       io.setFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
+  }
+
+  public Command runPositionCommand(double positionRads) {
+    return run(() -> io.runPosition(positionRads, 0.0))
+        .until(
+            () ->
+                Util.epsilonEquals(
+                    positionRads, inputs.rotorPositionRads, Constants.Hood.TOLERANCE));
+  }
+  
+  public Command runTrackedPositionCommand(DoubleSupplier positionRads, DoubleSupplier velocityRadsPerSec) {
+    return run(() -> io.runPosition(positionRads.getAsDouble(), velocityRadsPerSec.getAsDouble()));
+  }
+
+  public Command stopCommand(){
+    return runOnce(() -> io.stop());
   }
 }

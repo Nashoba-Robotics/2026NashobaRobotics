@@ -3,9 +3,11 @@ package frc.robot.subsystems.IntakeDeploy;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Util;
 import org.littletonrobotics.junction.Logger;
 
 public class Deploy extends SubsystemBase {
@@ -45,5 +47,23 @@ public class Deploy extends SubsystemBase {
     if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
       io.deploySetFeedForward(kS.get(), 0.0, kV.get(), kA.get());
     }
+  }
+
+
+  public Command runDeployDutyCycleCommand(double percent){
+        return run(() -> io.runDeployDutyCycle(percent));
+    }
+
+  public Command runDeployPositionCommand(double positionRads) {
+    return run(() -> io.runDeployPosition(positionRads))
+        .until(
+            () ->
+                Util.epsilonEquals(
+                    positionRads, inputs.deployRotorPositionRads, Constants.Intake.DEPLOY_TOLERANCE));
+  }
+
+
+  public Command deployStopCommand(){
+    return runOnce(() -> io.deployStop());
   }
 }
