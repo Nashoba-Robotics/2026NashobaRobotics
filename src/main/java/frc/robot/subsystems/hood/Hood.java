@@ -8,9 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Util;
-
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
@@ -59,12 +57,13 @@ public class Hood extends SubsystemBase {
                 Util.epsilonEquals(
                     positionRads, inputs.rotorPositionRads, Constants.Hood.TOLERANCE));
   }
-  
-  public Command runTrackedPositionCommand(DoubleSupplier positionRads, DoubleSupplier velocityRadsPerSec) {
+
+  public Command runTrackedPositionCommand(
+      DoubleSupplier positionRads, DoubleSupplier velocityRadsPerSec) {
     return run(() -> io.runPosition(positionRads.getAsDouble(), velocityRadsPerSec.getAsDouble()));
   }
 
-  public Command stopCommand(){
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
   }
 }

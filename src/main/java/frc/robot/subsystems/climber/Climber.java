@@ -62,7 +62,7 @@ public class Climber extends SubsystemBase {
                     positionRads, inputs.rotorPositionRads, Constants.Climber.TOLERANCE));
   }
 
-  public Command stopCommand(){
+  public Command stopCommand() {
     return runOnce(() -> io.stop());
   }
 }
