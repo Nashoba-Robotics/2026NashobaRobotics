@@ -206,7 +206,7 @@ public class RobotContainer {
         .onFalse(superstructure.stopAllRollers())
         .and(hood::atSetpoint)
         .and(shooter::atSetpoint);
-        //check drive rotation setpoint
+    // check drive rotation setpoint
   }
 
   /**

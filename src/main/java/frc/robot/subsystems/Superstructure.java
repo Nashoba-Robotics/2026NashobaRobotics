@@ -67,28 +67,23 @@ public class Superstructure extends SubsystemBase {
             this::getHubShootingSetpointHoodAngle, this::getHubShootingSetpointHoodVelocity),
         shooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
-  
-  public Command shoot(){
+
+  public Command shoot() {
     return new ParallelCommandGroup(
         hopper.runDutyCycleCommand(Presets.Hopper.FEED_DUTYCYCLE),
-        loader.runDutyCycleCommand(Presets.Loader.FEED_DUTYCYCLE)
-    );
+        loader.runDutyCycleCommand(Presets.Loader.FEED_DUTYCYCLE));
   }
 
-  public Command stopShoot(){
-    return new ParallelCommandGroup(
-        hopper.stopCommand(),
-        loader.stopCommand()
-    );
+  public Command stopShoot() {
+    return new ParallelCommandGroup(hopper.stopCommand(), loader.stopCommand());
   }
 
-  public Command stopAllRollers(){
+  public Command stopAllRollers() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
         hopper.stopCommand(),
         loader.stopCommand(),
-        shooter.stopCommand()
-    );
+        shooter.stopCommand());
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {
