@@ -106,7 +106,7 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       Supplier<Rotation2d> rotationSupplier,
-      DoubleSupplier rotationalVelocitySupplier) {
+      Supplier<Rotation2d> rotationalVelocitySupplier) {
 
     // Create PID controller
     ProfiledPIDController angleController =
@@ -129,7 +129,7 @@ public class DriveCommands {
                   angleController.calculate(
                       drive.getRotation().getRadians(),
                       rotationSupplier.get().getRadians()
-                          + rotationalVelocitySupplier.getAsDouble());
+                          + rotationalVelocitySupplier.get().getRadians());
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =

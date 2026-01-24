@@ -28,6 +28,9 @@ public class Climber extends SubsystemBase {
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Climber/kA", Constants.Climber.kA);
 
+  private static final LoggedTunableNumber positionTolerance =
+      new LoggedTunableNumber("Tuning/Climber/Tolerance", Constants.Climber.TOLERANCE);
+
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
 
@@ -60,12 +63,17 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public boolean atSetpoint() {
+    return Util.epsilonEquals(
+        inputs.positionSetpointRads, inputs.rotorPositionRads, positionTolerance.get());
+  }
+
   public Command runPositionCommand(double positionRads) {
     return run(() -> io.runPosition(positionRads))
         .until(
             () ->
                 Util.epsilonEquals(
-                    positionRads, inputs.rotorPositionRads, Constants.Climber.TOLERANCE));
+                    positionRads, inputs.rotorPositionRads, positionTolerance.get()));
   }
 
   public Command stopCommand() {

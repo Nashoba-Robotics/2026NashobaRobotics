@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Util;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -24,6 +26,9 @@ public class Shooter extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Shooter/kV", Constants.Shooter.kV);
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Shooter/kA", Constants.Shooter.kA);
+
+  private static final LoggedTunableNumber velocityTolerance =
+      new LoggedTunableNumber("Tuning/Shooter/Tolerance", Constants.Shooter.TOLERANCE);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Alert shooterMotorDisconnectedAlert =
@@ -48,8 +53,17 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  public boolean atSetpoint() {
+    return Util.epsilonEquals(
+        inputs.velocitySetpointRadsPerSec, inputs.velocityRadsPerSec, velocityTolerance.get());
+  }
+
   public Command runVelocityCommand(double velocityRadsPerSec) {
     return run(() -> io.runVelocity(velocityRadsPerSec));
+  }
+
+  public Command runTrackedVelocityCommand(DoubleSupplier velocityRadsPerSec) {
+    return run(() -> io.runVelocity(velocityRadsPerSec.getAsDouble()));
   }
 
   public Command stopCommand() {
