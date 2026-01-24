@@ -9,6 +9,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -20,10 +22,13 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-  public static final boolean tuningMode = false;
+  public static final boolean tuningMode = true;
   public static final boolean disableHAL = false;
 
   public static final double loopTime = 0.02;
+
+  public static final AprilTagFieldLayout aprilTagLayout =
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -174,5 +179,7 @@ public final class Constants {
     public static final double kA = 0.0;
 
     public static final double GEAR_RATIO = 0.0;
+
+    public static final double TOLERANCE = 0.0;
   }
 }

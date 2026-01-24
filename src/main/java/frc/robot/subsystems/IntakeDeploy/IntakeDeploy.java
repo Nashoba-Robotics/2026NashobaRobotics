@@ -26,6 +26,9 @@ public class IntakeDeploy extends SubsystemBase {
   private static final LoggedTunableNumber kA =
       new LoggedTunableNumber("Tuning/Intake/kA", Constants.Intake.kA);
 
+  private static final LoggedTunableNumber positionTolerance =
+      new LoggedTunableNumber("Tuning/Intake/DeployTolerance", Constants.Intake.DEPLOY_TOLERANCE);
+
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
 
@@ -56,12 +59,17 @@ public class IntakeDeploy extends SubsystemBase {
     }
   }
 
+  public boolean atSetpoint() {
+    return Util.epsilonEquals(
+        inputs.positionSetpointRads, inputs.rotorPositionRads, positionTolerance.get());
+  }
+
   public Command runPositionCommand(double positionRads) {
     return run(() -> io.runPosition(positionRads))
         .until(
             () ->
                 Util.epsilonEquals(
-                    positionRads, inputs.rotorPositionRads, Constants.Intake.DEPLOY_TOLERANCE));
+                    positionRads, inputs.rotorPositionRads, positionTolerance.get()));
   }
 
   public Command stopCommand() {

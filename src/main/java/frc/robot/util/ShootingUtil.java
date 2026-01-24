@@ -48,7 +48,7 @@ public class ShootingUtil {
 
     distanceTimeOfFlightMap.put(0.0, 1.0);
     distanceTimeOfFlightMap.put(2.5, 1.075);
-    distanceTimeOfFlightMap.put(5.0, 0.15);
+    distanceTimeOfFlightMap.put(5.0, 1.15);
   }
 
   public static ShooterSetpoint makeSetpoint(Drive drive, Pose2d target) {
