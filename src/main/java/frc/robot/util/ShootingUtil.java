@@ -8,7 +8,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import org.littletonrobotics.junction.Logger;
 
-public class ShootingCalculator {
+public class ShootingUtil {
 
   private static final LinearFilter driveAngleFilter =
       LinearFilter.movingAverage((int) (0.1 / Constants.loopTime));
@@ -46,28 +46,31 @@ public class ShootingCalculator {
     distanceShooterVelocityMap.put(0.0, 0.0);
     distanceShooterVelocityMap.put(0.0, 0.0);
 
-    distanceTimeOfFlightMap.put(0.0, 0.0);
-    distanceTimeOfFlightMap.put(0.0, 0.0);
-    distanceTimeOfFlightMap.put(0.0, 0.0);
+    distanceTimeOfFlightMap.put(0.0, 1.0);
+    distanceTimeOfFlightMap.put(2.5, 1.075);
+    distanceTimeOfFlightMap.put(5.0, 0.15);
   }
 
   public static ShooterSetpoint makeSetpoint(Drive drive, Pose2d target) {
 
-    double robotToTargetDistance =
-        target.getTranslation().getDistance(drive.getPose().getTranslation());
-
     ChassisSpeeds fieldRelativeVelocity =
         ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), drive.getRotation());
 
-    // TODO: Maybe iterate over timeOfFlight to find new time of flight with futurePose
-    double timeOfFlight = distanceTimeOfFlightMap.get(robotToTargetDistance);
-    Pose2d futurePose =
-        new Pose2d(
-            drive.getPose().getX() + fieldRelativeVelocity.vxMetersPerSecond * timeOfFlight,
-            drive.getPose().getY() + fieldRelativeVelocity.vyMetersPerSecond * timeOfFlight,
-            drive.getPose().getRotation());
+    double timeOfFlight;
+    Pose2d futurePose = drive.getPose();
     double futurePosetoTargetDistance =
         target.getTranslation().getDistance(drive.getPose().getTranslation());
+
+    // iterate over timeOfFlight for each new future pose because it would be slightly different
+    for (int i = 0; i < 5; i++) {
+      timeOfFlight = distanceTimeOfFlightMap.get(futurePosetoTargetDistance);
+      futurePose =
+          new Pose2d(
+              drive.getPose().getX() + fieldRelativeVelocity.vxMetersPerSecond * timeOfFlight,
+              drive.getPose().getY() + fieldRelativeVelocity.vyMetersPerSecond * timeOfFlight,
+              drive.getPose().getRotation());
+      futurePosetoTargetDistance = target.getTranslation().getDistance(futurePose.getTranslation());
+    }
 
     driveAngleRads =
         target.getTranslation().minus(futurePose.getTranslation()).getAngle().getRadians();
