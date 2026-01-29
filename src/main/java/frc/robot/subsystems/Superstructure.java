@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.Presets;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShootingUtil;
 import frc.robot.util.ShootingUtil.ShooterSetpoint;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
   private final Drive drive;
@@ -53,9 +55,13 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     hubShootingSetpoint = ShootingUtil.makeSetpoint(drive, FieldConstants.getAllianceHubPose2d());
+
+    Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
+    Logger.recordOutput(
+        "DriveCommands/atDriveToPoseSetpoint", DriveCommands.atDriveToPoseSetpoint());
   }
 
-  public Command aimAtHub(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+  public Command aimAtHubCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
     return new ParallelCommandGroup(
         DriveCommands.joystickDriveAtAngle(
             drive,
@@ -68,17 +74,19 @@ public class Superstructure extends SubsystemBase {
         shooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
 
-  public Command shoot() {
+  public Command shootCommand() {
     return new ParallelCommandGroup(
         hopper.runDutyCycleCommand(Presets.Hopper.FEED_DUTYCYCLE),
         loader.runDutyCycleCommand(Presets.Loader.FEED_DUTYCYCLE));
   }
 
-  public Command stopShoot() {
-    return new ParallelCommandGroup(hopper.stopCommand(), loader.stopCommand());
+  public Command endShootCommand() {
+    return new SequentialCommandGroup(
+        loader.runDutyCycleCommand(Presets.Loader.SLOW_EXHAUST_DUTYCYCLE).withTimeout(0.1),
+        new ParallelCommandGroup(hopper.stopCommand(), loader.stopCommand()));
   }
 
-  public Command stopAllRollers() {
+  public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
         hopper.stopCommand(),

@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Shooter/kA", Constants.Shooter.kA);
 
   private static final LoggedTunableNumber velocityTolerance =
-      new LoggedTunableNumber("Tuning/Shooter/Tolerance", Constants.Shooter.TOLERANCE);
+      new LoggedTunableNumber("Tuning/Shooter/ToleranceRadsPerSec", Constants.Shooter.TOLERANCE);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Alert shooterMotorDisconnectedAlert =

@@ -202,11 +202,13 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
-        .whileTrue(superstructure.aimAtHub(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .onFalse(superstructure.stopAllRollers())
+        .whileTrue(
+            superstructure.aimAtHubCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
         .and(hood::atSetpoint)
-        .and(shooter::atSetpoint);
-    // check drive rotation setpoint
+        .and(shooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
   }
 
   /**

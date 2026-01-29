@@ -2,6 +2,7 @@ package frc.robot.subsystems.intakeDeploy;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,7 +28,8 @@ public class IntakeDeploy extends SubsystemBase {
       new LoggedTunableNumber("Tuning/Intake/kA", Constants.Intake.kA);
 
   private static final LoggedTunableNumber positionTolerance =
-      new LoggedTunableNumber("Tuning/Intake/DeployTolerance", Constants.Intake.DEPLOY_TOLERANCE);
+      new LoggedTunableNumber(
+          "Tuning/Intake/DeployToleranceDeg", Constants.Intake.DEPLOY_TOLERANCE);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
@@ -61,7 +63,9 @@ public class IntakeDeploy extends SubsystemBase {
 
   public boolean atSetpoint() {
     return Util.epsilonEquals(
-        inputs.positionSetpointRads, inputs.rotorPositionRads, positionTolerance.get());
+        inputs.positionSetpointRads,
+        inputs.rotorPositionRads,
+        Units.degreesToRadians(positionTolerance.get()));
   }
 
   public Command runPositionCommand(double positionRads) {
@@ -69,7 +73,9 @@ public class IntakeDeploy extends SubsystemBase {
         .until(
             () ->
                 Util.epsilonEquals(
-                    positionRads, inputs.rotorPositionRads, positionTolerance.get()));
+                    positionRads,
+                    inputs.rotorPositionRads,
+                    Units.degreesToRadians(positionTolerance.get())));
   }
 
   public Command stopCommand() {
