@@ -50,6 +50,8 @@ public class Superstructure extends SubsystemBase {
     this.intakeRoller = intakeRoller;
     this.loader = loader;
     this.shooter = shooter;
+
+    hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
   }
 
   @Override
