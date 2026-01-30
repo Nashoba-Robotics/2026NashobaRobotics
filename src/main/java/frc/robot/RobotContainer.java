@@ -1,10 +1,3 @@
-// Copyright (c) 2021-2026 Littleton Robotics
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by a BSD
-// license that can be found in the LICENSE file
-// at the root directory of this project.
-
 package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
@@ -202,11 +195,13 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
-        .whileTrue(superstructure.aimAtHub(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .onFalse(superstructure.stopAllRollers())
+        .whileTrue(
+            superstructure.aimAtHubCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
         .and(hood::atSetpoint)
-        .and(shooter::atSetpoint);
-    // check drive rotation setpoint
+        .and(shooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
   }
 
   /**

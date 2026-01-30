@@ -72,7 +72,7 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double TOLERANCE = 0.0;
+    public static final double TOLERANCE = 0.0; // degrees
   }
 
   public static class Hood {
@@ -101,7 +101,7 @@ public final class Constants {
 
     public static final double GEAR_RATIO = 0.0;
 
-    public static final double TOLERANCE = 0.0;
+    public static final double TOLERANCE = 0.0; // degrees
   }
 
   public static class Hopper {
@@ -148,7 +148,7 @@ public final class Constants {
 
     public static final double GEAR_RATIO = 0.0;
 
-    public static final double DEPLOY_TOLERANCE = 0.0;
+    public static final double DEPLOY_TOLERANCE = 0.0; // degrees
   }
 
   public static class Loader {
@@ -180,6 +180,6 @@ public final class Constants {
 
     public static final double GEAR_RATIO = 0.0;
 
-    public static final double TOLERANCE = 0.0;
+    public static final double TOLERANCE = 0.0; // Radians/Second
   }
 }
