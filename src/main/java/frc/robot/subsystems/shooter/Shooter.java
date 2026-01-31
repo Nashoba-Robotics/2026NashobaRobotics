@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Util;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -16,46 +15,71 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-  private static final LoggedTunableNumber kP =
-      new LoggedTunableNumber("Tuning/Shooter/kP", Constants.Shooter.kP);
-  private static final LoggedTunableNumber kD =
-      new LoggedTunableNumber("Tuning/Shooter/kD", Constants.Shooter.kD);
-  private static final LoggedTunableNumber kS =
-      new LoggedTunableNumber("Tuning/Shooter/kS", Constants.Shooter.kS);
-  private static final LoggedTunableNumber kV =
-      new LoggedTunableNumber("Tuning/Shooter/kV", Constants.Shooter.kV);
-  private static final LoggedTunableNumber kA =
-      new LoggedTunableNumber("Tuning/Shooter/kA", Constants.Shooter.kA);
-
-  private static final LoggedTunableNumber velocityTolerance =
-      new LoggedTunableNumber("Tuning/Shooter/ToleranceRadsPerSec", Constants.Shooter.TOLERANCE);
+  private final boolean isLeftShooter;
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert shooterMotorDisconnectedAlert =
-      new Alert("Shooter motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert shooterLeaderDisconnectedAlert;
+  private final Alert shooterFollowerDisconnectedAlert;
 
-  public Shooter(ShooterIO io) {
+  public Shooter(ShooterIO io, boolean isLeftShooter) {
     this.io = io;
+    this.isLeftShooter = isLeftShooter;
+
+    shooterLeaderDisconnectedAlert =
+        new Alert(
+            (isLeftShooter ? "Left" : "Right") + "ShooterLeader motor disconnected!",
+            Alert.AlertType.kWarning);
+    shooterFollowerDisconnectedAlert =
+        new Alert(
+            (isLeftShooter ? "Left" : "Right") + "ShooterFollower motor disconnected!",
+            Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter", inputs);
+    Logger.processInputs("Shooter/" + (isLeftShooter ? "Left" : "Right"), inputs);
 
-    shooterMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    shooterLeaderDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.leaderConnected));
+    shooterFollowerDisconnectedAlert.set(
+        !motorConnectedDebouncer.calculate(inputs.followerConnected));
 
-    if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-      io.setPID(kP.get(), kD.get());
-    }
-    if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
-      io.setFeedForward(kS.get(), 0.0, kV.get(), kA.get());
+    if (isLeftShooter) {
+      if (Constants.Shooter.LEFT_kP.hasChanged(hashCode())
+          || Constants.Shooter.LEFT_kD.hasChanged(hashCode())) {
+        io.setPID(Constants.Shooter.LEFT_kP.get(), Constants.Shooter.LEFT_kD.get());
+      }
+      if (Constants.Shooter.LEFT_kS.hasChanged(hashCode())
+          || Constants.Shooter.LEFT_kV.hasChanged(hashCode())
+          || Constants.Shooter.LEFT_kA.hasChanged(hashCode())) {
+        io.setFeedForward(
+            Constants.Shooter.LEFT_kS.get(),
+            0.0,
+            Constants.Shooter.LEFT_kV.get(),
+            Constants.Shooter.LEFT_kA.get());
+      }
+    } else {
+      if (Constants.Shooter.RIGHT_kP.hasChanged(hashCode())
+          || Constants.Shooter.RIGHT_kD.hasChanged(hashCode())) {
+        io.setPID(Constants.Shooter.RIGHT_kP.get(), Constants.Shooter.RIGHT_kD.get());
+      }
+      if (Constants.Shooter.RIGHT_kS.hasChanged(hashCode())
+          || Constants.Shooter.RIGHT_kV.hasChanged(hashCode())
+          || Constants.Shooter.RIGHT_kA.hasChanged(hashCode())) {
+        io.setFeedForward(
+            Constants.Shooter.RIGHT_kS.get(),
+            0.0,
+            Constants.Shooter.RIGHT_kV.get(),
+            Constants.Shooter.RIGHT_kA.get());
+      }
     }
   }
 
   public boolean atSetpoint() {
     return Util.epsilonEquals(
-        inputs.velocitySetpointRadsPerSec, inputs.velocityRadsPerSec, velocityTolerance.get());
+        inputs.leaderVelocitySetpointRadsPerSec,
+        inputs.leaderVelocityRadsPerSec,
+        Constants.Shooter.VELOCITY_TOLERANCE.get());
   }
 
   public Command runVelocityCommand(double velocityRadsPerSec) {

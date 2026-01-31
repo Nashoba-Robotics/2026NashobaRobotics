@@ -29,7 +29,8 @@ public class Superstructure extends SubsystemBase {
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
-  private final Shooter shooter;
+  private final Shooter leftShooter;
+  private final Shooter rightShooter;
 
   private ShooterSetpoint hubShootingSetpoint;
 
@@ -41,7 +42,8 @@ public class Superstructure extends SubsystemBase {
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
       Loader loader,
-      Shooter shooter) {
+      Shooter leftShooter,
+      Shooter rightShooter) {
     this.drive = drive;
     this.climber = climber;
     this.hood = hood;
@@ -49,7 +51,8 @@ public class Superstructure extends SubsystemBase {
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
     this.loader = loader;
-    this.shooter = shooter;
+    this.leftShooter = leftShooter;
+    this.rightShooter = rightShooter;
 
     hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
   }
@@ -73,7 +76,8 @@ public class Superstructure extends SubsystemBase {
             this::getHubShootingSetpointDriveVelocity),
         hood.runTrackedPositionCommand(
             this::getHubShootingSetpointHoodAngle, this::getHubShootingSetpointHoodVelocity),
-        shooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
 
   public Command shootCommand() {
@@ -93,7 +97,8 @@ public class Superstructure extends SubsystemBase {
         intakeRoller.stopCommand(),
         hopper.stopCommand(),
         loader.stopCommand(),
-        shooter.stopCommand());
+        leftShooter.stopCommand(),
+        rightShooter.stopCommand());
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {
