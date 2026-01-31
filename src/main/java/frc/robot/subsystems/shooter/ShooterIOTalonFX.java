@@ -4,10 +4,12 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,21 +21,32 @@ import frc.robot.util.PhoenixUtil;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
-  private final TalonFX shooter;
+  private final TalonFX shooterLeader;
+  private final TalonFX shooterFollower;
+
   private final TalonFXConfiguration config;
 
-  private final StatusSignal<Temperature> temp;
-  private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<Double> velocitySetpoint;
-  private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> statorCurrent;
-  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Temperature> leaderTemp;
+  private final StatusSignal<AngularVelocity> leaderVelocity;
+  private final StatusSignal<Double> leaderVelocitySetpoint;
+  private final StatusSignal<Voltage> leaderAppliedVolts;
+  private final StatusSignal<Current> leaderStatorCurrent;
+  private final StatusSignal<Current> leaderSupplyCurrent;
+
+  private final StatusSignal<Temperature> followerTemp;
+  private final StatusSignal<AngularVelocity> followerVelocity;
+  private final StatusSignal<Voltage> followerAppliedVolts;
+  private final StatusSignal<Current> followerStatorCurrent;
+  private final StatusSignal<Current> followerSupplyCurrent;
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
   private final VelocityVoltage velocityVoltage = new VelocityVoltage(0).withEnableFOC(true);
 
-  public ShooterIOTalonFX() {
-    shooter = new TalonFX(Constants.Loader.MOTOR_ID);
+  public ShooterIOTalonFX(boolean isLeftShooter, int leaderDeviceId, int followerDeviceId) {
+    shooterLeader = new TalonFX(leaderDeviceId, Constants.Shooter.CANBUS);
+    shooterFollower = new TalonFX(followerDeviceId, Constants.Shooter.CANBUS);
+    shooterFollower.setControl(new Follower(leaderDeviceId, MotorAlignmentValue.Aligned));
+
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -41,78 +54,145 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = Constants.Shooter.SUPPLY_LIMIT;
 
-    config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted =
+        isLeftShooter ? Constants.Shooter.LEFT_INVERTED : Constants.Shooter.RIGHT_INVERTED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     config.Feedback.RotorToSensorRatio = Constants.Shooter.GEAR_RATIO;
 
-    config.Slot0.kP = Constants.Shooter.kP;
-    config.Slot0.kD = Constants.Shooter.kD;
-    config.Slot0.kS = Constants.Shooter.kS;
-    config.Slot0.kV = Constants.Shooter.kV;
-    config.Slot0.kA = Constants.Shooter.kA;
+    config.Slot0.kP =
+        isLeftShooter ? Constants.Shooter.LEFT_kP.get() : Constants.Shooter.RIGHT_kP.get();
+    config.Slot0.kD =
+        isLeftShooter ? Constants.Shooter.LEFT_kD.get() : Constants.Shooter.RIGHT_kD.get();
+    config.Slot0.kS =
+        isLeftShooter ? Constants.Shooter.LEFT_kS.get() : Constants.Shooter.RIGHT_kS.get();
+    config.Slot0.kV =
+        isLeftShooter ? Constants.Shooter.LEFT_kV.get() : Constants.Shooter.RIGHT_kV.get();
+    config.Slot0.kA =
+        isLeftShooter ? Constants.Shooter.LEFT_kA.get() : Constants.Shooter.RIGHT_kA.get();
 
-    PhoenixUtil.tryUntilOk(5, () -> shooter.getConfigurator().apply(config, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> shooterLeader.getConfigurator().apply(config, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> shooterFollower.getConfigurator().apply(config, 0.25));
 
-    temp = shooter.getDeviceTemp();
-    velocity = shooter.getVelocity();
-    velocitySetpoint = shooter.getClosedLoopReference();
-    appliedVolts = shooter.getMotorVoltage();
-    statorCurrent = shooter.getStatorCurrent();
-    supplyCurrent = shooter.getSupplyCurrent();
+    leaderTemp = shooterLeader.getDeviceTemp();
+    leaderVelocity = shooterLeader.getVelocity();
+    leaderVelocitySetpoint = shooterLeader.getClosedLoopReference();
+    leaderAppliedVolts = shooterLeader.getMotorVoltage();
+    leaderStatorCurrent = shooterLeader.getStatorCurrent();
+    leaderSupplyCurrent = shooterLeader.getSupplyCurrent();
+
+    followerTemp = shooterFollower.getDeviceTemp();
+    followerVelocity = shooterFollower.getVelocity();
+    followerAppliedVolts = shooterFollower.getMotorVoltage();
+    followerStatorCurrent = shooterFollower.getStatorCurrent();
+    followerSupplyCurrent = shooterFollower.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime,
-        temp,
-        velocity,
-        velocitySetpoint,
-        appliedVolts,
-        statorCurrent,
-        supplyCurrent);
-    shooter.optimizeBusUtilization();
+        leaderTemp,
+        leaderVelocity,
+        leaderVelocitySetpoint,
+        leaderAppliedVolts,
+        leaderStatorCurrent,
+        leaderSupplyCurrent);
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        1 / Constants.loopTime,
+        followerTemp,
+        followerVelocity,
+        followerAppliedVolts,
+        followerStatorCurrent,
+        followerSupplyCurrent);
+
+    shooterLeader.optimizeBusUtilization();
+    shooterFollower.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(
-        false, temp, velocity, velocitySetpoint, appliedVolts, statorCurrent, supplyCurrent);
+        false,
+        leaderTemp,
+        leaderVelocity,
+        leaderVelocitySetpoint,
+        leaderAppliedVolts,
+        leaderStatorCurrent,
+        leaderSupplyCurrent);
+    PhoenixUtil.registerSignals(
+        false,
+        followerTemp,
+        followerVelocity,
+        followerAppliedVolts,
+        followerStatorCurrent,
+        followerSupplyCurrent);
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        temp, velocity, velocitySetpoint, appliedVolts, statorCurrent, supplyCurrent);
+        leaderTemp,
+        leaderVelocity,
+        leaderVelocitySetpoint,
+        leaderAppliedVolts,
+        leaderStatorCurrent,
+        leaderSupplyCurrent);
+    BaseStatusSignal.refreshAll(
+        followerTemp,
+        followerVelocity,
+        followerAppliedVolts,
+        followerStatorCurrent,
+        followerSupplyCurrent);
 
-    inputs.connected =
+    inputs.leaderConnected =
         BaseStatusSignal.isAllGood(
-            temp, velocity, velocitySetpoint, appliedVolts, statorCurrent, supplyCurrent);
-    inputs.tempCelsius = temp.getValueAsDouble();
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
-    inputs.velocitySetpointRadsPerSec =
-        Units.rotationsToRadians(velocitySetpoint.getValueAsDouble());
-    inputs.appliedVolts = appliedVolts.getValueAsDouble();
-    inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
-    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+            leaderTemp,
+            leaderVelocity,
+            leaderVelocitySetpoint,
+            leaderAppliedVolts,
+            leaderStatorCurrent,
+            leaderSupplyCurrent);
+    inputs.leaderTempCelsius = leaderTemp.getValueAsDouble();
+    inputs.leaderVelocityRadsPerSec = Units.rotationsToRadians(leaderVelocity.getValueAsDouble());
+    inputs.leaderVelocitySetpointRadsPerSec =
+        Units.rotationsToRadians(leaderVelocitySetpoint.getValueAsDouble());
+    inputs.leaderAppliedVolts = leaderAppliedVolts.getValueAsDouble();
+    inputs.leaderStatorCurrentAmps = leaderStatorCurrent.getValueAsDouble();
+    inputs.leaderSupplyCurrentAmps = leaderSupplyCurrent.getValueAsDouble();
+
+    inputs.followerConnected =
+        BaseStatusSignal.isAllGood(
+            followerTemp,
+            followerVelocity,
+            followerAppliedVolts,
+            followerStatorCurrent,
+            followerSupplyCurrent);
+    inputs.followerTempCelsius = followerTemp.getValueAsDouble();
+    inputs.followerVelocityRadsPerSec =
+        Units.rotationsToRadians(followerVelocity.getValueAsDouble());
+    inputs.followerAppliedVolts = followerAppliedVolts.getValueAsDouble();
+    inputs.followerStatorCurrentAmps = followerStatorCurrent.getValueAsDouble();
+    inputs.followerSupplyCurrentAmps = followerSupplyCurrent.getValueAsDouble();
   }
 
   @Override
   public void runDutyCycle(double percent) {
-    shooter.setControl(dutyCycle.withOutput(percent));
+    shooterLeader.setControl(dutyCycle.withOutput(percent));
   }
 
   @Override
   public void runVelocity(double velocityRadsPerSec) {
-    shooter.setControl(velocityVoltage.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+    shooterLeader.setControl(
+        velocityVoltage.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }
 
   @Override
   public void stop() {
-    shooter.setControl(new NeutralOut());
+    shooterLeader.setControl(new NeutralOut());
   }
 
   @Override
   public void setPID(double kP, double kD) {
     config.Slot0.kP = kP;
     config.Slot0.kD = kD;
-    shooter.getConfigurator().apply(config);
+    shooterLeader.getConfigurator().apply(config);
   }
 
   @Override
@@ -121,6 +201,6 @@ public class ShooterIOTalonFX implements ShooterIO {
     config.Slot0.kG = kG;
     config.Slot0.kV = kV;
     config.Slot0.kA = kA;
-    shooter.getConfigurator().apply(config);
+    shooterLeader.getConfigurator().apply(config);
   }
 }

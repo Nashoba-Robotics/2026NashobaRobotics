@@ -13,6 +13,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.util.LoggedTunableNumber;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -65,14 +66,15 @@ public final class Constants {
     public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
     public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
 
-    public static final double kP = 0.0;
-    public static final double kD = 0.0;
-    public static final double kS = 0.0;
-    public static final double kG = 0.0;
-    public static final double kV = 0.0;
-    public static final double kA = 0.0;
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("PID/Climber/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("PID/Climber/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("PID/Climber/kS", 0.0);
+    public static final LoggedTunableNumber kG = new LoggedTunableNumber("PID/Climber/kG", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("PID/Climber/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("PID/Climber/kA", 0.0);
 
-    public static final double TOLERANCE = 0.0; // degrees
+    public static final LoggedTunableNumber POSITION_TOLERANCE =
+        new LoggedTunableNumber("PID/Climber/ToleranceDeg", 0.0);
   }
 
   public static class Hood {
@@ -93,15 +95,16 @@ public final class Constants {
     public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
     public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
 
-    public static final double kP = 0.0;
-    public static final double kD = 0.0;
-    public static final double kS = 0.0;
-    public static final double kV = 0.0;
-    public static final double kA = 0.0;
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("PID/Hood/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("PID/Hood/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("PID/Hood/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("PID/Hood/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("PID/Hood/kA", 0.0);
+
+    public static final LoggedTunableNumber POSITION_TOLERANCE =
+        new LoggedTunableNumber("PID/Hood/ToleranceDeg", 0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
-    public static final double TOLERANCE = 0.0; // degrees
   }
 
   public static class Hopper {
@@ -140,15 +143,16 @@ public final class Constants {
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
     public static final double DEPLOY_ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
 
-    public static final double kP = 0.0;
-    public static final double kD = 0.0;
-    public static final double kS = 0.0;
-    public static final double kV = 0.0;
-    public static final double kA = 0.0;
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("PID/Intake/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("PID/Intake/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("PID/Intake/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("PID/Intake/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("PID/Intake/kA", 0.0);
+
+    public static final LoggedTunableNumber POSITION_TOLERANCE =
+        new LoggedTunableNumber("PID/Intake/DeployToleranceDeg", 0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
-    public static final double DEPLOY_TOLERANCE = 0.0; // degrees
   }
 
   public static class Loader {
@@ -165,21 +169,42 @@ public final class Constants {
 
   public static class Shooter {
     public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 0;
+    public static final int LEFT_SHOOTER_LEADER_ID = 0;
+    public static final int LEFT_SHOOTER_FOLLOWER_ID = 0;
+    public static final int RIGHT_SHOOTER_LEADER_ID = 0;
+    public static final int RIGHT_SHOOTER_FOLLOWER_ID = 0;
 
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue RIGHT_INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final double STATOR_LIMIT = 0.0;
     public static final double SUPPLY_LIMIT = 0.0;
 
-    public static final double kP = 0.0;
-    public static final double kD = 0.0;
-    public static final double kS = 0.0;
-    public static final double kV = 0.0;
-    public static final double kA = 0.0;
+    public static final LoggedTunableNumber LEFT_kP =
+        new LoggedTunableNumber("PID/Shooter/Left/kP", 0.0);
+    public static final LoggedTunableNumber LEFT_kD =
+        new LoggedTunableNumber("PID/Shooter/Left/kD", 0.0);
+    public static final LoggedTunableNumber LEFT_kS =
+        new LoggedTunableNumber("PID/Shooter/Left/kS", 0.0);
+    public static final LoggedTunableNumber LEFT_kV =
+        new LoggedTunableNumber("PID/Shooter/Left/kV", 0.0);
+    public static final LoggedTunableNumber LEFT_kA =
+        new LoggedTunableNumber("PID/Shooter/Left/kA", 0.0);
+
+    public static final LoggedTunableNumber RIGHT_kP =
+        new LoggedTunableNumber("PID/Shooter/Right/kP", 0.0);
+    public static final LoggedTunableNumber RIGHT_kD =
+        new LoggedTunableNumber("PID/Shooter/Right/kD", 0.0);
+    public static final LoggedTunableNumber RIGHT_kS =
+        new LoggedTunableNumber("PID/Shooter/Right/kS", 0.0);
+    public static final LoggedTunableNumber RIGHT_kV =
+        new LoggedTunableNumber("PID/Shooter/Right/kV", 0.0);
+    public static final LoggedTunableNumber RIGHT_kA =
+        new LoggedTunableNumber("PID/Shooter/Right/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("PID/Shooter/ToleranceRadsPerSec", 0.0);
 
     public static final double GEAR_RATIO = 0.0;
-
-    public static final double TOLERANCE = 0.0; // Radians/Second
   }
 }

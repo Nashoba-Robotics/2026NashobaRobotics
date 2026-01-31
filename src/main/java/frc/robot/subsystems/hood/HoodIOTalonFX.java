@@ -60,11 +60,11 @@ public class HoodIOTalonFX implements HoodIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = Constants.Hood.INVERTED;
 
-    config.Slot0.kP = Constants.Hood.kP;
-    config.Slot0.kD = Constants.Hood.kD;
-    config.Slot0.kS = Constants.Hood.kS;
-    config.Slot0.kV = Constants.Hood.kV;
-    config.Slot0.kA = Constants.Hood.kA;
+    config.Slot0.kP = Constants.Hood.kP.get();
+    config.Slot0.kD = Constants.Hood.kD.get();
+    config.Slot0.kS = Constants.Hood.kS.get();
+    config.Slot0.kV = Constants.Hood.kV.get();
+    config.Slot0.kA = Constants.Hood.kA.get();
 
     encoderConfig.MagnetSensor.SensorDirection = Constants.Hood.ENCODER_DIRECTION;
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =

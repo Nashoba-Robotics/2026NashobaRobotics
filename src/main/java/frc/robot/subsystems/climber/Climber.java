@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.Util;
 import org.littletonrobotics.junction.Logger;
 
@@ -15,22 +14,6 @@ public class Climber extends SubsystemBase {
 
   private final ClimberIO io;
   private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
-
-  private static final LoggedTunableNumber kP =
-      new LoggedTunableNumber("Tuning/Climber/kP", Constants.Climber.kP);
-  private static final LoggedTunableNumber kD =
-      new LoggedTunableNumber("Tuning/Climber/kD", Constants.Climber.kD);
-  private static final LoggedTunableNumber kS =
-      new LoggedTunableNumber("Tuning/Climber/kS", Constants.Climber.kS);
-  private static final LoggedTunableNumber kG =
-      new LoggedTunableNumber("Tuning/Climber/kG", Constants.Climber.kG);
-  private static final LoggedTunableNumber kV =
-      new LoggedTunableNumber("Tuning/Climber/kV", Constants.Climber.kV);
-  private static final LoggedTunableNumber kA =
-      new LoggedTunableNumber("Tuning/Climber/kA", Constants.Climber.kA);
-
-  private static final LoggedTunableNumber positionTolerance =
-      new LoggedTunableNumber("Tuning/Climber/ToleranceDeg", Constants.Climber.TOLERANCE);
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
@@ -53,14 +36,19 @@ public class Climber extends SubsystemBase {
     climberEncoderDisconnectedAlert.set(
         !encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
-    if (kP.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
-      io.setPID(kP.get(), kD.get());
+    if (Constants.Climber.kP.hasChanged(hashCode())
+        || Constants.Climber.kD.hasChanged(hashCode())) {
+      io.setPID(Constants.Climber.kP.get(), Constants.Climber.kD.get());
     }
-    if (kS.hasChanged(hashCode())
-        || kG.hasChanged(hashCode())
-        || kV.hasChanged(hashCode())
-        || kA.hasChanged(hashCode())) {
-      io.setFeedForward(kS.get(), kG.get(), kV.get(), kA.get());
+    if (Constants.Climber.kS.hasChanged(hashCode())
+        || Constants.Climber.kG.hasChanged(hashCode())
+        || Constants.Climber.kV.hasChanged(hashCode())
+        || Constants.Climber.kA.hasChanged(hashCode())) {
+      io.setFeedForward(
+          Constants.Climber.kS.get(),
+          Constants.Climber.kG.get(),
+          Constants.Climber.kV.get(),
+          Constants.Climber.kA.get());
     }
   }
 
@@ -68,7 +56,7 @@ public class Climber extends SubsystemBase {
     return Util.epsilonEquals(
         inputs.positionSetpointRads,
         inputs.rotorPositionRads,
-        Units.degreesToRadians(positionTolerance.get()));
+        Units.degreesToRadians(Constants.Climber.POSITION_TOLERANCE.get()));
   }
 
   public Command runPositionCommand(double positionRads) {
@@ -78,7 +66,7 @@ public class Climber extends SubsystemBase {
                 Util.epsilonEquals(
                     positionRads,
                     inputs.rotorPositionRads,
-                    Units.degreesToRadians(positionTolerance.get())));
+                    Units.degreesToRadians(Constants.Climber.POSITION_TOLERANCE.get())));
   }
 
   public Command stopCommand() {

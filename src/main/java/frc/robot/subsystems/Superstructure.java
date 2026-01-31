@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -16,6 +17,7 @@ import frc.robot.subsystems.intakeDeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeRoller.IntakeRoller;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ShootingUtil;
 import frc.robot.util.ShootingUtil.ShooterSetpoint;
 import java.util.function.DoubleSupplier;
@@ -29,7 +31,8 @@ public class Superstructure extends SubsystemBase {
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
-  private final Shooter shooter;
+  private final Shooter leftShooter;
+  private final Shooter rightShooter;
 
   private ShooterSetpoint hubShootingSetpoint;
 
@@ -41,7 +44,8 @@ public class Superstructure extends SubsystemBase {
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
       Loader loader,
-      Shooter shooter) {
+      Shooter leftShooter,
+      Shooter rightShooter) {
     this.drive = drive;
     this.climber = climber;
     this.hood = hood;
@@ -49,14 +53,20 @@ public class Superstructure extends SubsystemBase {
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
     this.loader = loader;
-    this.shooter = shooter;
+    this.leftShooter = leftShooter;
+    this.rightShooter = rightShooter;
 
     hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
   }
 
   @Override
   public void periodic() {
-    hubShootingSetpoint = ShootingUtil.makeSetpoint(drive, FieldConstants.getAllianceHubPose2d());
+    hubShootingSetpoint =
+        ShootingUtil.makeSetpoint(
+            drive,
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
 
     Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
     Logger.recordOutput(
@@ -73,7 +83,8 @@ public class Superstructure extends SubsystemBase {
             this::getHubShootingSetpointDriveVelocity),
         hood.runTrackedPositionCommand(
             this::getHubShootingSetpointHoodAngle, this::getHubShootingSetpointHoodVelocity),
-        shooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
 
   public Command shootCommand() {
@@ -93,7 +104,8 @@ public class Superstructure extends SubsystemBase {
         intakeRoller.stopCommand(),
         hopper.stopCommand(),
         loader.stopCommand(),
-        shooter.stopCommand());
+        leftShooter.stopCommand(),
+        rightShooter.stopCommand());
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {

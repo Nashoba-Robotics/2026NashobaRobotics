@@ -23,6 +23,7 @@ import frc.robot.util.PhoenixUtil;
 public class ClimberIOTalonFX implements ClimberIO {
 
   private final TalonFX climber;
+
   private final TalonFXConfiguration config;
 
   private final CANcoder encoder;
@@ -70,12 +71,12 @@ public class ClimberIOTalonFX implements ClimberIO {
     config.Feedback.RotorToSensorRatio = Constants.Climber.ROTOR_TO_MECHANISM_GEAR_RATIO;
     config.Feedback.SensorToMechanismRatio = Constants.Climber.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
-    config.Slot0.kP = Constants.Climber.kP;
-    config.Slot0.kD = Constants.Climber.kD;
-    config.Slot0.kS = Constants.Climber.kS;
-    config.Slot0.kG = Constants.Climber.kG;
-    config.Slot0.kV = Constants.Climber.kV;
-    config.Slot0.kA = Constants.Climber.kA;
+    config.Slot0.kP = Constants.Climber.kP.get();
+    config.Slot0.kD = Constants.Climber.kD.get();
+    config.Slot0.kS = Constants.Climber.kS.get();
+    config.Slot0.kG = Constants.Climber.kG.get();
+    config.Slot0.kV = Constants.Climber.kV.get();
+    config.Slot0.kA = Constants.Climber.kA.get();
 
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
         Constants.Climber.ENCODER_DISCONTINUITY_POINT;

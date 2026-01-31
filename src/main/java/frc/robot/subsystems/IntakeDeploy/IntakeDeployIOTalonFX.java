@@ -62,11 +62,11 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
     deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    deployConfig.Slot0.kP = Constants.Intake.kP;
-    deployConfig.Slot0.kD = Constants.Intake.kD;
-    deployConfig.Slot0.kS = Constants.Intake.kS;
-    deployConfig.Slot0.kV = Constants.Intake.kV;
-    deployConfig.Slot0.kA = Constants.Intake.kA;
+    deployConfig.Slot0.kP = Constants.Intake.kP.get();
+    deployConfig.Slot0.kD = Constants.Intake.kD.get();
+    deployConfig.Slot0.kS = Constants.Intake.kS.get();
+    deployConfig.Slot0.kV = Constants.Intake.kV.get();
+    deployConfig.Slot0.kA = Constants.Intake.kA.get();
 
     encoderConfig.MagnetSensor.SensorDirection = Constants.Intake.ENCODER_DIRECTION;
     encoderConfig.MagnetSensor.MagnetOffset = Constants.Intake.ENCODER_OFFSET;
