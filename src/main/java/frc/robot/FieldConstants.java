@@ -9,12 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Contains information for location of field element and other useful reference points.
@@ -31,12 +28,6 @@ public class FieldConstants {
   // Field dimensions
   public static final double fieldLength = defaultAprilTagType.getFieldLength();
   public static final double fieldWidth = defaultAprilTagType.getFieldWidth();
-
-  public static Pose2d getAllianceHubPose2d() {
-    return (DriverStation.getAlliance().get() == Alliance.Blue)
-        ? new Pose2d(Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)
-        : new Pose2d(Hub.oppInnerCenterPoint.toTranslation2d(), Rotation2d.kZero);
-  }
 
   /**
    * Officially defined and relevant vertical lines found on the field (defined by X-axis offset)

@@ -205,10 +205,6 @@ public class RobotContainer {
         .and(DriveCommands::atAngleSetpoint)
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
-
-    driver
-        .leftTrigger()
-        .whileTrue(DriveCommands.driveToPose(drive, () -> FieldConstants.getAllianceHubPose2d()));
   }
 
   public Command getAutonomousCommand() {

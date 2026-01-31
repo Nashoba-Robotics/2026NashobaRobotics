@@ -147,10 +147,12 @@ public class DriveCommands {
 
               // Calculate angular speed
               double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(),
-                      rotationSupplier.get().getRadians()
-                          + rotationalVelocitySupplier.get().getRadians());
+                  MathUtil.clamp(
+                      angleController.calculate(
+                              drive.getRotation().getRadians(), rotationSupplier.get().getRadians())
+                          + rotationalVelocitySupplier.get().getRadians(),
+                      -drive.getMaxAngularSpeedRadPerSec(),
+                      drive.getMaxAngularSpeedRadPerSec());
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =

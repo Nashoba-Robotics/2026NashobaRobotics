@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -47,6 +48,7 @@ public class ShootingUtil {
     distanceShooterVelocityMap.put(0.0, 0.0);
 
     distanceTimeOfFlightMap.put(0.0, 1.0);
+    distanceTimeOfFlightMap.put(0.95, 1.0);
     distanceTimeOfFlightMap.put(2.5, 1.075);
     distanceTimeOfFlightMap.put(5.0, 1.15);
   }
@@ -80,8 +82,20 @@ public class ShootingUtil {
     if (Double.isNaN(lastDriveAngleRads)) lastDriveAngleRads = driveAngleRads;
     if (Double.isNaN(lastHoodAngleRads)) lastHoodAngleRads = hoodAngleRads;
 
+    // drive angular speed wraparound
+    double deltaAngleRads = driveAngleRads - lastDriveAngleRads;
+    if (deltaAngleRads > Math.PI) deltaAngleRads -= (2 * Math.PI);
+    else if (deltaAngleRads < -Math.PI) deltaAngleRads += (2 * Math.PI);
+
+    // stops rapid switches in futurePose target velocity when near the goal
     driveVelocityRadsPerSec =
-        driveAngleFilter.calculate((driveAngleRads - lastDriveAngleRads) / Constants.loopTime);
+        (futurePosetoTargetDistance >= 1.0)
+            ? driveAngleFilter.calculate(
+                MathUtil.clamp(
+                    (deltaAngleRads) / Constants.loopTime,
+                    -drive.getMaxAngularSpeedRadPerSec(),
+                    drive.getMaxAngularSpeedRadPerSec()))
+            : 0;
     hoodVelocityRadsPerSec =
         hoodAngleFilter.calculate((hoodAngleRads - lastHoodAngleRads) / Constants.loopTime);
 
@@ -90,6 +104,7 @@ public class ShootingUtil {
 
     Logger.recordOutput("targetPose", target);
     Logger.recordOutput("futureRobotPose", futurePose);
+    Logger.recordOutput("FUTUREPOSETOTARGETDISTANCE", futurePosetoTargetDistance);
 
     return new ShooterSetpoint(
         driveAngleRads,
