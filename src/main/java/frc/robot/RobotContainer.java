@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -180,6 +182,13 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    Trigger inAllianceZone =
+        new Trigger(
+            () -> {
+              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
+            });
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
@@ -197,8 +206,19 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
+        .and(inAllianceZone)
+        .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .and(hood::atSetpoint)
+        .and(leftShooter::atSetpoint)
+        .and(rightShooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
+    driver
+        .rightTrigger()
+        .and(inAllianceZone.negate())
         .whileTrue(
-            superstructure.aimAtHubCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+            superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
         .and(hood::atSetpoint)
         .and(leftShooter::atSetpoint)
         .and(rightShooter::atSetpoint)

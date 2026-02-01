@@ -35,6 +35,7 @@ public class Superstructure extends SubsystemBase {
   private final Shooter rightShooter;
 
   private ShooterSetpoint hubShootingSetpoint;
+  private ShooterSetpoint shuttleShootingSetpoint;
 
   public Superstructure(
       Drive drive,
@@ -56,24 +57,37 @@ public class Superstructure extends SubsystemBase {
     this.leftShooter = leftShooter;
     this.rightShooter = rightShooter;
 
+    hubShootingSetpoint =
+        ShootingUtil.makeHubSetpoint(
+            drive,
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
+    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
+
     hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
   }
 
   @Override
   public void periodic() {
     hubShootingSetpoint =
-        ShootingUtil.makeSetpoint(
+        ShootingUtil.makeHubSetpoint(
             drive,
             AllianceFlipUtil.apply(
                 new Pose2d(
                     FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
+    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
     Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
     Logger.recordOutput(
         "DriveCommands/atDriveToPoseSetpoint", DriveCommands.atDriveToPoseSetpoint());
+
+    Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+    Logger.recordOutput(
+        "INALLIANNCEZONE", robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
   }
 
-  public Command aimAtHubCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+  public Command hubAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
     return new ParallelCommandGroup(
         DriveCommands.joystickDriveAtAngle(
             drive,
@@ -83,6 +97,21 @@ public class Superstructure extends SubsystemBase {
             this::getHubShootingSetpointDriveVelocity),
         hood.runTrackedPositionCommand(
             this::getHubShootingSetpointHoodAngle, this::getHubShootingSetpointHoodVelocity),
+        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+  }
+
+  public Command shuttleAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+    return new ParallelCommandGroup(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            driveXSupplier,
+            driveYSupplier,
+            this::getShuttleShootingSetpointDriveAngle,
+            this::getShuttleShootingSetpointDriveVelocity),
+        hood.runTrackedPositionCommand(
+            this::getShuttleShootingSetpointHoodAngle,
+            this::getShuttleShootingSetpointHoodVelocity),
         leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
         rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
@@ -108,12 +137,21 @@ public class Superstructure extends SubsystemBase {
         rightShooter.stopCommand());
   }
 
+  public Pose2d getShuttleTargetPose() {
+    return AllianceFlipUtil.apply(
+        new Pose2d(
+            (drive.getPose().getY() <= FieldConstants.fieldWidth / 2)
+                ? FieldConstants.RightBump.centerPoint
+                : FieldConstants.LeftBump.centerPoint,
+            Rotation2d.kZero));
+  }
+
   public Rotation2d getHubShootingSetpointDriveAngle() {
-    return Rotation2d.fromRadians(hubShootingSetpoint.driveAngleRads());
+    return hubShootingSetpoint.driveAngleRads();
   }
 
   public Rotation2d getHubShootingSetpointDriveVelocity() {
-    return Rotation2d.fromRadians(hubShootingSetpoint.driveVelocityRadsPerSec());
+    return hubShootingSetpoint.driveVelocityRadsPerSec();
   }
 
   public double getHubShootingSetpointHoodAngle() {
@@ -126,5 +164,25 @@ public class Superstructure extends SubsystemBase {
 
   public double getHubShootingSetpointShooterSpeed() {
     return hubShootingSetpoint.shooterSpeedRadsPerSec();
+  }
+
+  public Rotation2d getShuttleShootingSetpointDriveAngle() {
+    return shuttleShootingSetpoint.driveAngleRads();
+  }
+
+  public Rotation2d getShuttleShootingSetpointDriveVelocity() {
+    return shuttleShootingSetpoint.driveVelocityRadsPerSec();
+  }
+
+  public double getShuttleShootingSetpointHoodAngle() {
+    return shuttleShootingSetpoint.hoodAngleRads();
+  }
+
+  public double getShuttleShootingSetpointHoodVelocity() {
+    return shuttleShootingSetpoint.hoodVelocityRadsPerSec();
+  }
+
+  public double getShuttleShootingSetpointShooterSpeed() {
+    return shuttleShootingSetpoint.shooterSpeedRadsPerSec();
   }
 }
