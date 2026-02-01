@@ -40,8 +40,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     rollerConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
 
     rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    rollerConfig.Feedback.SensorToMechanismRatio =
-        Constants.Intake.ROLLER_GEAR_RATIO;
+    rollerConfig.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_GEAR_RATIO;
 
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

@@ -134,9 +134,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Pose2d getShuttleTargetPose() {
+    Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
     return AllianceFlipUtil.apply(
         new Pose2d(
-            (drive.getPose().getY() <= FieldConstants.fieldWidth / 2)
+            (robotPose.getY() <= FieldConstants.fieldWidth / 2)
                 ? FieldConstants.RightBump.centerPoint
                 : FieldConstants.LeftBump.centerPoint,
             Rotation2d.kZero));
