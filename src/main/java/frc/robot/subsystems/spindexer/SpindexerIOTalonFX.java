@@ -1,4 +1,4 @@
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.spindexer;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -16,9 +16,9 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
 
-public class HopperIOTalonFX implements HopperIO {
+public class SpindexerIOTalonFX implements SpindexerIO {
 
-  private final TalonFX hopper;
+  private final TalonFX spindexer;
   private final TalonFXConfiguration config;
 
   private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
@@ -29,39 +29,39 @@ public class HopperIOTalonFX implements HopperIO {
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
 
-  public HopperIOTalonFX() {
-    hopper = new TalonFX(Constants.Hopper.MOTOR_ID);
+  public SpindexerIOTalonFX() {
+    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = Constants.Hopper.STATOR_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.Spindexer.STATOR_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.Hopper.SUPPLY_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.Spindexer.SUPPLY_LIMIT;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    config.Feedback.SensorToMechanismRatio = Constants.Hopper.GEAR_RATIO;
+    config.Feedback.SensorToMechanismRatio = Constants.Spindexer.GEAR_RATIO;
 
-    config.MotorOutput.Inverted = Constants.Hopper.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted = Constants.Spindexer.INVERTED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    PhoenixUtil.tryUntilOk(5, () -> hopper.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> spindexer.getConfigurator().apply(config));
 
-    temp = hopper.getDeviceTemp();
-    velocity = hopper.getVelocity();
-    appliedVolts = hopper.getMotorVoltage();
-    statorCurrent = hopper.getStatorCurrent();
-    supplyCurrent = hopper.getSupplyCurrent();
+    temp = spindexer.getDeviceTemp();
+    velocity = spindexer.getVelocity();
+    appliedVolts = spindexer.getMotorVoltage();
+    statorCurrent = spindexer.getStatorCurrent();
+    supplyCurrent = spindexer.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
-    hopper.optimizeBusUtilization();
+    spindexer.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
   }
 
   @Override
-  public void updateInputs(HopperIOInputs inputs) {
+  public void updateInputs(SpindexerIOInputs inputs) {
     BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
     inputs.connected =
@@ -75,11 +75,11 @@ public class HopperIOTalonFX implements HopperIO {
 
   @Override
   public void runDutyCycle(double percent) {
-    hopper.setControl(dutyCycle.withOutput(percent));
+    spindexer.setControl(dutyCycle.withOutput(percent));
   }
 
   @Override
   public void stop() {
-    hopper.setControl(new NeutralOut());
+    spindexer.setControl(new NeutralOut());
   }
 }

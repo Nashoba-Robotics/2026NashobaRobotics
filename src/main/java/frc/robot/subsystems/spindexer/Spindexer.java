@@ -1,4 +1,4 @@
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.spindexer;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -8,25 +8,25 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Hopper extends SubsystemBase {
+public class Spindexer extends SubsystemBase {
 
-  private final HopperIO io;
-  private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
+  private final SpindexerIO io;
+  private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert hopperMotorDisconnectedAlert =
-      new Alert("Hopper motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert spindexerMotorDisconnectedAlert =
+      new Alert("Spindexer motor disconnected!", Alert.AlertType.kWarning);
 
-  public Hopper(HopperIO io) {
+  public Spindexer(SpindexerIO io) {
     this.io = io;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Hopper", inputs);
+    Logger.processInputs("Spindexer", inputs);
 
-    hopperMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    spindexerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
   public Command runDutyCycleCommand(DoubleSupplier percent) {

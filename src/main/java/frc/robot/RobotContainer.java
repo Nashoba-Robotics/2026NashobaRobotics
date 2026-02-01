@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
@@ -23,9 +24,6 @@ import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.HopperIO;
-import frc.robot.subsystems.hopper.HopperIOTalonFX;
 import frc.robot.subsystems.intakeDeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeDeploy.IntakeDeployIO;
 import frc.robot.subsystems.intakeDeploy.IntakeDeployIOTalonFX;
@@ -38,10 +36,14 @@ import frc.robot.subsystems.loader.LoaderIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -50,7 +52,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Climber climber;
   private final Hood hood;
-  private final Hopper hopper;
+  private final Spindexer spindexer;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
@@ -84,7 +86,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        hopper = new Hopper(new HopperIOTalonFX());
+        spindexer = new Spindexer(new SpindexerIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
         intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
         loader = new Loader(new LoaderIOTalonFX());
@@ -122,7 +124,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
-        hopper = new Hopper(new HopperIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
@@ -144,7 +146,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
-        hopper = new Hopper(new HopperIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
@@ -159,7 +161,7 @@ public class RobotContainer {
             drive,
             climber,
             hood,
-            hopper,
+            spindexer,
             intakeDeploy,
             intakeRoller,
             loader,
@@ -180,6 +182,13 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    Trigger inAllianceZone =
+        new Trigger(
+            () -> {
+              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
+            });
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
@@ -197,8 +206,19 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
+        .and(inAllianceZone)
+        .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .and(hood::atSetpoint)
+        .and(leftShooter::atSetpoint)
+        .and(rightShooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
+    driver
+        .rightTrigger()
+        .and(inAllianceZone.negate())
         .whileTrue(
-            superstructure.aimAtHubCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+            superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
         .and(hood::atSetpoint)
         .and(leftShooter::atSetpoint)
         .and(rightShooter::atSetpoint)

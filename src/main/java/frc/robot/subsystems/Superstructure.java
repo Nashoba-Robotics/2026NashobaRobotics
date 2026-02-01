@@ -12,11 +12,11 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intakeDeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeRoller.IntakeRoller;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ShootingUtil;
 import frc.robot.util.ShootingUtil.ShooterSetpoint;
@@ -27,7 +27,7 @@ public class Superstructure extends SubsystemBase {
   private final Drive drive;
   private final Climber climber;
   private final Hood hood;
-  private final Hopper hopper;
+  private final Spindexer spindexer;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
@@ -35,12 +35,13 @@ public class Superstructure extends SubsystemBase {
   private final Shooter rightShooter;
 
   private ShooterSetpoint hubShootingSetpoint;
+  private ShooterSetpoint shuttleShootingSetpoint;
 
   public Superstructure(
       Drive drive,
       Climber climber,
       Hood hood,
-      Hopper hopper,
+      Spindexer spindexer,
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
       Loader loader,
@@ -49,12 +50,20 @@ public class Superstructure extends SubsystemBase {
     this.drive = drive;
     this.climber = climber;
     this.hood = hood;
-    this.hopper = hopper;
+    this.spindexer = spindexer;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
     this.loader = loader;
     this.leftShooter = leftShooter;
     this.rightShooter = rightShooter;
+
+    hubShootingSetpoint =
+        ShootingUtil.makeHubSetpoint(
+            drive,
+            AllianceFlipUtil.apply(
+                new Pose2d(
+                    FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
+    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
     hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
   }
@@ -62,18 +71,19 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     hubShootingSetpoint =
-        ShootingUtil.makeSetpoint(
+        ShootingUtil.makeHubSetpoint(
             drive,
             AllianceFlipUtil.apply(
                 new Pose2d(
                     FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
+    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
     Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
     Logger.recordOutput(
         "DriveCommands/atDriveToPoseSetpoint", DriveCommands.atDriveToPoseSetpoint());
   }
 
-  public Command aimAtHubCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+  public Command hubAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
     return new ParallelCommandGroup(
         DriveCommands.joystickDriveAtAngle(
             drive,
@@ -87,33 +97,58 @@ public class Superstructure extends SubsystemBase {
         rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
   }
 
+  public Command shuttleAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+    return new ParallelCommandGroup(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            driveXSupplier,
+            driveYSupplier,
+            this::getShuttleShootingSetpointDriveAngle,
+            this::getShuttleShootingSetpointDriveVelocity),
+        hood.runTrackedPositionCommand(
+            this::getShuttleShootingSetpointHoodAngle,
+            this::getShuttleShootingSetpointHoodVelocity),
+        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+  }
+
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        hopper.runDutyCycleCommand(Presets.Hopper.FEED_DUTYCYCLE),
+        spindexer.runDutyCycleCommand(Presets.Spindexer.FEED_DUTYCYCLE),
         loader.runDutyCycleCommand(Presets.Loader.FEED_DUTYCYCLE));
   }
 
   public Command endShootCommand() {
     return new SequentialCommandGroup(
         loader.runDutyCycleCommand(Presets.Loader.SLOW_EXHAUST_DUTYCYCLE).withTimeout(0.1),
-        new ParallelCommandGroup(hopper.stopCommand(), loader.stopCommand()));
+        new ParallelCommandGroup(spindexer.stopCommand(), loader.stopCommand()));
   }
 
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
-        hopper.stopCommand(),
+        spindexer.stopCommand(),
         loader.stopCommand(),
         leftShooter.stopCommand(),
         rightShooter.stopCommand());
   }
 
+  public Pose2d getShuttleTargetPose() {
+    Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+    return AllianceFlipUtil.apply(
+        new Pose2d(
+            (robotPose.getY() <= FieldConstants.fieldWidth / 2)
+                ? FieldConstants.RightBump.centerPoint
+                : FieldConstants.LeftBump.centerPoint,
+            Rotation2d.kZero));
+  }
+
   public Rotation2d getHubShootingSetpointDriveAngle() {
-    return Rotation2d.fromRadians(hubShootingSetpoint.driveAngleRads());
+    return hubShootingSetpoint.driveAngleRads();
   }
 
   public Rotation2d getHubShootingSetpointDriveVelocity() {
-    return Rotation2d.fromRadians(hubShootingSetpoint.driveVelocityRadsPerSec());
+    return hubShootingSetpoint.driveVelocityRadsPerSec();
   }
 
   public double getHubShootingSetpointHoodAngle() {
@@ -126,5 +161,25 @@ public class Superstructure extends SubsystemBase {
 
   public double getHubShootingSetpointShooterSpeed() {
     return hubShootingSetpoint.shooterSpeedRadsPerSec();
+  }
+
+  public Rotation2d getShuttleShootingSetpointDriveAngle() {
+    return shuttleShootingSetpoint.driveAngleRads();
+  }
+
+  public Rotation2d getShuttleShootingSetpointDriveVelocity() {
+    return shuttleShootingSetpoint.driveVelocityRadsPerSec();
+  }
+
+  public double getShuttleShootingSetpointHoodAngle() {
+    return shuttleShootingSetpoint.hoodAngleRads();
+  }
+
+  public double getShuttleShootingSetpointHoodVelocity() {
+    return shuttleShootingSetpoint.hoodVelocityRadsPerSec();
+  }
+
+  public double getShuttleShootingSetpointShooterSpeed() {
+    return shuttleShootingSetpoint.shooterSpeedRadsPerSec();
   }
 }
