@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "T-NZ-Steal-TShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TShoot-T-NZ"
           }
         }
       ]
