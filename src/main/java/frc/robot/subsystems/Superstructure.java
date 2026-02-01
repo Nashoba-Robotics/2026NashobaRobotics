@@ -81,10 +81,6 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
     Logger.recordOutput(
         "DriveCommands/atDriveToPoseSetpoint", DriveCommands.atDriveToPoseSetpoint());
-
-    Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
-    Logger.recordOutput(
-        "INALLIANNCEZONE", robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
   }
 
   public Command hubAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
