@@ -16,11 +16,11 @@ public final class Presets {
         new LoggedTunableNumber("Setpoints/Hood/CloseHubAngle");
   }
 
-  public static class Hopper {
+  public static class Spindexer {
     public static final LoggedTunableNumber FEED_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Hopper/FeedDutyCycle", 0.0);
+        new LoggedTunableNumber("Setpoints/Spindexer/FeedDutyCycle", 0.0);
     public static final LoggedTunableNumber EXHAUST_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Hopper/ExhaustDutyCycle", 0.0);
+        new LoggedTunableNumber("Setpoints/Spindexer/ExhaustDutyCycle", 0.0);
   }
 
   public static class Intake {

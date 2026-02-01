@@ -12,11 +12,11 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intakeDeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeRoller.IntakeRoller;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ShootingUtil;
 import frc.robot.util.ShootingUtil.ShooterSetpoint;
@@ -27,7 +27,7 @@ public class Superstructure extends SubsystemBase {
   private final Drive drive;
   private final Climber climber;
   private final Hood hood;
-  private final Hopper hopper;
+  private final Spindexer spindexer;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
@@ -41,7 +41,7 @@ public class Superstructure extends SubsystemBase {
       Drive drive,
       Climber climber,
       Hood hood,
-      Hopper hopper,
+      Spindexer spindexer,
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
       Loader loader,
@@ -50,7 +50,7 @@ public class Superstructure extends SubsystemBase {
     this.drive = drive;
     this.climber = climber;
     this.hood = hood;
-    this.hopper = hopper;
+    this.spindexer = spindexer;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
     this.loader = loader;
@@ -114,20 +114,20 @@ public class Superstructure extends SubsystemBase {
 
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        hopper.runDutyCycleCommand(Presets.Hopper.FEED_DUTYCYCLE),
+        spindexer.runDutyCycleCommand(Presets.Spindexer.FEED_DUTYCYCLE),
         loader.runDutyCycleCommand(Presets.Loader.FEED_DUTYCYCLE));
   }
 
   public Command endShootCommand() {
     return new SequentialCommandGroup(
         loader.runDutyCycleCommand(Presets.Loader.SLOW_EXHAUST_DUTYCYCLE).withTimeout(0.1),
-        new ParallelCommandGroup(hopper.stopCommand(), loader.stopCommand()));
+        new ParallelCommandGroup(spindexer.stopCommand(), loader.stopCommand()));
   }
 
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
-        hopper.stopCommand(),
+        spindexer.stopCommand(),
         loader.stopCommand(),
         leftShooter.stopCommand(),
         rightShooter.stopCommand());

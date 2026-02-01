@@ -24,9 +24,6 @@ import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.HopperIO;
-import frc.robot.subsystems.hopper.HopperIOTalonFX;
 import frc.robot.subsystems.intakeDeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeDeploy.IntakeDeployIO;
 import frc.robot.subsystems.intakeDeploy.IntakeDeployIOTalonFX;
@@ -39,6 +36,9 @@ import frc.robot.subsystems.loader.LoaderIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -52,7 +52,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Climber climber;
   private final Hood hood;
-  private final Hopper hopper;
+  private final Spindexer spindexer;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
@@ -86,7 +86,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        hopper = new Hopper(new HopperIOTalonFX());
+        spindexer = new Spindexer(new SpindexerIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
         intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
         loader = new Loader(new LoaderIOTalonFX());
@@ -124,7 +124,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
-        hopper = new Hopper(new HopperIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
@@ -146,7 +146,7 @@ public class RobotContainer {
 
         climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
-        hopper = new Hopper(new HopperIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
@@ -161,7 +161,7 @@ public class RobotContainer {
             drive,
             climber,
             hood,
-            hopper,
+            spindexer,
             intakeDeploy,
             intakeRoller,
             loader,

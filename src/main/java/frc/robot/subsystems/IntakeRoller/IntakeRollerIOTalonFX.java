@@ -41,7 +41,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
     rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     rollerConfig.Feedback.SensorToMechanismRatio =
-        Constants.Intake.ROLLER_SENSOR_TO_MECHANISM_GEAR_RATIO;
+        Constants.Intake.ROLLER_GEAR_RATIO;
 
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

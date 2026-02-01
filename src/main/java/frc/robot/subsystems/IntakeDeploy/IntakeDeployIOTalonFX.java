@@ -25,11 +25,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   private final TalonFX deploy;
   private final TalonFXConfiguration deployConfig;
 
-  private final CANcoder encoder;
-  private final CANcoderConfiguration encoderConfig;
-
   private final StatusSignal<Temperature> temp;
-  private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<Angle> rotorPosition;
   private final StatusSignal<Double> positionSetpoint;
   private final StatusSignal<AngularVelocity> velocity;
@@ -44,20 +40,13 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
     deployConfig = new TalonFXConfiguration();
 
-    encoder = new CANcoder(Constants.Intake.DEPLOY_ENCODER_ID);
-    encoderConfig = new CANcoderConfiguration();
-
     deployConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     deployConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.DEPLOY_STATOR_LIMIT;
     deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     deployConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.DEPLOY_SUPPLY_LIMIT;
 
-    deployConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    deployConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.DEPLOY_ENCODER_ID;
-    deployConfig.Feedback.RotorToSensorRatio =
-        Constants.Intake.DEPLOY_ROTOR_TO_MECHANISM_GEAR_RATIO;
-    deployConfig.Feedback.SensorToMechanismRatio =
-        Constants.Intake.DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO;
+    deployConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    deployConfig.Feedback.SensorToMechanismRatio = Constants.Intake.DEPLOY_GEAR_RATIO;
 
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
     deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -68,16 +57,9 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     deployConfig.Slot0.kV = Constants.Intake.kV.get();
     deployConfig.Slot0.kA = Constants.Intake.kA.get();
 
-    encoderConfig.MagnetSensor.SensorDirection = Constants.Intake.ENCODER_DIRECTION;
-    encoderConfig.MagnetSensor.MagnetOffset = Constants.Intake.ENCODER_OFFSET;
-    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-        Constants.Intake.ENCODER_DISCONTINUITY_POINT;
-
     PhoenixUtil.tryUntilOk(5, () -> deploy.getConfigurator().apply(deployConfig, 0.25));
-    PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(encoderConfig, 0.25));
 
     temp = deploy.getDeviceTemp();
-    absolutePosition = encoder.getAbsolutePosition();
     rotorPosition = deploy.getPosition();
     positionSetpoint = deploy.getClosedLoopReference();
     velocity = deploy.getVelocity();
@@ -88,7 +70,6 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime,
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -96,12 +77,10 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
         statorCurrent,
         supplyCurrent);
     deploy.optimizeBusUtilization();
-    encoder.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(
         false,
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -114,7 +93,6 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   public void updateInputs(IntakeDeployIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -131,9 +109,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
             appliedVolts,
             statorCurrent,
             supplyCurrent);
-    inputs.encoderConnected = BaseStatusSignal.isAllGood(absolutePosition);
     inputs.tempCelsius = temp.getValueAsDouble();
-    inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());
     inputs.positionSetpointRads = Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());

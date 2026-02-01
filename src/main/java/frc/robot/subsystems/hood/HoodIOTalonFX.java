@@ -2,12 +2,10 @@ package frc.robot.subsystems.hood;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,11 +23,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final TalonFX hood;
   private final TalonFXConfiguration config;
 
-  private final CANcoder encoder;
-  private final CANcoderConfiguration encoderConfig;
-
   private final StatusSignal<Temperature> temp;
-  private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<Angle> rotorPosition;
   private final StatusSignal<Double> positionSetpoint;
   private final StatusSignal<AngularVelocity> velocity;
@@ -44,18 +38,13 @@ public class HoodIOTalonFX implements HoodIO {
     hood = new TalonFX(Constants.Hood.MOTOR_ID);
     config = new TalonFXConfiguration();
 
-    encoder = new CANcoder(Constants.Hood.ENCODER_ID);
-    encoderConfig = new CANcoderConfiguration();
-
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_LIMIT;
 
-    config.Feedback.FeedbackRemoteSensorID = Constants.Hood.ENCODER_ID;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = Constants.Hood.ROTOR_TO_MECHANISM_GEAR_RATIO;
-    config.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.SensorToMechanismRatio = Constants.Hood.GEAR_RATIO;
 
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = Constants.Hood.INVERTED;
@@ -66,16 +55,9 @@ public class HoodIOTalonFX implements HoodIO {
     config.Slot0.kV = Constants.Hood.kV.get();
     config.Slot0.kA = Constants.Hood.kA.get();
 
-    encoderConfig.MagnetSensor.SensorDirection = Constants.Hood.ENCODER_DIRECTION;
-    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-        Constants.Hood.ENCODER_DISCONTINUITY_POINT;
-    encoderConfig.MagnetSensor.MagnetOffset = Constants.Hood.ENCODER_OFFSET;
-
     PhoenixUtil.tryUntilOk(5, () -> hood.getConfigurator().apply(config, 0.25));
-    PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(encoderConfig, 0.25));
 
     temp = hood.getDeviceTemp();
-    absolutePosition = encoder.getAbsolutePosition();
     rotorPosition = hood.getPosition();
     positionSetpoint = hood.getClosedLoopReference();
     velocity = hood.getVelocity();
@@ -86,7 +68,6 @@ public class HoodIOTalonFX implements HoodIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime,
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -94,12 +75,10 @@ public class HoodIOTalonFX implements HoodIO {
         statorCurrent,
         supplyCurrent);
     hood.optimizeBusUtilization();
-    encoder.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(
         false,
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -112,7 +91,6 @@ public class HoodIOTalonFX implements HoodIO {
   public void updateInputs(HoodIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         temp,
-        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -129,9 +107,7 @@ public class HoodIOTalonFX implements HoodIO {
             appliedVolts,
             statorCurrent,
             supplyCurrent);
-    inputs.encoderConnected = BaseStatusSignal.isAllGood(absolutePosition);
     inputs.tempCelsius = temp.getValueAsDouble();
-    inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());
     inputs.positionSetpointRads = Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
