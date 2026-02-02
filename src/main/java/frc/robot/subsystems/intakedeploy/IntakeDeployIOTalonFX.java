@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intakeDeploy;
+package frc.robot.subsystems.intakedeploy;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
