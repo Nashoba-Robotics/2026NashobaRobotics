@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intakeDeploy;
+package frc.robot.subsystems.intakedeploy;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
