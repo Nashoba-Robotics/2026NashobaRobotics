@@ -3,8 +3,8 @@ package frc.robot.subsystems.intakeRoller;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -21,7 +21,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final TalonFX roller;
   private final TalonFXConfiguration rollerConfig;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
@@ -76,8 +76,8 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   }
 
   @Override
-  public void runDutyCycle(double percent) {
-    roller.setControl(dutyCycle.withOutput(percent));
+  public void runVoltage(double percent) {
+    roller.setControl(voltageOut.withOutput(percent));
   }
 
   @Override

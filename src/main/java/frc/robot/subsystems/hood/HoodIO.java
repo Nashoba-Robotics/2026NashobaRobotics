@@ -18,7 +18,7 @@ public interface HoodIO {
 
   public default void updateInputs(HoodIOInputs inputs) {}
 
-  public default void runDutyCycle(double percent) {}
+  public default void runVoltage(double percent) {}
 
   public default void runPosition(double positionRads, double velocityRadsPerSec) {}
 

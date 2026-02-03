@@ -4,10 +4,9 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -39,8 +38,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
-  private final MotionMagicVelocityVoltage velocityVoltage = new MotionMagicVelocityVoltage(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
   private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
   public ClimberIOTalonFX() {
@@ -156,7 +154,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void runVoltage(double voltage) {
-    climber.setControl(dutyCycle.withOutput(percent));
+    climber.setControl(voltageOut.withOutput(voltage));
   }
 
   @Override

@@ -28,8 +28,8 @@ public class IntakeRoller extends SubsystemBase {
     intakeRollerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
-  public Command runDutyCycleCommand(double percent) {
-    return run(() -> io.runDutyCycle(percent));
+  public Command runVoltageCommand(double percent) {
+    return run(() -> io.runVoltage(percent));
   }
 
   public Command stopCommand() {

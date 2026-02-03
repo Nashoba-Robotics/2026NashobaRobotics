@@ -29,8 +29,8 @@ public class Loader extends SubsystemBase {
     loaderMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
-  public Command runDutyCycleCommand(DoubleSupplier percent) {
-    return run(() -> io.runDutyCycle(percent.getAsDouble()));
+  public Command runVoltageCommand(DoubleSupplier percent) {
+    return run(() -> io.runVoltage(percent.getAsDouble()));
   }
 
   public Command stopCommand() {
