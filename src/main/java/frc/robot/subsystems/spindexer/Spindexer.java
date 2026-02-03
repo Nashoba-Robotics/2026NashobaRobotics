@@ -29,8 +29,8 @@ public class Spindexer extends SubsystemBase {
     spindexerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
-  public Command runVoltageCommand(DoubleSupplier percent) {
-    return run(() -> io.runVoltage(percent.getAsDouble()));
+  public Command runVoltageCommand(DoubleSupplier volts) {
+    return run(() -> io.runVoltage(volts.getAsDouble()));
   }
 
   public Command stopCommand() {
