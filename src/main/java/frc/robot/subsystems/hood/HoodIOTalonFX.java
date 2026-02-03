@@ -3,9 +3,9 @@ package frc.robot.subsystems.hood;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -31,7 +31,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
   private final PositionVoltage positionVoltage = new PositionVoltage(0).withEnableFOC(true);
 
   public HoodIOTalonFX() {
@@ -117,8 +117,8 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void runDutyCycle(double percent) {
-    hood.setControl(dutyCycle.withOutput(percent));
+  public void runVoltage(double volts) {
+    hood.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

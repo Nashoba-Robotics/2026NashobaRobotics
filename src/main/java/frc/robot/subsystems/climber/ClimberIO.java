@@ -20,7 +20,7 @@ public interface ClimberIO {
 
   public default void updateInputs(ClimberIOInputs inputs) {}
 
-  public default void runDutyCycle(double percent) {}
+  public default void runVoltage(double volts) {}
 
   public default void runPosition(double positionRads) {}
 

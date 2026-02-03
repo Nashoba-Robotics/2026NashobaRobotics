@@ -24,7 +24,7 @@ public interface ShooterIO {
 
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void runDutyCycle(double percent) {}
+  public default void runVoltage(double volts) {}
 
   public default void runVelocity(double velocityRadsPerSec) {}
 

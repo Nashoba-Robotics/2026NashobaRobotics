@@ -3,10 +3,10 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -39,7 +39,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   private final StatusSignal<Current> followerStatorCurrent;
   private final StatusSignal<Current> followerSupplyCurrent;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
   private final VelocityVoltage velocityVoltage = new VelocityVoltage(0).withEnableFOC(true);
 
   public ShooterIOTalonFX(boolean isLeftShooter, int leaderDeviceId, int followerDeviceId) {
@@ -173,8 +173,8 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void runDutyCycle(double percent) {
-    shooterLeader.setControl(dutyCycle.withOutput(percent));
+  public void runVoltage(double volts) {
+    shooterLeader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

@@ -16,7 +16,7 @@ public interface LoaderIO {
 
   public default void updateInputs(LoaderIOInputs inputs) {}
 
-  public default void runDutyCycle(double percent) {}
+  public default void runVoltage(double volts) {}
 
   public default void stop() {}
 }

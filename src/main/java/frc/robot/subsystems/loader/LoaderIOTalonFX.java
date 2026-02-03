@@ -3,8 +3,8 @@ package frc.robot.subsystems.loader;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -21,7 +21,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   private final TalonFX loader;
   private final TalonFXConfiguration config;
 
-  private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
@@ -74,8 +74,8 @@ public class LoaderIOTalonFX implements LoaderIO {
   }
 
   @Override
-  public void runDutyCycle(double percent) {
-    loader.setControl(dutyCycle.withOutput(percent));
+  public void runVoltage(double volts) {
+    loader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
