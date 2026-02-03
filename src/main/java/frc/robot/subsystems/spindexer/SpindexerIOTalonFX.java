@@ -74,8 +74,8 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    spindexer.setControl(voltageOut.withOutput(percent));
+  public void runVoltage(double volts) {
+    spindexer.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

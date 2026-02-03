@@ -117,8 +117,8 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    deploy.setControl(voltageOut.withOutput(percent));
+  public void runVoltage(double volts) {
+    deploy.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

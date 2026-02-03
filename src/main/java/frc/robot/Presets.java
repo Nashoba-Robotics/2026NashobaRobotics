@@ -17,10 +17,10 @@ public final class Presets {
   }
 
   public static class Spindexer {
-    public static final LoggedTunableNumber FEED_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Spindexer/FeedDutyCycle", 0.0);
-    public static final LoggedTunableNumber EXHAUST_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Spindexer/ExhaustDutyCycle", 0.0);
+    public static final LoggedTunableNumber FEED_VOLTS =
+        new LoggedTunableNumber("Setpoints/Spindexer/FeedVolts", 0.0);
+    public static final LoggedTunableNumber EXHAUST_VOLTS =
+        new LoggedTunableNumber("Setpoints/Spindexer/ExhaustVolts", 0.0);
   }
 
   public static class Intake {
@@ -29,19 +29,19 @@ public final class Presets {
     public static final LoggedTunableNumber EXTEND_ANGLE =
         new LoggedTunableNumber("Setpoints/Intake/ExtendAngle", 0.0);
 
-    public static final LoggedTunableNumber INTAKE_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Intake/IntakeDutyCycle", 0.0);
-    public static final LoggedTunableNumber EXHAUST_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Intake/ExhaustDutyCycle", 0.0);
+    public static final LoggedTunableNumber INTAKE_VOLTS =
+        new LoggedTunableNumber("Setpoints/Intake/IntakeVolts", 0.0);
+    public static final LoggedTunableNumber EXHAUST_VOLTS =
+        new LoggedTunableNumber("Setpoints/Intake/ExhaustVolts", 0.0);
   }
 
   public static class Loader {
-    public static final LoggedTunableNumber FEED_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Loader/FeedDutyCycle", 0.0);
-    public static final LoggedTunableNumber EXHAUST_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Loader/ExhaustDutyCycle", 0.0);
-    public static final LoggedTunableNumber SLOW_EXHAUST_DUTYCYCLE =
-        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustDutyCycle", 0.0);
+    public static final LoggedTunableNumber FEED_VOLTS =
+        new LoggedTunableNumber("Setpoints/Loader/FeedVolts", 0.0);
+    public static final LoggedTunableNumber EXHAUST_VOLTS =
+        new LoggedTunableNumber("Setpoints/Loader/ExhaustVolts", 0.0);
+    public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
+        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustVolts", 0.0);
   }
 
   public static class Shooter {

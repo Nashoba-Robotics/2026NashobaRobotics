@@ -76,8 +76,8 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    roller.setControl(voltageOut.withOutput(percent));
+  public void runVoltage(double volts) {
+    roller.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

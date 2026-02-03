@@ -16,7 +16,7 @@ public interface IntakeRollerIO {
 
   public default void updateInputs(IntakeRollerIOInputs inputs) {}
 
-  public default void runVoltage(double percent) {}
+  public default void runVoltage(double volts) {}
 
   public default void stop() {}
 }

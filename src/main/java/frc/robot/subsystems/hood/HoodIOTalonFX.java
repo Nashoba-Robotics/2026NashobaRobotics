@@ -117,8 +117,8 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    hood.setControl(voltageOut.withOutput(percent));
+  public void runVoltage(double volts) {
+    hood.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

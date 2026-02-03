@@ -153,8 +153,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   }
 
   @Override
-  public void runVoltage(double voltage) {
-    climber.setControl(voltageOut.withOutput(voltage));
+  public void runVoltage(double volts) {
+    climber.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

@@ -173,8 +173,8 @@ public class ShooterIOTalonFX implements ShooterIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    shooterLeader.setControl(voltageOut.withOutput(percent));
+  public void runVoltage(double volts) {
+    shooterLeader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override

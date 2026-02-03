@@ -18,7 +18,7 @@ public interface IntakeDeployIO {
 
   public default void updateInputs(IntakeDeployIOInputs inputs) {}
 
-  public default void runVoltage(double percent) {}
+  public default void runVoltage(double volts) {}
 
   public default void runPosition(double positionRads) {}
 

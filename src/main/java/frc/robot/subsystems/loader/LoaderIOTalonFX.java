@@ -74,8 +74,8 @@ public class LoaderIOTalonFX implements LoaderIO {
   }
 
   @Override
-  public void runVoltage(double percent) {
-    loader.setControl(Voltage.withOutput(percent));
+  public void runVoltage(double volts) {
+    loader.setControl(Voltage.withOutput(volts));
   }
 
   @Override
