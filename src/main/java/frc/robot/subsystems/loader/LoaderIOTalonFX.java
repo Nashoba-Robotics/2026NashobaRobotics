@@ -21,7 +21,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   private final TalonFX loader;
   private final TalonFXConfiguration config;
 
-  private final VoltageOut Voltage = new VoltageOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
@@ -75,7 +75,7 @@ public class LoaderIOTalonFX implements LoaderIO {
 
   @Override
   public void runVoltage(double volts) {
-    loader.setControl(Voltage.withOutput(volts));
+    loader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
