@@ -5,31 +5,29 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakedeploy.IntakeDeployIO;
-import frc.robot.subsystems.intakedeploy.IntakeDeployIOTalonFX;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
 import frc.robot.subsystems.intakeroller.IntakeRollerIO;
-import frc.robot.subsystems.intakeroller.IntakeRollerIOTalonFX;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.loader.LoaderIO;
 import frc.robot.subsystems.loader.LoaderIOTalonFX;
@@ -38,10 +36,8 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
-import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -70,25 +66,25 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+        // drive =
+        //     new Drive(
+        //         new GyroIOPigeon2(),
+        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
+        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
+        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
+        //         new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
+        //         new VisionIOPhotonVision(camera1Name, robotToCamera1));
 
-        climber = new Climber(new ClimberIOTalonFX());
+        // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        spindexer = new Spindexer(new SpindexerIOTalonFX());
-        intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
-        intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
+        // spindexer = new Spindexer(new SpindexerIOTalonFX());
+        // intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
+        // intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
         loader = new Loader(new LoaderIOTalonFX());
         leftShooter =
             new Shooter(
@@ -104,6 +100,21 @@ public class RobotContainer {
                     Constants.Shooter.RIGHT_SHOOTER_LEADER_ID,
                     Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
                 false);
+
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
+        climber = new Climber(new ClimberIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
+        intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
+        intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
 
         break;
 
@@ -176,6 +187,15 @@ public class RobotContainer {
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    SmartDashboard.putData(
+        "RunShooterHoodAndLoader",
+        new ParallelCommandGroup(
+            leftShooter.runTrackedVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED),
+            rightShooter.runTrackedVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED),
+            loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+            hood.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.get()), () -> 0.0)));
 
     // Configure the button bindings
     configureButtonBindings();

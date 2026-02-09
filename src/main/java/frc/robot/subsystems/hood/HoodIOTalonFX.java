@@ -4,11 +4,12 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -32,7 +33,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<Current> supplyCurrent;
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-  private final PositionVoltage positionVoltage = new PositionVoltage(0).withEnableFOC(true);
+  private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
 
   public HoodIOTalonFX() {
     hood = new TalonFX(Constants.Hood.MOTOR_ID);
@@ -54,6 +55,7 @@ public class HoodIOTalonFX implements HoodIO {
     config.Slot0.kS = Constants.Hood.kS.get();
     config.Slot0.kV = Constants.Hood.kV.get();
     config.Slot0.kA = Constants.Hood.kA.get();
+    config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
     PhoenixUtil.tryUntilOk(5, () -> hood.getConfigurator().apply(config, 0.25));
 
@@ -124,7 +126,7 @@ public class HoodIOTalonFX implements HoodIO {
   @Override
   public void runPosition(double positionRads, double velocityRadsPerSec) {
     hood.setControl(
-        positionVoltage
+        positionTorqueCurrentFOC
             .withPosition(Units.radiansToRotations(positionRads))
             .withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }

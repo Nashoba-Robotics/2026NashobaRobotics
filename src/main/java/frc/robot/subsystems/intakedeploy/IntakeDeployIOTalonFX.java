@@ -3,8 +3,8 @@ package frc.robot.subsystems.intakedeploy;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -32,7 +32,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   private final StatusSignal<Current> supplyCurrent;
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
+  private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
 
   public IntakeDeployIOTalonFX() {
     deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
@@ -123,7 +123,8 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
   @Override
   public void runPosition(double positionRads) {
-    deploy.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)));
+    deploy.setControl(
+        positionTorqueCurrentFOC.withPosition(Units.radiansToRotations(positionRads)));
   }
 
   @Override

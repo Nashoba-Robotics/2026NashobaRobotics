@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -65,7 +66,8 @@ public class Superstructure extends SubsystemBase {
                     FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
     shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
-    hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
+    hood.setDefaultCommand(
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }
 
   @Override

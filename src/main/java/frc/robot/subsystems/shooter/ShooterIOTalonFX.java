@@ -5,12 +5,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -40,7 +41,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   private final StatusSignal<Current> followerSupplyCurrent;
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-  private final VelocityVoltage velocityVoltage = new VelocityVoltage(0).withEnableFOC(true);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
   public ShooterIOTalonFX(boolean isLeftShooter, int leaderDeviceId, int followerDeviceId) {
     shooterLeader = new TalonFX(leaderDeviceId, Constants.Shooter.CANBUS);
@@ -71,6 +72,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         isLeftShooter ? Constants.Shooter.LEFT_kV.get() : Constants.Shooter.RIGHT_kV.get();
     config.Slot0.kA =
         isLeftShooter ? Constants.Shooter.LEFT_kA.get() : Constants.Shooter.RIGHT_kA.get();
+    config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
     PhoenixUtil.tryUntilOk(5, () -> shooterLeader.getConfigurator().apply(config, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> shooterFollower.getConfigurator().apply(config, 0.25));
@@ -180,7 +182,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   @Override
   public void runVelocity(double velocityRadsPerSec) {
     shooterLeader.setControl(
-        velocityVoltage.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+        velocityTorqueCurrentFOC.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }
 
   @Override
