@@ -51,13 +51,7 @@ public class Hood extends SubsystemBase {
   }
 
   public Command runPositionCommand(double positionRads) {
-    return run(() -> io.runPosition(positionRads, 0.0))
-        .until(
-            () ->
-                Util.epsilonEquals(
-                    positionRads,
-                    inputs.rotorPositionRads,
-                    Units.degreesToRadians(Constants.Hood.POSITION_TOLERANCE.get())));
+    return run(() -> io.runPosition(positionRads, 0.0)).until(this::atSetpoint);
   }
 
   public Command runTrackedPositionCommand(

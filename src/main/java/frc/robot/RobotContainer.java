@@ -18,16 +18,20 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakedeploy.IntakeDeployIO;
+import frc.robot.subsystems.intakedeploy.IntakeDeployIOTalonFX;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
 import frc.robot.subsystems.intakeroller.IntakeRollerIO;
+import frc.robot.subsystems.intakeroller.IntakeRollerIOTalonFX;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.loader.LoaderIO;
 import frc.robot.subsystems.loader.LoaderIOTalonFX;
@@ -36,6 +40,7 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
@@ -66,13 +71,13 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight));
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
 
         // vision =
         //     new Vision(
@@ -82,9 +87,9 @@ public class RobotContainer {
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        // spindexer = new Spindexer(new SpindexerIOTalonFX());
-        // intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
-        // intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
+        spindexer = new Spindexer(new SpindexerIOTalonFX());
+        intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
+        intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
         loader = new Loader(new LoaderIOTalonFX());
         leftShooter =
             new Shooter(
@@ -101,20 +106,9 @@ public class RobotContainer {
                     Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
                 false);
 
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         climber = new Climber(new ClimberIO() {});
-        spindexer = new Spindexer(new SpindexerIO() {});
-        intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
-        intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
 
         break;
 
@@ -189,13 +183,16 @@ public class RobotContainer {
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
     SmartDashboard.putData(
-        "RunShooterHoodAndLoader",
+        "RunEverythingForTuning",
         new ParallelCommandGroup(
-            leftShooter.runTrackedVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED),
-            rightShooter.runTrackedVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED),
-            loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+            loader.runVoltageCommand(Presets.Loader.TUNING_VOLTS),
+            spindexer.runVoltageCommand(Presets.Spindexer.TUNING_VOLTS),
+            intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
+            intakeDeploy.runTrackedPositionCommand(Presets.Intake.TUNING_ANGLE_DEG),
+            leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+            rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
             hood.runTrackedPositionCommand(
-                () -> Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.get()), () -> 0.0)));
+                () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -224,27 +221,42 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    // driver
+    //     .rightTrigger()
+    //     .and(inAllianceZone)
+    //     .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () ->
+    // -driver.getLeftX()))
+    //     .and(hood::atSetpoint)
+    //     .and(leftShooter::atSetpoint)
+    //     .and(rightShooter::atSetpoint)
+    //     .and(DriveCommands::atAngleSetpoint)
+    //     .whileTrue(superstructure.shootCommand())
+    //     .onFalse(superstructure.endShootCommand());
+    // driver
+    //     .rightTrigger()
+    //     .and(inAllianceZone.negate())
+    //     .whileTrue(
+    //         superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+    //     .and(hood::atSetpoint)
+    //     .and(leftShooter::atSetpoint)
+    //     .and(rightShooter::atSetpoint)
+    //     .and(DriveCommands::atAngleSetpoint)
+    //     .whileTrue(superstructure.shootCommand())
+    //     .onFalse(superstructure.endShootCommand());
+
     driver
-        .rightTrigger()
-        .and(inAllianceZone)
-        .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
-        .whileTrue(superstructure.shootCommand())
-        .onFalse(superstructure.endShootCommand());
-    driver
-        .rightTrigger()
-        .and(inAllianceZone.negate())
+        .rightBumper()
         .whileTrue(
-            superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
-        .whileTrue(superstructure.shootCommand())
-        .onFalse(superstructure.endShootCommand());
+            new ParallelCommandGroup(
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+                hood.runPositionCommand(
+                    Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
+                leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
+                rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())))
+        .onFalse(new ParallelCommandGroup(leftShooter.stopCommand(), rightShooter.stopCommand()));
+
+    driver.leftBumper().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
   }
 
   public Command getAutonomousCommand() {

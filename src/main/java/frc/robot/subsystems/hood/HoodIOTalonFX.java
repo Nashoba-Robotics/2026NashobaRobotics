@@ -55,7 +55,7 @@ public class HoodIOTalonFX implements HoodIO {
     config.Slot0.kS = Constants.Hood.kS.get();
     config.Slot0.kV = Constants.Hood.kV.get();
     config.Slot0.kA = Constants.Hood.kA.get();
-    config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+    config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
     PhoenixUtil.tryUntilOk(5, () -> hood.getConfigurator().apply(config, 0.25));
 

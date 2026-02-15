@@ -47,7 +47,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     deployConfig.Feedback.SensorToMechanismRatio = Constants.Intake.DEPLOY_GEAR_RATIO;
 
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
-    deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     deployConfig.Slot0.kP = Constants.Intake.kP.get();
     deployConfig.Slot0.kD = Constants.Intake.kD.get();

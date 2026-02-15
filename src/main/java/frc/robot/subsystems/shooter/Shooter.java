@@ -83,7 +83,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runVelocityCommand(double velocityRadsPerSec) {
-    return run(() -> io.runVelocity(velocityRadsPerSec));
+    return run(() -> io.runVelocity(velocityRadsPerSec)).until(this::atSetpoint);
   }
 
   public Command runTrackedVelocityCommand(DoubleSupplier velocityRadsPerSec) {

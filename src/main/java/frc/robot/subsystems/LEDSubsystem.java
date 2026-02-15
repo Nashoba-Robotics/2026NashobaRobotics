@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDSubsystem extends SubsystemBase {
   private final CANdle candle;
 
-  private Superstructure superstructure;
   private CANBus canBus = new CANBus();
 
   private int LEDCount = 0;

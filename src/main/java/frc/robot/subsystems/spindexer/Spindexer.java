@@ -30,7 +30,7 @@ public class Spindexer extends SubsystemBase {
   }
 
   public Command runVoltageCommand(DoubleSupplier volts) {
-    return run(() -> io.runVoltage(volts.getAsDouble()));
+    return run(() -> io.runVoltage(volts.getAsDouble())).finallyDo(() -> io.stop());
   }
 
   public Command stopCommand() {
