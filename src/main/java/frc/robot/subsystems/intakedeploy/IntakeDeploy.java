@@ -37,10 +37,14 @@ public class IntakeDeploy extends SubsystemBase {
       io.setPID(Constants.Intake.kP.get(), Constants.Intake.kD.get());
     }
     if (Constants.Intake.kS.hasChanged(hashCode())
+        || Constants.Intake.kG.hasChanged(hashCode())
         || Constants.Intake.kV.hasChanged(hashCode())
         || Constants.Intake.kA.hasChanged(hashCode())) {
       io.setFeedForward(
-          Constants.Intake.kS.get(), 0.0, Constants.Intake.kV.get(), Constants.Intake.kA.get());
+          Constants.Intake.kS.get(),
+          Constants.Intake.kG.get(),
+          Constants.Intake.kV.get(),
+          Constants.Intake.kA.get());
     }
   }
 

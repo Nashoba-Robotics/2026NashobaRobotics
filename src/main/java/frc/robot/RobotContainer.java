@@ -187,7 +187,8 @@ public class RobotContainer {
             loader.runVoltageCommand(Presets.Loader.TUNING_VOLTS),
             spindexer.runVoltageCommand(Presets.Spindexer.TUNING_VOLTS),
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
-            intakeDeploy.runTrackedPositionCommand(Presets.Intake.TUNING_ANGLE_DEG),
+            intakeDeploy.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
             leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
             rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
             hood.runTrackedPositionCommand(
@@ -220,17 +221,16 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // driver
-    //     .rightTrigger()
-    //     .and(inAllianceZone)
-    //     .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () ->
-    // -driver.getLeftX()))
-    //     .and(hood::atSetpoint)
-    //     .and(leftShooter::atSetpoint)
-    //     .and(rightShooter::atSetpoint)
-    //     .and(DriveCommands::atAngleSetpoint)
-    //     .whileTrue(superstructure.shootCommand())
-    //     .onFalse(superstructure.endShootCommand());
+    driver
+        .rightTrigger()
+        .and(inAllianceZone)
+        .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .and(hood::atSetpoint)
+        .and(leftShooter::atSetpoint)
+        .and(rightShooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
     // driver
     //     .rightTrigger()
     //     .and(inAllianceZone.negate())
@@ -254,7 +254,7 @@ public class RobotContainer {
                 leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
                 rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
-    driver.leftBumper().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
   }
 

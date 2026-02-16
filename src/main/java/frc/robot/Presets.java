@@ -13,7 +13,7 @@ public final class Presets {
 
   public static class Hood {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
-        new LoggedTunableNumber("Setpoints/Hood/TuckAngleDeg", 0.0);
+        new LoggedTunableNumber("Setpoints/Hood/TuckAngleDeg", 0.75);
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
         new LoggedTunableNumber("Setpoints/Hood/CloseHubAngleDeg", 10.0);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
@@ -22,7 +22,7 @@ public final class Presets {
 
   public static class Spindexer {
     public static final LoggedTunableNumber FEED_VOLTS =
-        new LoggedTunableNumber("Setpoints/Spindexer/FeedVolts", 10.0);
+        new LoggedTunableNumber("Setpoints/Spindexer/FeedVolts", 6.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
         new LoggedTunableNumber("Setpoints/Spindexer/ExhaustVolts", 0.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
@@ -51,7 +51,7 @@ public final class Presets {
     public static final LoggedTunableNumber EXHAUST_VOLTS =
         new LoggedTunableNumber("Setpoints/Loader/ExhaustVolts", 0.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
-        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustVolts", 0.0);
+        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustVolts", 2.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
         new LoggedTunableNumber("Setpoints/Loader/TuningVolts", 0.0);
   }
