@@ -60,16 +60,14 @@ public class Climber extends SubsystemBase {
   }
 
   public Command runPositionCommand(double positionRads) {
-    return run(() -> io.runPosition(positionRads))
-        .until(
-            () ->
-                Util.epsilonEquals(
-                    positionRads,
-                    inputs.rotorPositionRads,
-                    Units.degreesToRadians(Constants.Climber.POSITION_TOLERANCE.get())));
+    return run(() -> io.runPosition(positionRads)).until(this::atSetpoint);
+  }
+
+  public void stop() {
+    io.stop();
   }
 
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }

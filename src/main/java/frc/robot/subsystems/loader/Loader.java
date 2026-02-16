@@ -33,7 +33,11 @@ public class Loader extends SubsystemBase {
     return run(() -> io.runVoltage(volts.getAsDouble())).finallyDo(() -> io.stop());
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }

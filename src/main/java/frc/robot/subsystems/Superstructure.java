@@ -68,6 +68,8 @@ public class Superstructure extends SubsystemBase {
 
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
+    leftShooter.setDefaultCommand(leftShooter.stopCommand());
+    rightShooter.setDefaultCommand(rightShooter.stopCommand());
   }
 
   @Override

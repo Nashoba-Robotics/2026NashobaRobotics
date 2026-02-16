@@ -59,7 +59,11 @@ public class IntakeDeploy extends SubsystemBase {
     return run(() -> io.runPosition(positionRads.getAsDouble()));
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }

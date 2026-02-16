@@ -90,7 +90,11 @@ public class Shooter extends SubsystemBase {
     return run(() -> io.runVelocity(velocityRadsPerSec.getAsDouble()));
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }

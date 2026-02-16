@@ -40,7 +40,7 @@ public final class Presets {
     public static final LoggedTunableNumber INTAKE_VOLTS =
         new LoggedTunableNumber("Setpoints/Intake/RollerIntakeVolts", 10.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Setpoints/Intake/RollerExhaustVolts", 0.0);
+        new LoggedTunableNumber("Setpoints/Intake/RollerExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
         new LoggedTunableNumber("Setpoints/Intake/RollerTuningVolts", 0.0);
   }

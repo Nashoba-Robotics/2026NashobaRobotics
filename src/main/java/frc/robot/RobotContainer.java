@@ -253,10 +253,10 @@ public class RobotContainer {
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
                 leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
-                rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())))
-        .onFalse(new ParallelCommandGroup(leftShooter.stopCommand(), rightShooter.stopCommand()));
+                rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
     driver.leftBumper().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
   }
 
   public Command getAutonomousCommand() {

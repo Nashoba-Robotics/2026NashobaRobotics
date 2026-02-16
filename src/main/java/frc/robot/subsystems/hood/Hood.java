@@ -59,7 +59,11 @@ public class Hood extends SubsystemBase {
     return run(() -> io.runPosition(positionRads.getAsDouble(), velocityRadsPerSec.getAsDouble()));
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }
