@@ -43,6 +43,7 @@ import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -79,11 +80,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
-        //         new VisionIOPhotonVision(camera1Name, robotToCamera1));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1));
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
@@ -105,8 +106,6 @@ public class RobotContainer {
                     Constants.Shooter.RIGHT_SHOOTER_LEADER_ID,
                     Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
                 false);
-
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         climber = new Climber(new ClimberIO() {});
 
