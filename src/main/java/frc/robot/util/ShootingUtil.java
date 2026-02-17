@@ -70,16 +70,26 @@ public class ShootingUtil {
     hubDistanceTimeOfFlightMap.put(0.0, 1.0);
     hubDistanceTimeOfFlightMap.put(1.0, 1.05);
     hubDistanceTimeOfFlightMap.put(3.0, 1.15);
-    hubDistanceTimeOfFlightMap.put(5.0, 1.25);
-    hubDistanceTimeOfFlightMap.put(6.0, 1.30);
+    hubDistanceTimeOfFlightMap.put(5.0, 1.15);
 
-    shuttleDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(0.0));
-    shuttleDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(0.0));
-    shuttleDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(0.0));
+    shuttleDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(25.0));
+    shuttleDistanceHoodAngleMap.put(1.5, Rotation2d.fromDegrees(25.0));
+    shuttleDistanceHoodAngleMap.put(2.5, Rotation2d.fromDegrees(31.0));
+    shuttleDistanceHoodAngleMap.put(3.5, Rotation2d.fromDegrees(36.0));
+    shuttleDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(42.0));
+    shuttleDistanceHoodAngleMap.put(5.5, Rotation2d.fromDegrees(42.0));
 
-    shuttleDistanceShooterVelocityMap.put(0.0, 0.0);
-    shuttleDistanceShooterVelocityMap.put(0.0, 0.0);
-    shuttleDistanceShooterVelocityMap.put(0.0, 0.0);
+    shuttleDistanceShooterVelocityMap.put(0.0, 250.0);
+    shuttleDistanceShooterVelocityMap.put(1.5, 250.0);
+    shuttleDistanceShooterVelocityMap.put(2.5, 270.0);
+    shuttleDistanceShooterVelocityMap.put(3.5, 290.0);
+    shuttleDistanceShooterVelocityMap.put(4.5, 310.0);
+    shuttleDistanceShooterVelocityMap.put(5.5, 350.0);
+    shuttleDistanceShooterVelocityMap.put(6.5, 390.0);
+    shuttleDistanceShooterVelocityMap.put(7.5, 430.0);
+    shuttleDistanceShooterVelocityMap.put(8.5, 470.0);
+    shuttleDistanceShooterVelocityMap.put(9.5, 510.0);
+    shuttleDistanceShooterVelocityMap.put(10.5, 540.0);
   }
 
   public static ShooterSetpoint makeHubSetpoint(Drive drive, Pose2d target) {
@@ -163,7 +173,7 @@ public class ShootingUtil {
     driveAngleRads =
         target.getTranslation().minus(drive.getPose().getTranslation()).getAngle().getRadians();
     hoodAngleRads = shuttleDistanceHoodAngleMap.get(robotPosetoTargetDistance).getRadians();
-    shooterSpeedRadsPerSec = hubDistanceShooterVelocityMap.get(robotPosetoTargetDistance);
+    shooterSpeedRadsPerSec = shuttleDistanceShooterVelocityMap.get(robotPosetoTargetDistance);
 
     if (Double.isNaN(lastShuttleDriveAngleRads)) lastShuttleDriveAngleRads = driveAngleRads;
     if (Double.isNaN(lastShuttleHoodAngleRads)) lastShuttleHoodAngleRads = hoodAngleRads;

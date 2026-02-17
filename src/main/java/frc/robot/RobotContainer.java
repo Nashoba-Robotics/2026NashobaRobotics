@@ -231,17 +231,17 @@ public class RobotContainer {
         .and(DriveCommands::atAngleSetpoint)
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
-    // driver
-    //     .rightTrigger()
-    //     .and(inAllianceZone.negate())
-    //     .whileTrue(
-    //         superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-    //     .and(hood::atSetpoint)
-    //     .and(leftShooter::atSetpoint)
-    //     .and(rightShooter::atSetpoint)
-    //     .and(DriveCommands::atAngleSetpoint)
-    //     .whileTrue(superstructure.shootCommand())
-    //     .onFalse(superstructure.endShootCommand());
+    driver
+        .rightTrigger()
+        .and(inAllianceZone.negate())
+        .whileTrue(
+            superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .and(hood::atSetpoint)
+        .and(leftShooter::atSetpoint)
+        .and(rightShooter::atSetpoint)
+        .and(DriveCommands::atAngleSetpoint)
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
 
     driver
         .rightBumper()

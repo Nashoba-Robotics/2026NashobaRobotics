@@ -112,8 +112,8 @@ public class Superstructure extends SubsystemBase {
         hood.runTrackedPositionCommand(
             this::getShuttleShootingSetpointHoodAngle,
             this::getShuttleShootingSetpointHoodVelocity),
-        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
-        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+        leftShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed));
   }
 
   public Command shootCommand() {
