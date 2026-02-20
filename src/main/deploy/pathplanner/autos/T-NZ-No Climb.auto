@@ -9,6 +9,12 @@
           "data": {
             "pathName": "T-NZ-Steal-TShoot"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
         }
       ]
     }
