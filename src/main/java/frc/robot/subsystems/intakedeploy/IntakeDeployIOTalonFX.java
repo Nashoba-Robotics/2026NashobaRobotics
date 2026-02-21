@@ -3,12 +3,14 @@ package frc.robot.subsystems.intakedeploy;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -32,7 +34,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   private final StatusSignal<Current> supplyCurrent;
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-  private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
+  private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
 
   public IntakeDeployIOTalonFX() {
     deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
@@ -47,13 +49,18 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     deployConfig.Feedback.SensorToMechanismRatio = Constants.Intake.DEPLOY_GEAR_RATIO;
 
     deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
-    deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     deployConfig.Slot0.kP = Constants.Intake.kP.get();
     deployConfig.Slot0.kD = Constants.Intake.kD.get();
     deployConfig.Slot0.kS = Constants.Intake.kS.get();
+    deployConfig.Slot0.kG = Constants.Intake.kG.get();
     deployConfig.Slot0.kV = Constants.Intake.kV.get();
     deployConfig.Slot0.kA = Constants.Intake.kA.get();
+    deployConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+    deployConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    deployConfig.Slot0.GravityArmPositionOffset =
+        Constants.Intake.GRAVITY_POSTION_OFFSET.getRotations();
 
     PhoenixUtil.tryUntilOk(5, () -> deploy.getConfigurator().apply(deployConfig, 0.25));
 
@@ -123,7 +130,8 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
   @Override
   public void runPosition(double positionRads) {
-    deploy.setControl(positionVoltage.withPosition(Units.radiansToRotations(positionRads)));
+    deploy.setControl(
+        positionTorqueCurrentFOC.withPosition(Units.radiansToRotations(positionRads)));
   }
 
   @Override

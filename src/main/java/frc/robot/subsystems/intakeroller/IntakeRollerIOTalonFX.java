@@ -43,7 +43,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     rollerConfig.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_GEAR_RATIO;
 
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
-    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     // roller.getConfigurator().apply(rollerConfig);
     PhoenixUtil.tryUntilOk(5, () -> roller.getConfigurator().apply(rollerConfig));

@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.FieldConstants;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
@@ -65,7 +67,10 @@ public class Superstructure extends SubsystemBase {
                     FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
     shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
-    hood.setDefaultCommand(hood.runPositionCommand(Presets.Hood.TUCK_ANGLE.get()));
+    hood.setDefaultCommand(
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
+    leftShooter.setDefaultCommand(leftShooter.stopCommand());
+    rightShooter.setDefaultCommand(rightShooter.stopCommand());
   }
 
   @Override
@@ -108,8 +113,8 @@ public class Superstructure extends SubsystemBase {
         hood.runTrackedPositionCommand(
             this::getShuttleShootingSetpointHoodAngle,
             this::getShuttleShootingSetpointHoodVelocity),
-        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
-        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
+        leftShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed),
+        rightShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed));
   }
 
   public Command shootCommand() {
@@ -120,8 +125,17 @@ public class Superstructure extends SubsystemBase {
 
   public Command endShootCommand() {
     return new SequentialCommandGroup(
-        loader.runVoltageCommand(Presets.Loader.SLOW_EXHAUST_VOLTS).withTimeout(0.1),
+        loader.runVoltageCommand(Presets.Loader.SLOW_EXHAUST_VOLTS).withTimeout(0.5),
         new ParallelCommandGroup(spindexer.stopCommand(), loader.stopCommand()));
+  }
+
+  public Command deployIntake() {
+    return intakeDeploy.runPositionCommand(
+        Units.degreesToRadians(Presets.Intake.EXTEND_ANGLE_DEG.get()));
+  }
+
+  public Command retractIntake() {
+    return intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get());
   }
 
   public Command stopAllRollersCommand() {
@@ -141,6 +155,17 @@ public class Superstructure extends SubsystemBase {
                 ? FieldConstants.RightBump.centerPoint
                 : FieldConstants.LeftBump.centerPoint,
             Rotation2d.kZero));
+  }
+
+  public Command autoShoot() {
+    return new ParallelCommandGroup(
+        hubAimCommand(() -> 0.0, () -> 0.0),
+        new SequentialCommandGroup(
+            new WaitUntilCommand(
+                () -> leftShooter.atSetpoint() && rightShooter.atSetpoint() && hood.atSetpoint()),
+            new ParallelCommandGroup(
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))));
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {

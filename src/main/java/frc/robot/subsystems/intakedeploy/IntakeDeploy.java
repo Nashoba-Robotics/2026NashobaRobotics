@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.Util;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeDeploy extends SubsystemBase {
@@ -36,10 +37,14 @@ public class IntakeDeploy extends SubsystemBase {
       io.setPID(Constants.Intake.kP.get(), Constants.Intake.kD.get());
     }
     if (Constants.Intake.kS.hasChanged(hashCode())
+        || Constants.Intake.kG.hasChanged(hashCode())
         || Constants.Intake.kV.hasChanged(hashCode())
         || Constants.Intake.kA.hasChanged(hashCode())) {
       io.setFeedForward(
-          Constants.Intake.kS.get(), 0.0, Constants.Intake.kV.get(), Constants.Intake.kA.get());
+          Constants.Intake.kS.get(),
+          Constants.Intake.kG.get(),
+          Constants.Intake.kV.get(),
+          Constants.Intake.kA.get());
     }
   }
 
@@ -50,17 +55,23 @@ public class IntakeDeploy extends SubsystemBase {
         Units.degreesToRadians(Constants.Intake.POSITION_TOLERANCE.get()));
   }
 
+  public boolean isDeployed() {
+    return inputs.rotorPositionRads >= Units.degreesToRadians(45);
+  }
+
   public Command runPositionCommand(double positionRads) {
-    return run(() -> io.runPosition(positionRads))
-        .until(
-            () ->
-                Util.epsilonEquals(
-                    positionRads,
-                    inputs.rotorPositionRads,
-                    Units.degreesToRadians(Constants.Intake.POSITION_TOLERANCE.get())));
+    return run(() -> io.runPosition(positionRads)).until(this::atSetpoint);
+  }
+
+  public Command runTrackedPositionCommand(DoubleSupplier positionRads) {
+    return run(() -> io.runPosition(positionRads.getAsDouble()));
+  }
+
+  public void stop() {
+    io.stop();
   }
 
   public Command stopCommand() {
-    return runOnce(() -> io.stop());
+    return runOnce(this::stop);
   }
 }

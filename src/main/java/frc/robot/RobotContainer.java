@@ -3,17 +3,20 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -84,7 +87,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1));
 
-        climber = new Climber(new ClimberIOTalonFX());
+        // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
         spindexer = new Spindexer(new SpindexerIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
@@ -104,6 +107,8 @@ public class RobotContainer {
                     Constants.Shooter.RIGHT_SHOOTER_LEADER_ID,
                     Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
                 false);
+
+        climber = new Climber(new ClimberIO() {});
 
         break;
 
@@ -171,11 +176,28 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
+    NamedCommands.registerCommand("shoot", superstructure.autoShoot().withTimeout(5));
+    NamedCommands.registerCommand(
+        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    SmartDashboard.putData(
+        "RunEverythingForTuning",
+        new ParallelCommandGroup(
+            loader.runVoltageCommand(Presets.Loader.TUNING_VOLTS),
+            spindexer.runVoltageCommand(Presets.Spindexer.TUNING_VOLTS),
+            intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
+            intakeDeploy.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
+            leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+            rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+            hood.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -225,6 +247,24 @@ public class RobotContainer {
         .and(DriveCommands::atAngleSetpoint)
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
+
+    driver
+        .rightBumper()
+        .whileTrue(
+            new ParallelCommandGroup(
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+                hood.runPositionCommand(
+                    Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
+                leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
+                rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
+
+    driver.leftTrigger().onTrue(superstructure.deployIntake());
+    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+
+    driver.leftBumper().onTrue(superstructure.retractIntake());
+
+    driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
   }
 
   public Command getAutonomousCommand() {
