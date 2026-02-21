@@ -116,18 +116,18 @@ public final class Constants {
     public static final int ROLLER_MOTOR_ID = 15;
 
     public static final InvertedValue DEPLOY_INVERTED = InvertedValue.CounterClockwise_Positive;
-    public static final InvertedValue ROLLER_INVERTED = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue ROLLER_INVERTED = InvertedValue.CounterClockwise_Positive;
 
-    public static final double DEPLOY_STATOR_LIMIT = 60.0;
-    public static final double DEPLOY_SUPPLY_LIMIT = 60.0;
+    public static final double DEPLOY_STATOR_LIMIT = 80.0;
+    public static final double DEPLOY_SUPPLY_LIMIT = 40.0;
 
-    public static final double ROLLER_STATOR_LIMIT = 60.0;
+    public static final double ROLLER_STATOR_LIMIT = 80.0;
     public static final double ROLLER_SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("PID/Intake/kP", 0.0);
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("PID/Intake/kP", 460.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("PID/Intake/kD", 0.0);
     public static final LoggedTunableNumber kS = new LoggedTunableNumber("PID/Intake/kS", 0.0);
-    public static final LoggedTunableNumber kG = new LoggedTunableNumber("PID/Intake/kG", 0.0);
+    public static final LoggedTunableNumber kG = new LoggedTunableNumber("PID/Intake/kG", 32.0);
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("PID/Intake/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("PID/Intake/kA", 0.0);
 
@@ -188,7 +188,7 @@ public final class Constants {
         new LoggedTunableNumber("PID/Shooter/Right/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("PID/Shooter/ToleranceRadsPerSec", 10.0);
+        new LoggedTunableNumber("PID/Shooter/ToleranceRadsPerSec", 20.0);
 
     public static final double GEAR_RATIO = 1.5;
   }

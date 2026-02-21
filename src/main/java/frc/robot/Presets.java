@@ -33,7 +33,7 @@ public final class Presets {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
         new LoggedTunableNumber("Setpoints/Intake/DeployTuckAngleDeg", 0.0);
     public static final LoggedTunableNumber EXTEND_ANGLE_DEG =
-        new LoggedTunableNumber("Setpoints/Intake/DeployExtendAngleDeg", 0.0);
+        new LoggedTunableNumber("Setpoints/Intake/DeployExtendAngleDeg", 95.0);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Setpoints/Intake/DeployTuningAngleDeg", 0.0);
 
@@ -51,7 +51,7 @@ public final class Presets {
     public static final LoggedTunableNumber EXHAUST_VOLTS =
         new LoggedTunableNumber("Setpoints/Loader/ExhaustVolts", 0.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
-        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustVolts", 2.0);
+        new LoggedTunableNumber("Setpoints/Loader/SlowExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
         new LoggedTunableNumber("Setpoints/Loader/TuningVolts", 0.0);
   }

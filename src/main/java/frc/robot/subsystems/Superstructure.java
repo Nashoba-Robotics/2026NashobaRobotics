@@ -125,8 +125,17 @@ public class Superstructure extends SubsystemBase {
 
   public Command endShootCommand() {
     return new SequentialCommandGroup(
-        loader.runVoltageCommand(Presets.Loader.SLOW_EXHAUST_VOLTS).withTimeout(0.1),
+        loader.runVoltageCommand(Presets.Loader.SLOW_EXHAUST_VOLTS).withTimeout(0.5),
         new ParallelCommandGroup(spindexer.stopCommand(), loader.stopCommand()));
+  }
+
+  public Command deployIntake() {
+    return intakeDeploy.runPositionCommand(
+        Units.degreesToRadians(Presets.Intake.EXTEND_ANGLE_DEG.get()));
+  }
+
+  public Command retractIntake() {
+    return intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get());
   }
 
   public Command stopAllRollersCommand() {
