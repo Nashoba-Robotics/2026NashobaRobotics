@@ -60,12 +60,12 @@ public class ShootingUtil {
     hubDistanceShooterVelocityMap.put(1.0, 280.0 + 10.0);
     hubDistanceShooterVelocityMap.put(1.5, 285.0 + 10.0);
     hubDistanceShooterVelocityMap.put(2.0, 290.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(2.5, 295.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(3.0, 305.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(3.5, 315.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(4.0, 325.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(4.5, 335.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(5.0, 345.0 + 10.0);
+    hubDistanceShooterVelocityMap.put(2.5, 295.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(3.0, 305.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(3.5, 315.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(4.0, 325.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(4.5, 335.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(5.0, 345.0 + 20.0);
 
     hubDistanceTimeOfFlightMap.put(0.0, 1.0);
     hubDistanceTimeOfFlightMap.put(1.0, 1.0);

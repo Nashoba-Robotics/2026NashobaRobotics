@@ -4,6 +4,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -176,15 +177,24 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    NamedCommands.registerCommand("shoot", superstructure.autoShoot().withTimeout(5));
+    NamedCommands.registerCommand("shoot", superstructure.autoShoot());
+    NamedCommands.registerCommand("intakeRoller", intakeRoller.runVoltageCommand(() -> 12.0));
+    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake().withTimeout(3.0));
     NamedCommands.registerCommand(
-        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+        "tuckHood",
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
 
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    autoChooser.addOption("Right T-NZ-NoClimb", new PathPlannerAuto("T-NZ-No Climb", false));
+    autoChooser.addOption("Left T-NZ-NoClimb", new PathPlannerAuto("T-NZ-No Climb", true));
+    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
+    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(
         "RunEverythingForTuning",
@@ -265,6 +275,8 @@ public class RobotContainer {
     driver.leftBumper().onTrue(superstructure.retractIntake());
 
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
+
+    driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
   }
 
   public Command getAutonomousCommand() {
