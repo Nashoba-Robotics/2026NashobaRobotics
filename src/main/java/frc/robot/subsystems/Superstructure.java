@@ -128,10 +128,7 @@ public class Superstructure extends SubsystemBase {
         spindexer.stopCommand(),
         new SequentialCommandGroup(
             loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
-            loader.stopCommand()),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand(),
-        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
+            loader.stopCommand()));
   }
 
   public Command deployIntake() {
@@ -173,7 +170,18 @@ public class Superstructure extends SubsystemBase {
                     loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                     spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))
         .withTimeout(5.0)
-        .andThen(endShootCommand());
+        .andThen(autoEndShootCommand());
+  }
+
+  public Command autoEndShootCommand() {
+    return new ParallelCommandGroup(
+        spindexer.stopCommand(),
+        new SequentialCommandGroup(
+            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
+            loader.stopCommand()),
+        leftShooter.stopCommand(),
+        rightShooter.stopCommand(),
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {
