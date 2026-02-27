@@ -46,7 +46,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   public ShooterIOTalonFX(boolean isLeftShooter, int leaderDeviceId, int followerDeviceId) {
     shooterLeader = new TalonFX(leaderDeviceId, Constants.Shooter.CANBUS);
     shooterFollower = new TalonFX(followerDeviceId, Constants.Shooter.CANBUS);
-    shooterFollower.setControl(new Follower(leaderDeviceId, MotorAlignmentValue.Aligned));
+    shooterFollower.setControl(new Follower(leaderDeviceId, MotorAlignmentValue.Opposed));
 
     config = new TalonFXConfiguration();
 
