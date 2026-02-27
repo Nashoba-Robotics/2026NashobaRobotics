@@ -56,16 +56,16 @@ public class ShootingUtil {
     hubDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(27.0));
     hubDistanceHoodAngleMap.put(5.0, Rotation2d.fromDegrees(30.0));
 
-    hubDistanceShooterVelocityMap.put(0.0, 280.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(1.0, 280.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(1.5, 285.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(2.0, 290.0 + 10.0);
-    hubDistanceShooterVelocityMap.put(2.5, 295.0 + 20.0);
-    hubDistanceShooterVelocityMap.put(3.0, 305.0 + 20.0);
-    hubDistanceShooterVelocityMap.put(3.5, 315.0 + 20.0);
-    hubDistanceShooterVelocityMap.put(4.0, 325.0 + 20.0);
-    hubDistanceShooterVelocityMap.put(4.5, 335.0 + 20.0);
-    hubDistanceShooterVelocityMap.put(5.0, 345.0 + 20.0);
+    hubDistanceShooterVelocityMap.put(0.0, 200.0);
+    hubDistanceShooterVelocityMap.put(1.0, 200.0);
+    hubDistanceShooterVelocityMap.put(1.5, 205.0);
+    hubDistanceShooterVelocityMap.put(2.0, 300.0);
+    hubDistanceShooterVelocityMap.put(2.5, 315.0);
+    hubDistanceShooterVelocityMap.put(3.0, 325.0);
+    hubDistanceShooterVelocityMap.put(3.5, 335.0);
+    hubDistanceShooterVelocityMap.put(4.0, 345.0);
+    hubDistanceShooterVelocityMap.put(4.5, 355.0);
+    hubDistanceShooterVelocityMap.put(5.0, 365.0);
 
     hubDistanceTimeOfFlightMap.put(0.0, 1.0);
     hubDistanceTimeOfFlightMap.put(1.0, 1.0);
@@ -79,16 +79,16 @@ public class ShootingUtil {
     shuttleDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(42.0));
     shuttleDistanceHoodAngleMap.put(5.5, Rotation2d.fromDegrees(42.0));
 
-    shuttleDistanceShooterVelocityMap.put(0.0, 250.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(1.5, 250.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(2.5, 270.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(3.5, 290.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(4.5, 310.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(5.5, 350.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(6.5, 390.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(7.5, 430.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(8.5, 470.0 + 15.0);
-    shuttleDistanceShooterVelocityMap.put(9.5, 510.0 + 15.0);
+    shuttleDistanceShooterVelocityMap.put(0.0, 265.0);
+    shuttleDistanceShooterVelocityMap.put(1.5, 265.0);
+    shuttleDistanceShooterVelocityMap.put(2.5, 285.0);
+    shuttleDistanceShooterVelocityMap.put(3.5, 305.0);
+    shuttleDistanceShooterVelocityMap.put(4.5, 325.0);
+    shuttleDistanceShooterVelocityMap.put(5.5, 365.0);
+    shuttleDistanceShooterVelocityMap.put(6.5, 405.0);
+    shuttleDistanceShooterVelocityMap.put(7.5, 445.0);
+    shuttleDistanceShooterVelocityMap.put(8.5, 485.0);
+    shuttleDistanceShooterVelocityMap.put(9.5, 525.0);
     shuttleDistanceShooterVelocityMap.put(10.5, 540.0);
   }
 

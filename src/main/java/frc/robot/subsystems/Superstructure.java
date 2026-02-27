@@ -165,7 +165,10 @@ public class Superstructure extends SubsystemBase {
             new SequentialCommandGroup(
                 new WaitUntilCommand(
                     () ->
-                        leftShooter.atSetpoint() && rightShooter.atSetpoint() && hood.atSetpoint()),
+                        leftShooter.atSetpoint()
+                            && rightShooter.atSetpoint()
+                            && hood.atSetpoint()
+                            && DriveCommands.atAngleSetpoint()),
                 new ParallelCommandGroup(
                     loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                     spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))

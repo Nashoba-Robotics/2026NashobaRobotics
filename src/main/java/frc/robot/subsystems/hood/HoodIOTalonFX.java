@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -17,6 +18,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PhoenixUtil;
 
 public class HoodIOTalonFX implements HoodIO {
@@ -34,6 +36,9 @@ public class HoodIOTalonFX implements HoodIO {
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
   private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
+
+  private final LoggedTunableNumber minAngleDeg = new LoggedTunableNumber("Hood/minAngleDeg", 0.0);
+  private final LoggedTunableNumber maxAngleDeg = new LoggedTunableNumber("Hood/maxAngleDeg", 43.0);
 
   public HoodIOTalonFX() {
     hood = new TalonFX(Constants.Hood.MOTOR_ID);
@@ -127,7 +132,12 @@ public class HoodIOTalonFX implements HoodIO {
   public void runPosition(double positionRads, double velocityRadsPerSec) {
     hood.setControl(
         positionTorqueCurrentFOC
-            .withPosition(Units.radiansToRotations(positionRads))
+            .withPosition(
+                Units.radiansToRotations(
+                    MathUtil.clamp(
+                        positionRads,
+                        Units.degreesToRadians(minAngleDeg.get()),
+                        Units.degreesToRadians(maxAngleDeg.get()))))
             .withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
   }
 

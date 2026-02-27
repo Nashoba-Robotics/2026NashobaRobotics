@@ -5,6 +5,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -214,13 +215,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    Trigger inAllianceZone =
-        new Trigger(
-            () -> {
-              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
-              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
-            });
-
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
@@ -236,14 +230,26 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    Trigger inAllianceZone =
+        new Trigger(
+            () -> {
+              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
+            });
+
+    Trigger inShootingTolerance =
+        new Trigger(
+            () ->
+                hood.atSetpoint()
+                    && leftShooter.atSetpoint()
+                    && rightShooter.atSetpoint()
+                    && DriveCommands.atAngleSetpoint());
+
     driver
         .rightTrigger()
         .and(inAllianceZone)
         .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
+        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
     driver
@@ -251,10 +257,7 @@ public class RobotContainer {
         .and(inAllianceZone.negate())
         .whileTrue(
             superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
+        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
