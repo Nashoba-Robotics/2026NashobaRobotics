@@ -48,16 +48,16 @@
     },
     {
       "anchor": {
-        "x": 5.953980028530669,
-        "y": 0.8068045649072781
+        "x": 5.915164051355207,
+        "y": 0.69
       },
       "prevControl": {
-        "x": 6.202267679611388,
-        "y": 0.8360148767991291
+        "x": 6.163451702435926,
+        "y": 0.7192103118918509
       },
       "nextControl": {
-        "x": 5.011449299817215,
-        "y": 0.6959185968233361
+        "x": 4.972633322641753,
+        "y": 0.5791140319160579
       },
       "isLocked": false,
       "linkedName": null
@@ -107,9 +107,14 @@
   "eventMarkers": [
     {
       "name": "intakeRoller",
-      "waypointRelativePos": 0.3673193787981025,
-      "endWaypointRelativePos": 3.1978392977718015,
-      "command": null
+      "waypointRelativePos": 0.5401755570560344,
+      "endWaypointRelativePos": 2.787305874409194,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intakeRoller"
+        }
+      }
     }
   ],
   "globalConstraints": {

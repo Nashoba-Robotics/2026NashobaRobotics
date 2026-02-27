@@ -180,7 +180,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand("intakeRoller", intakeRoller.runVoltageCommand(() -> 12.0));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake().withTimeout(3.0));
+    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
+    NamedCommands.registerCommand(
+        "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
     NamedCommands.registerCommand(
         "tuckHood",
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
@@ -191,10 +193,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("Right T-NZ-NoClimb", new PathPlannerAuto("T-NZ-No Climb", false));
-    autoChooser.addOption("Left T-NZ-NoClimb", new PathPlannerAuto("T-NZ-No Climb", true));
+
     autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
     autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption("Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(

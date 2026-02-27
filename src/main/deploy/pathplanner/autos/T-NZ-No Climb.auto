@@ -13,26 +13,8 @@
                 "data": {
                   "pathName": "T-NZ-Steal-TShoot"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeDeploy"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeRoller"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {

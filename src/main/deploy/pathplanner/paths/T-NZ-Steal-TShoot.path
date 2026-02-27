@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.116690442225392,
-        "y": 0.4315834522111266
+        "x": 4.582482168330957,
+        "y": 0.6386019971469319
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.928102710413693,
-        "y": 0.6127246790299581
+        "x": 6.3938944365192585,
+        "y": 0.8197432239657634
       },
       "isLocked": false,
       "linkedName": null
@@ -110,10 +110,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "intakeRoller",
-      "waypointRelativePos": 1.0803511141120898,
+      "name": "intakeDeploy",
+      "waypointRelativePos": 0.3646185010128384,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intakeDeploy"
+        }
+      }
+    },
+    {
+      "name": "intakeRoller",
+      "waypointRelativePos": 1.1478730587440875,
+      "endWaypointRelativePos": 2.5118163403105913,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intakeRoller"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -132,7 +148,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -135.0
   },
   "useDefaultConstraints": false
 }

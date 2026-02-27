@@ -13,18 +13,6 @@
                 "data": {
                   "pathName": "T-NZ-Steal-TShoot"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeRoller"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeDeploy"
-                }
               }
             ]
           }
@@ -49,18 +37,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "TShoot-T-NZ"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeRoller"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeDeploy"
                 }
               }
             ]
