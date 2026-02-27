@@ -4,6 +4,8 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -176,15 +178,26 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    NamedCommands.registerCommand("shoot", superstructure.autoShoot().withTimeout(5));
+    NamedCommands.registerCommand("shoot", superstructure.autoShoot());
+    NamedCommands.registerCommand("intakeRoller", intakeRoller.runVoltageCommand(() -> 12.0));
+    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
     NamedCommands.registerCommand(
-        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+        "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
+    NamedCommands.registerCommand(
+        "tuckHood",
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
 
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+
+    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
+    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption("Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(
         "RunEverythingForTuning",
@@ -204,13 +217,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    Trigger inAllianceZone =
-        new Trigger(
-            () -> {
-              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
-              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
-            });
-
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
@@ -226,14 +232,26 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    Trigger inAllianceZone =
+        new Trigger(
+            () -> {
+              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
+              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
+            });
+
+    Trigger inShootingTolerance =
+        new Trigger(
+            () ->
+                hood.atSetpoint()
+                    && leftShooter.atSetpoint()
+                    && rightShooter.atSetpoint()
+                    && DriveCommands.atAngleSetpoint());
+
     driver
         .rightTrigger()
         .and(inAllianceZone)
         .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
+        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
     driver
@@ -241,10 +259,7 @@ public class RobotContainer {
         .and(inAllianceZone.negate())
         .whileTrue(
             superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(hood::atSetpoint)
-        .and(leftShooter::atSetpoint)
-        .and(rightShooter::atSetpoint)
-        .and(DriveCommands::atAngleSetpoint)
+        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
@@ -265,6 +280,8 @@ public class RobotContainer {
     driver.leftBumper().onTrue(superstructure.retractIntake());
 
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
+
+    driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
   }
 
   public Command getAutonomousCommand() {

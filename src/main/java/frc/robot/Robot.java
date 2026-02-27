@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -71,6 +72,9 @@ public class Robot extends LoggedRobot {
       DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
     }
     CommandScheduler.getInstance().setPeriod(loopOverrunWarningTimeout);
+
+    // Configure brownout voltage
+    RobotController.setBrownoutVoltage(6.0);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 

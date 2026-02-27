@@ -124,9 +124,11 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command endShootCommand() {
-    return new SequentialCommandGroup(
-        loader.runVoltageCommand(Presets.Loader.SLOW_EXHAUST_VOLTS).withTimeout(0.5),
-        new ParallelCommandGroup(spindexer.stopCommand(), loader.stopCommand()));
+    return new ParallelCommandGroup(
+        spindexer.stopCommand(),
+        new SequentialCommandGroup(
+            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
+            loader.stopCommand()));
   }
 
   public Command deployIntake() {
@@ -159,13 +161,30 @@ public class Superstructure extends SubsystemBase {
 
   public Command autoShoot() {
     return new ParallelCommandGroup(
-        hubAimCommand(() -> 0.0, () -> 0.0),
+            hubAimCommand(() -> 0.0, () -> 0.0),
+            new SequentialCommandGroup(
+                new WaitUntilCommand(
+                    () ->
+                        leftShooter.atSetpoint()
+                            && rightShooter.atSetpoint()
+                            && hood.atSetpoint()
+                            && DriveCommands.atAngleSetpoint()),
+                new ParallelCommandGroup(
+                    loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+                    spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))
+        .withTimeout(5.0)
+        .andThen(autoEndShootCommand());
+  }
+
+  public Command autoEndShootCommand() {
+    return new ParallelCommandGroup(
+        spindexer.stopCommand(),
         new SequentialCommandGroup(
-            new WaitUntilCommand(
-                () -> leftShooter.atSetpoint() && rightShooter.atSetpoint() && hood.atSetpoint()),
-            new ParallelCommandGroup(
-                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
-                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))));
+            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
+            loader.stopCommand()),
+        leftShooter.stopCommand(),
+        rightShooter.stopCommand(),
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }
 
   public Rotation2d getHubShootingSetpointDriveAngle() {
