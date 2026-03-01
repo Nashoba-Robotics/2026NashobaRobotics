@@ -30,7 +30,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final StatusSignal<Current> supplyCurrent;
 
   public IntakeRollerIOTalonFX() {
-    roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID);
+    roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID, Constants.Intake.CANBUS);
 
     rollerConfig = new TalonFXConfiguration();
 
@@ -45,7 +45,6 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    // roller.getConfigurator().apply(rollerConfig);
     PhoenixUtil.tryUntilOk(5, () -> roller.getConfigurator().apply(rollerConfig));
 
     temp = roller.getDeviceTemp();

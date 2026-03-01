@@ -193,10 +193,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-
     autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
     autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption("Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption(
+        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(

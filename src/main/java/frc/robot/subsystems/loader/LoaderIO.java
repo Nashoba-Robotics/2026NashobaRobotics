@@ -6,12 +6,19 @@ public interface LoaderIO {
 
   @AutoLog
   public static class LoaderIOInputs {
-    public boolean connected = false;
-    public double tempCelsius = 0.0;
-    public double velocityRadsPerSec = 0.0;
-    public double appliedVolts = 0.0;
-    public double statorCurrentAmps = 0.0;
-    public double supplyCurrentAmps = 0.0;
+    public boolean leftConnected = false;
+    public double leftTempCelsius = 0.0;
+    public double leftVelocityRadsPerSec = 0.0;
+    public double leftAppliedVolts = 0.0;
+    public double leftStatorCurrentAmps = 0.0;
+    public double leftSupplyCurrentAmps = 0.0;
+
+    public boolean rightConnected = false;
+    public double rightTempCelsius = 0.0;
+    public double rightVelocityRadsPerSec = 0.0;
+    public double rightAppliedVolts = 0.0;
+    public double rightStatorCurrentAmps = 0.0;
+    public double rightSupplyCurrentAmps = 0.0;
   }
 
   public default void updateInputs(LoaderIOInputs inputs) {}

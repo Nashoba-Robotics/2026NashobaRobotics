@@ -142,9 +142,11 @@ public final class Constants {
 
   public static class Loader {
     public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 13;
+    public static final int LEFT_MOTOR_ID = 13;
+    public static final int RIGHT_MOTOR_ID = 0;
 
-    public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue LEFT_INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 80.0;

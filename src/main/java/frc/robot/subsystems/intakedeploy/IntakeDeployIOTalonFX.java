@@ -37,7 +37,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
 
   public IntakeDeployIOTalonFX() {
-    deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID);
+    deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID, Constants.Intake.CANBUS);
     deployConfig = new TalonFXConfiguration();
 
     deployConfig.CurrentLimits.StatorCurrentLimitEnable = true;

@@ -17,7 +17,9 @@ public class Shooter extends SubsystemBase {
 
   private final boolean isLeftShooter;
 
-  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Debouncer leaderMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Debouncer followerMotorConnectedDebouncer =
+      new Debouncer(0.5, DebounceType.kFalling);
   private final Alert shooterLeaderDisconnectedAlert;
   private final Alert shooterFollowerDisconnectedAlert;
 
@@ -40,9 +42,10 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/" + (isLeftShooter ? "Left" : "Right"), inputs);
 
-    shooterLeaderDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.leaderConnected));
+    shooterLeaderDisconnectedAlert.set(
+        !leaderMotorConnectedDebouncer.calculate(inputs.leaderConnected));
     shooterFollowerDisconnectedAlert.set(
-        !motorConnectedDebouncer.calculate(inputs.followerConnected));
+        !followerMotorConnectedDebouncer.calculate(inputs.followerConnected));
 
     if (isLeftShooter) {
       if (Constants.Shooter.LEFT_kP.hasChanged(hashCode())

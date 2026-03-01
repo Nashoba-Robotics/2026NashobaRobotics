@@ -46,7 +46,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   public ShooterIOTalonFX(boolean isLeftShooter, int leaderDeviceId, int followerDeviceId) {
     shooterLeader = new TalonFX(leaderDeviceId, Constants.Shooter.CANBUS);
     shooterFollower = new TalonFX(followerDeviceId, Constants.Shooter.CANBUS);
-    shooterFollower.setControl(new Follower(leaderDeviceId, MotorAlignmentValue.Opposed));
+    shooterFollower.setControl(new Follower(leaderDeviceId, MotorAlignmentValue.Aligned));
 
     config = new TalonFXConfiguration();
 
@@ -97,10 +97,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         leaderVelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
-        leaderSupplyCurrent);
-
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        1 / Constants.loopTime,
+        leaderSupplyCurrent,
         followerTemp,
         followerVelocity,
         followerAppliedVolts,
@@ -117,9 +114,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         leaderVelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
-        leaderSupplyCurrent);
-    PhoenixUtil.registerSignals(
-        false,
+        leaderSupplyCurrent,
         followerTemp,
         followerVelocity,
         followerAppliedVolts,
@@ -135,8 +130,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         leaderVelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
-        leaderSupplyCurrent);
-    BaseStatusSignal.refreshAll(
+        leaderSupplyCurrent,
         followerTemp,
         followerVelocity,
         followerAppliedVolts,

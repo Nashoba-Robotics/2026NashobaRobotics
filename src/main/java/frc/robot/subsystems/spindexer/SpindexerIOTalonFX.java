@@ -30,7 +30,7 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   private final StatusSignal<Current> supplyCurrent;
 
   public SpindexerIOTalonFX() {
-    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID);
+    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID, Constants.Spindexer.CANBUS);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;

@@ -13,9 +13,13 @@ public class Loader extends SubsystemBase {
   private final LoaderIO io;
   private final LoaderIOInputsAutoLogged inputs = new LoaderIOInputsAutoLogged();
 
-  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert loaderMotorDisconnectedAlert =
-      new Alert("Loader motor disconnected!", Alert.AlertType.kWarning);
+  private final Debouncer leftMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert leftLoaderMotorDisconnectedAlert =
+      new Alert("LeftLoader motor disconnected!", Alert.AlertType.kWarning);
+
+  private final Debouncer rightMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Alert rightLoaderMotorDisconnectedAlert =
+      new Alert("RightLoader motor disconnected!", Alert.AlertType.kWarning);
 
   public Loader(LoaderIO io) {
     this.io = io;
@@ -26,7 +30,10 @@ public class Loader extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Loader", inputs);
 
-    loaderMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    leftLoaderMotorDisconnectedAlert.set(
+        !leftMotorConnectedDebouncer.calculate(inputs.leftConnected));
+    rightLoaderMotorDisconnectedAlert.set(
+        !rightMotorConnectedDebouncer.calculate(inputs.rightConnected));
   }
 
   public Command runVoltageCommand(DoubleSupplier volts) {

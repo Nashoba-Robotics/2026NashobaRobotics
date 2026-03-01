@@ -41,7 +41,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final LoggedTunableNumber maxAngleDeg = new LoggedTunableNumber("Hood/maxAngleDeg", 43.0);
 
   public HoodIOTalonFX() {
-    hood = new TalonFX(Constants.Hood.MOTOR_ID);
+    hood = new TalonFX(Constants.Hood.MOTOR_ID, Constants.Hood.CANBUS);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
