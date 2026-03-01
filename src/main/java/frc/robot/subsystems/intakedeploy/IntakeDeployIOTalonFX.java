@@ -2,10 +2,12 @@ package frc.robot.subsystems.intakedeploy;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -23,9 +25,13 @@ import frc.robot.util.PhoenixUtil;
 public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
   private final TalonFX deploy;
-  private final TalonFXConfiguration deployConfig;
+  private final TalonFXConfiguration motorConfig;
+
+  private final CANcoder encoder;
+  private final CANcoderConfiguration encoderConfig;
 
   private final StatusSignal<Temperature> temp;
+  private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<Angle> rotorPosition;
   private final StatusSignal<Double> positionSetpoint;
   private final StatusSignal<AngularVelocity> velocity;
@@ -38,33 +44,47 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
   public IntakeDeployIOTalonFX() {
     deploy = new TalonFX(Constants.Intake.DEPLOY_MOTOR_ID, Constants.Intake.CANBUS);
-    deployConfig = new TalonFXConfiguration();
+    motorConfig = new TalonFXConfiguration();
 
-    deployConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    deployConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.DEPLOY_STATOR_LIMIT;
-    deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    deployConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.DEPLOY_SUPPLY_LIMIT;
+    encoder = new CANcoder(Constants.Intake.ENCODER_ID, Constants.Intake.CANBUS);
+    encoderConfig = new CANcoderConfiguration();
 
-    deployConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    deployConfig.Feedback.SensorToMechanismRatio = Constants.Intake.DEPLOY_GEAR_RATIO;
+    motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    motorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.DEPLOY_STATOR_LIMIT;
+    motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.DEPLOY_SUPPLY_LIMIT;
+    
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    motorConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.ENCODER_ID;
+    motorConfig.Feedback.RotorToSensorRatio =
+        Constants.Intake.DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO;
+    motorConfig.Feedback.SensorToMechanismRatio =
+        Constants.Intake.DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO;
 
-    deployConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
-    deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    motorConfig.MotorOutput.Inverted = Constants.Intake.DEPLOY_INVERTED;
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    deployConfig.Slot0.kP = Constants.Intake.kP.get();
-    deployConfig.Slot0.kD = Constants.Intake.kD.get();
-    deployConfig.Slot0.kS = Constants.Intake.kS.get();
-    deployConfig.Slot0.kG = Constants.Intake.kG.get();
-    deployConfig.Slot0.kV = Constants.Intake.kV.get();
-    deployConfig.Slot0.kA = Constants.Intake.kA.get();
-    deployConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-    deployConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    deployConfig.Slot0.GravityArmPositionOffset =
+    motorConfig.Slot0.kP = Constants.Intake.kP.get();
+    motorConfig.Slot0.kD = Constants.Intake.kD.get();
+    motorConfig.Slot0.kS = Constants.Intake.kS.get();
+    motorConfig.Slot0.kG = Constants.Intake.kG.get();
+    motorConfig.Slot0.kV = Constants.Intake.kV.get();
+    motorConfig.Slot0.kA = Constants.Intake.kA.get();
+    motorConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+    motorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    motorConfig.Slot0.GravityArmPositionOffset =
         Constants.Intake.GRAVITY_POSTION_OFFSET.getRotations();
 
-    PhoenixUtil.tryUntilOk(5, () -> deploy.getConfigurator().apply(deployConfig, 0.25));
+    encoderConfig.MagnetSensor.SensorDirection = Constants.Intake.ENCODER_DIRECTION;
+    encoderConfig.MagnetSensor.MagnetOffset = Constants.Intake.ENCODER_OFFSET;
+    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+        Constants.Intake.ENCODER_DISCONTINUITY_POINT;
+
+    PhoenixUtil.tryUntilOk(5, () -> deploy.getConfigurator().apply(motorConfig, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(encoderConfig, 0.25));
 
     temp = deploy.getDeviceTemp();
+    absolutePosition = encoder.getAbsolutePosition();
     rotorPosition = deploy.getPosition();
     positionSetpoint = deploy.getClosedLoopReference();
     velocity = deploy.getVelocity();
@@ -75,6 +95,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime,
         temp,
+        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -82,10 +103,12 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
         statorCurrent,
         supplyCurrent);
     deploy.optimizeBusUtilization();
+    encoder.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(
         false,
         temp,
+        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -98,6 +121,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
   public void updateInputs(IntakeDeployIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         temp,
+        absolutePosition,
         rotorPosition,
         positionSetpoint,
         velocity,
@@ -114,7 +138,10 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
             appliedVolts,
             statorCurrent,
             supplyCurrent);
+    inputs.encoderConnected =
+        BaseStatusSignal.isAllGood(absolutePosition);
     inputs.tempCelsius = temp.getValueAsDouble();
+    inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());
     inputs.positionSetpointRads = Units.rotationsToRadians(positionSetpoint.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
@@ -141,17 +168,17 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
 
   @Override
   public void setPID(double kP, double kD) {
-    deployConfig.Slot0.kP = kP;
-    deployConfig.Slot0.kD = kD;
-    deploy.getConfigurator().apply(deployConfig);
+    motorConfig.Slot0.kP = kP;
+    motorConfig.Slot0.kD = kD;
+    deploy.getConfigurator().apply(motorConfig);
   }
 
   @Override
   public void setFeedForward(double kS, double kG, double kV, double kA) {
-    deployConfig.Slot0.kS = kS;
-    deployConfig.Slot0.kG = kG;
-    deployConfig.Slot0.kV = kV;
-    deployConfig.Slot0.kA = kA;
-    deploy.getConfigurator().apply(deployConfig);
+    motorConfig.Slot0.kS = kS;
+    motorConfig.Slot0.kG = kG;
+    motorConfig.Slot0.kV = kV;
+    motorConfig.Slot0.kA = kA;
+    deploy.getConfigurator().apply(motorConfig);
   }
 }

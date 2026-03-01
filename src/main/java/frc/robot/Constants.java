@@ -80,8 +80,14 @@ public final class Constants {
   public static class Hood {
     public static final String CANBUS = "rio";
     public static final int MOTOR_ID = 12;
+    public static final int ENCODER_ID = 0;
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+
+    public static final SensorDirectionValue ENCODER_DIRECTION =
+        SensorDirectionValue.Clockwise_Positive;
+    public static final double ENCODER_OFFSET = 0.0;
+    public static final double ENCODER_DISCONTINUITY_POINT = 0.5;
 
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 60.0;
@@ -95,7 +101,9 @@ public final class Constants {
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Hood/ToleranceDeg", 1.0);
 
-    public static final double GEAR_RATIO = 144.5;
+    public static final double ROTOR_TO_SENSOR_GEAR_RATIO = 8.5;
+    public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 17.0;
+
   }
 
   public static class Spindexer {
@@ -107,16 +115,22 @@ public final class Constants {
     public static final double STATOR_LIMIT = 40.0;
     public static final double SUPPLY_LIMIT = 40.0;
 
-    public static final double GEAR_RATIO = 1.0;
+    public static final double GEAR_RATIO = 2.0;
   }
 
   public static class Intake {
     public static final String CANBUS = "rio";
     public static final int DEPLOY_MOTOR_ID = 16;
     public static final int ROLLER_MOTOR_ID = 15;
+    public static final int ENCODER_ID = 0;
 
     public static final InvertedValue DEPLOY_INVERTED = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue ROLLER_INVERTED = InvertedValue.CounterClockwise_Positive;
+
+    public static final SensorDirectionValue ENCODER_DIRECTION =
+        SensorDirectionValue.Clockwise_Positive;
+    public static final double ENCODER_OFFSET = 0.0;
+    public static final double ENCODER_DISCONTINUITY_POINT = 0.5;
 
     public static final double DEPLOY_STATOR_LIMIT = 80.0;
     public static final double DEPLOY_SUPPLY_LIMIT = 40.0;
@@ -131,13 +145,14 @@ public final class Constants {
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
 
+    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(0.0);
+
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
 
-    public static final double ROLLER_GEAR_RATIO = 30.0 / 14.0;
-    public static final double DEPLOY_GEAR_RATIO = 23.0;
-
-    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(90.0);
+    public static final double ROLLER_GEAR_RATIO = 2.0;
+    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0;
+    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 32.0 / 18.0;
   }
 
   public static class Loader {
@@ -192,6 +207,6 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 20.0);
 
-    public static final double GEAR_RATIO = 1.5;
+    public static final double GEAR_RATIO = 1.35;
   }
 }

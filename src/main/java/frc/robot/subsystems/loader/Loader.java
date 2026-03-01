@@ -14,10 +14,10 @@ public class Loader extends SubsystemBase {
   private final LoaderIOInputsAutoLogged inputs = new LoaderIOInputsAutoLogged();
 
   private final Debouncer leftMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  private final Debouncer rightMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+  
   private final Alert leftLoaderMotorDisconnectedAlert =
       new Alert("LeftLoader motor disconnected!", Alert.AlertType.kWarning);
-
-  private final Debouncer rightMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Alert rightLoaderMotorDisconnectedAlert =
       new Alert("RightLoader motor disconnected!", Alert.AlertType.kWarning);
 

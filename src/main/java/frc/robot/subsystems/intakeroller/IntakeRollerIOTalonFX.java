@@ -21,13 +21,13 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final TalonFX roller;
   private final TalonFXConfiguration rollerConfig;
 
-  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
+  
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   public IntakeRollerIOTalonFX() {
     roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID, Constants.Intake.CANBUS);

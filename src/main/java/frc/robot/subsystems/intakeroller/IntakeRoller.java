@@ -14,7 +14,7 @@ public class IntakeRoller extends SubsystemBase {
   private final IntakeRollerIOInputsAutoLogged inputs = new IntakeRollerIOInputsAutoLogged();
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert intakeRollerMotorDisconnectedAlert =
+  private final Alert rollerMotorDisconnectedAlert =
       new Alert("IntakeRoller motor disconnected!", Alert.AlertType.kWarning);
 
   public IntakeRoller(IntakeRollerIO io) {
@@ -26,7 +26,7 @@ public class IntakeRoller extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakeRoller", inputs);
 
-    intakeRollerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    rollerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
   public Command runVoltageCommand(DoubleSupplier volts) {
