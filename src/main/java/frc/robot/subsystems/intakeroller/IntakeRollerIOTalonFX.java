@@ -19,33 +19,33 @@ import frc.robot.util.PhoenixUtil;
 public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
   private final TalonFX roller;
-  private final TalonFXConfiguration rollerConfig;
+  private final TalonFXConfiguration config;
 
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
-  
+
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   public IntakeRollerIOTalonFX() {
     roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID, Constants.Intake.CANBUS);
 
-    rollerConfig = new TalonFXConfiguration();
+    config = new TalonFXConfiguration();
 
-    rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rollerConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
-    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.ROLLER_STATOR_LIMIT;
 
-    rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    rollerConfig.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_GEAR_RATIO;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_GEAR_RATIO;
 
-    rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
-    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    PhoenixUtil.tryUntilOk(5, () -> roller.getConfigurator().apply(rollerConfig));
+    PhoenixUtil.tryUntilOk(5, () -> roller.getConfigurator().apply(config));
 
     temp = roller.getDeviceTemp();
     velocity = roller.getVelocity();

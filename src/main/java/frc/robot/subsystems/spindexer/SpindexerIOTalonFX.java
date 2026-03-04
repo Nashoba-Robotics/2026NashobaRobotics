@@ -20,7 +20,7 @@ public class SpindexerIOTalonFX implements SpindexerIO {
 
   private final TalonFX spindexer;
   private final TalonFXConfiguration config;
-  
+
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;

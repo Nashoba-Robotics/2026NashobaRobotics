@@ -21,7 +21,7 @@ public class Hood extends SubsystemBase {
 
   private final Alert hoodMotorDisconnectedAlert =
       new Alert("Hood motor disconnected!", Alert.AlertType.kWarning);
-  private final Alert hoodEncoderDisconnectedAlert = 
+  private final Alert hoodEncoderDisconnectedAlert =
       new Alert("Hood encoder disconnected!", Alert.AlertType.kWarning);
 
   public Hood(HoodIO io) {

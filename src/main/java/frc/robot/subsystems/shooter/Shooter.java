@@ -20,6 +20,7 @@ public class Shooter extends SubsystemBase {
   private final Debouncer leaderMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer followerMotorConnectedDebouncer =
       new Debouncer(0.5, DebounceType.kFalling);
+
   private final Alert shooterLeaderDisconnectedAlert;
   private final Alert shooterFollowerDisconnectedAlert;
 

@@ -53,11 +53,10 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     motorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.DEPLOY_STATOR_LIMIT;
     motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.DEPLOY_SUPPLY_LIMIT;
-    
+
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     motorConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.ENCODER_ID;
-    motorConfig.Feedback.RotorToSensorRatio =
-        Constants.Intake.DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO;
+    motorConfig.Feedback.RotorToSensorRatio = Constants.Intake.DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO;
     motorConfig.Feedback.SensorToMechanismRatio =
         Constants.Intake.DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO;
 
@@ -138,8 +137,7 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
             appliedVolts,
             statorCurrent,
             supplyCurrent);
-    inputs.encoderConnected =
-        BaseStatusSignal.isAllGood(absolutePosition);
+    inputs.encoderConnected = BaseStatusSignal.isAllGood(absolutePosition);
     inputs.tempCelsius = temp.getValueAsDouble();
     inputs.absolutePositionRads = Units.rotationsToRadians(absolutePosition.getValueAsDouble());
     inputs.rotorPositionRads = Units.rotationsToRadians(rotorPosition.getValueAsDouble());

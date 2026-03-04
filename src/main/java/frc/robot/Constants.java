@@ -103,7 +103,6 @@ public final class Constants {
 
     public static final double ROTOR_TO_SENSOR_GEAR_RATIO = 8.5;
     public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 17.0;
-
   }
 
   public static class Spindexer {
@@ -120,7 +119,7 @@ public final class Constants {
 
   public static class Intake {
     public static final String CANBUS = "rio";
-    public static final int DEPLOY_MOTOR_ID = 16;
+    public static final int DEPLOY_MOTOR_ID = 11;
     public static final int ROLLER_MOTOR_ID = 15;
     public static final int ENCODER_ID = 0;
 
@@ -151,7 +150,7 @@ public final class Constants {
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
 
     public static final double ROLLER_GEAR_RATIO = 2.0;
-    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0;
+    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 50.0;
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 32.0 / 18.0;
   }
 

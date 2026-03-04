@@ -18,7 +18,7 @@ public class IntakeDeploy extends SubsystemBase {
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
   private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  
+
   private final Alert deployMotorDisconnectedAlert =
       new Alert("IntakeDeploy motor disconnected!", Alert.AlertType.kWarning);
   private final Alert deployEncoderDisconnectedAlert =
@@ -33,8 +33,7 @@ public class IntakeDeploy extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakeDeploy", inputs);
 
-    deployMotorDisconnectedAlert.set(
-        !motorConnectedDebouncer.calculate(inputs.motorConnected));
+    deployMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.motorConnected));
     deployEncoderDisconnectedAlert.set(
         !encoderConnectedDebouncer.calculate(inputs.encoderConnected));
 
