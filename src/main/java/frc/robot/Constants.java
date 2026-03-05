@@ -158,7 +158,7 @@ public final class Constants {
   public static class Loader {
     public static final String CANBUS = "rio";
     public static final int LEFT_MOTOR_ID = 13;
-    public static final int RIGHT_MOTOR_ID = 0;
+    public static final int RIGHT_MOTOR_ID = 17;
 
     public static final InvertedValue LEFT_INVERTED = InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
