@@ -13,6 +13,12 @@
                 "data": {
                   "pathName": "T-NZ-Steal-TShoot"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intakeRoller"
+                }
               }
             ]
           }
@@ -37,6 +43,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "TShoot-T-NZ"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intakeRoller"
                 }
               }
             ]

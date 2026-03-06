@@ -35,7 +35,7 @@ public class LoaderIOTalonFX implements LoaderIO {
   private final StatusSignal<Current> rightStatorCurrent;
   private final StatusSignal<Current> rightSupplyCurrent;
 
-  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
 
   public LoaderIOTalonFX() {
     leftLoader = new TalonFX(Constants.Loader.LEFT_MOTOR_ID, Constants.Loader.CANBUS);

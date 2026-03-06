@@ -144,7 +144,7 @@ public final class Constants {
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
 
-    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(0.0);
+    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(120.0);
 
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
@@ -182,29 +182,29 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 80.0;
 
     public static final LoggedTunableNumber LEFT_kP =
-        new LoggedTunableNumber("Shooter/Left/PID/kP", 0.0);
+        new LoggedTunableNumber("Shooter/Left/PID/kP", 10.0);
     public static final LoggedTunableNumber LEFT_kD =
         new LoggedTunableNumber("Shooter/Left/PID/kD", 0.0);
     public static final LoggedTunableNumber LEFT_kS =
-        new LoggedTunableNumber("Shooter/Left/PID/kS", 0.0);
+        new LoggedTunableNumber("Shooter/Left/PID/kS", 5.2);
     public static final LoggedTunableNumber LEFT_kV =
-        new LoggedTunableNumber("Shooter/Left/PID/kV", 0.0);
+        new LoggedTunableNumber("Shooter/Left/PID/kV", 0.043);
     public static final LoggedTunableNumber LEFT_kA =
         new LoggedTunableNumber("Shooter/Left/PID/kA", 0.0);
 
     public static final LoggedTunableNumber RIGHT_kP =
-        new LoggedTunableNumber("Shooter/Right/PID/kP", 0.0);
+        new LoggedTunableNumber("Shooter/Right/PID/kP", 10.0);
     public static final LoggedTunableNumber RIGHT_kD =
         new LoggedTunableNumber("Shooter/Right/PID/kD", 0.0);
     public static final LoggedTunableNumber RIGHT_kS =
-        new LoggedTunableNumber("Shooter/Right/PID/kS", 0.0);
+        new LoggedTunableNumber("Shooter/Right/PID/kS", 5.2);
     public static final LoggedTunableNumber RIGHT_kV =
-        new LoggedTunableNumber("Shooter/Right/PID/kV", 0.0);
+        new LoggedTunableNumber("Shooter/Right/PID/kV", 0.043);
     public static final LoggedTunableNumber RIGHT_kA =
         new LoggedTunableNumber("Shooter/Right/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 0.0);
+        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 15.0);
 
     public static final double GEAR_RATIO = 1.35;
   }

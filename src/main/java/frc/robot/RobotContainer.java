@@ -87,7 +87,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2));
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
@@ -179,7 +180,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
-    NamedCommands.registerCommand("intakeRoller", intakeRoller.runVoltageCommand(() -> 12.0));
+    NamedCommands.registerCommand(
+        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
     NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
     NamedCommands.registerCommand(
         "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));

@@ -18,14 +18,16 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "Front_Camera";
-  public static String camera1Name = "Back_Right_Camera";
+  public static String camera1Name = "Back_Left_Camera";
+  public static String camera2Name = "Back_Right_Camera";
 
   // Robot to camera transforms
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.299, 0.273, 0.415, new Rotation3d(0.0, -0.261799, -0.261799));
+      new Transform3d(0.273, 0.299, 0.415, new Rotation3d(0.0, -0.261799, -0.261799));
   public static Transform3d robotToCamera1 =
-      new Transform3d(
-          0.198199, -0.314863, 0.435406, new Rotation3d(-0.041906, -0.340384, -2.344587));
+      new Transform3d(0.159, 0.321, 0.482, new Rotation3d(0.0, -0.130899, 2.356194));
+  public static Transform3d robotToCamera2 =
+      new Transform3d(0.159, -0.321, 0.482, new Rotation3d(-0.041906, -0.130899, -2.356194));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -33,7 +35,7 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
+  public static double linearStdDevBaseline = 0.15; // Meters
   public static double angularStdDevBaseline = 0.20; // Radians
 
   // Standard deviation multipliers for each camera
@@ -41,6 +43,7 @@ public class VisionConstants {
   public static double[] cameraStdDevFactors =
       new double[] {
         1.0, // Camera 0
-        1.0 // Camera 1
+        0.5, // Camera 1
+        0.5 // Camera 2
       };
 }
