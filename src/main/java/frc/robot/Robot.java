@@ -83,6 +83,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+    Logger.recordOutput("MatchTime", DriverStation.getMatchTime());
+
     CommandScheduler.getInstance().run();
   }
 
