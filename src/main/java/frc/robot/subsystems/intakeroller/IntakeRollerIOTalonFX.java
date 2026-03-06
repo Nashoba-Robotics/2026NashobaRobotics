@@ -21,16 +21,16 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final TalonFX roller;
   private final TalonFXConfiguration rollerConfig;
 
-  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
 
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
+
   public IntakeRollerIOTalonFX() {
-    roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID);
+    roller = new TalonFX(Constants.Intake.ROLLER_MOTOR_ID, Constants.Intake.CANBUS);
 
     rollerConfig = new TalonFXConfiguration();
 
@@ -45,7 +45,6 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    // roller.getConfigurator().apply(rollerConfig);
     PhoenixUtil.tryUntilOk(5, () -> roller.getConfigurator().apply(rollerConfig));
 
     temp = roller.getDeviceTemp();

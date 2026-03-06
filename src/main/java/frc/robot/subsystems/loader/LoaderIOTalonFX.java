@@ -2,6 +2,7 @@ package frc.robot.subsystems.loader;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -18,19 +19,27 @@ import frc.robot.util.PhoenixUtil;
 
 public class LoaderIOTalonFX implements LoaderIO {
 
-  private final TalonFX loader;
+  private final TalonFX leftLoader;
+  private final TalonFX rightLoader;
   private final TalonFXConfiguration config;
 
-  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
+  private final StatusSignal<Temperature> leftTemp;
+  private final StatusSignal<AngularVelocity> leftVelocity;
+  private final StatusSignal<Voltage> leftAppliedVolts;
+  private final StatusSignal<Current> leftStatorCurrent;
+  private final StatusSignal<Current> leftSupplyCurrent;
 
-  private final StatusSignal<Temperature> temp;
-  private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> statorCurrent;
-  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Temperature> rightTemp;
+  private final StatusSignal<AngularVelocity> rightVelocity;
+  private final StatusSignal<Voltage> rightAppliedVolts;
+  private final StatusSignal<Current> rightStatorCurrent;
+  private final StatusSignal<Current> rightSupplyCurrent;
+
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
 
   public LoaderIOTalonFX() {
-    loader = new TalonFX(Constants.Loader.MOTOR_ID);
+    leftLoader = new TalonFX(Constants.Loader.LEFT_MOTOR_ID, Constants.Loader.CANBUS);
+    rightLoader = new TalonFX(Constants.Loader.RIGHT_MOTOR_ID, Constants.Loader.CANBUS);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -41,45 +50,111 @@ public class LoaderIOTalonFX implements LoaderIO {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     config.Feedback.SensorToMechanismRatio = Constants.Loader.GEAR_RATIO;
 
-    config.MotorOutput.Inverted = Constants.Loader.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    PhoenixUtil.tryUntilOk(
+        5,
+        () ->
+            leftLoader
+                .getConfigurator()
+                .apply(
+                    config.withMotorOutput(
+                        new MotorOutputConfigs()
+                            .withInverted(Constants.Loader.LEFT_INVERTED)
+                            .withNeutralMode(NeutralModeValue.Brake))));
+    PhoenixUtil.tryUntilOk(
+        5,
+        () ->
+            rightLoader
+                .getConfigurator()
+                .apply(
+                    config.withMotorOutput(
+                        new MotorOutputConfigs()
+                            .withInverted(Constants.Loader.RIGHT_INVERTED)
+                            .withNeutralMode(NeutralModeValue.Brake))));
 
-    PhoenixUtil.tryUntilOk(5, () -> loader.getConfigurator().apply(config));
+    leftTemp = leftLoader.getDeviceTemp();
+    leftVelocity = leftLoader.getVelocity();
+    leftAppliedVolts = leftLoader.getMotorVoltage();
+    leftStatorCurrent = leftLoader.getStatorCurrent();
+    leftSupplyCurrent = leftLoader.getSupplyCurrent();
 
-    temp = loader.getDeviceTemp();
-    velocity = loader.getVelocity();
-    appliedVolts = loader.getMotorVoltage();
-    statorCurrent = loader.getStatorCurrent();
-    supplyCurrent = loader.getSupplyCurrent();
+    rightTemp = rightLoader.getDeviceTemp();
+    rightVelocity = rightLoader.getVelocity();
+    rightAppliedVolts = rightLoader.getMotorVoltage();
+    rightStatorCurrent = rightLoader.getStatorCurrent();
+    rightSupplyCurrent = rightLoader.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+        1 / Constants.loopTime,
+        leftTemp,
+        leftVelocity,
+        leftAppliedVolts,
+        leftStatorCurrent,
+        leftSupplyCurrent,
+        rightTemp,
+        rightVelocity,
+        rightAppliedVolts,
+        rightStatorCurrent,
+        rightSupplyCurrent);
 
-    loader.optimizeBusUtilization();
+    leftLoader.optimizeBusUtilization();
+    rightLoader.optimizeBusUtilization();
 
-    PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+    PhoenixUtil.registerSignals(
+        false,
+        leftTemp,
+        leftVelocity,
+        leftAppliedVolts,
+        leftStatorCurrent,
+        leftSupplyCurrent,
+        rightTemp,
+        rightVelocity,
+        rightAppliedVolts,
+        rightStatorCurrent,
+        rightSupplyCurrent);
   }
 
   @Override
   public void updateInputs(LoaderIOInputs inputs) {
-    BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
+    BaseStatusSignal.refreshAll(
+        leftTemp,
+        leftVelocity,
+        leftAppliedVolts,
+        leftStatorCurrent,
+        leftSupplyCurrent,
+        rightTemp,
+        rightVelocity,
+        rightAppliedVolts,
+        rightStatorCurrent,
+        rightSupplyCurrent);
 
-    inputs.connected =
-        BaseStatusSignal.isAllGood(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
-    inputs.tempCelsius = temp.getValueAsDouble();
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
-    inputs.appliedVolts = appliedVolts.getValueAsDouble();
-    inputs.statorCurrentAmps = statorCurrent.getValueAsDouble();
-    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.leftConnected =
+        BaseStatusSignal.isAllGood(
+            leftTemp, leftVelocity, leftAppliedVolts, leftStatorCurrent, leftSupplyCurrent);
+    inputs.leftTempCelsius = leftTemp.getValueAsDouble();
+    inputs.leftVelocityRadsPerSec = Units.rotationsToRadians(leftVelocity.getValueAsDouble());
+    inputs.leftAppliedVolts = leftAppliedVolts.getValueAsDouble();
+    inputs.leftStatorCurrentAmps = leftStatorCurrent.getValueAsDouble();
+    inputs.leftSupplyCurrentAmps = leftSupplyCurrent.getValueAsDouble();
+
+    inputs.rightConnected =
+        BaseStatusSignal.isAllGood(
+            rightTemp, rightVelocity, rightAppliedVolts, rightStatorCurrent, rightSupplyCurrent);
+    inputs.rightTempCelsius = rightTemp.getValueAsDouble();
+    inputs.rightVelocityRadsPerSec = Units.rotationsToRadians(rightVelocity.getValueAsDouble());
+    inputs.rightAppliedVolts = rightAppliedVolts.getValueAsDouble();
+    inputs.rightStatorCurrentAmps = rightStatorCurrent.getValueAsDouble();
+    inputs.rightSupplyCurrentAmps = rightSupplyCurrent.getValueAsDouble();
   }
 
   @Override
   public void runVoltage(double volts) {
-    loader.setControl(voltageOut.withOutput(volts));
+    leftLoader.setControl(voltageOut.withOutput(volts));
+    rightLoader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
   public void stop() {
-    loader.setControl(new NeutralOut());
+    leftLoader.setControl(new NeutralOut());
+    rightLoader.setControl(new NeutralOut());
   }
 }

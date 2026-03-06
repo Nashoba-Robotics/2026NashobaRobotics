@@ -127,7 +127,7 @@ public class Superstructure extends SubsystemBase {
     return new ParallelCommandGroup(
         spindexer.stopCommand(),
         new SequentialCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
+            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.25),
             loader.stopCommand()));
   }
 
@@ -137,7 +137,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command retractIntake() {
-    return intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get());
+    return intakeDeploy.runPositionCommand(
+        Units.degreesToRadians(Presets.Intake.TUCK_ANGLE_DEG.get()));
   }
 
   public Command stopAllRollersCommand() {

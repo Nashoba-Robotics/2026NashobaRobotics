@@ -21,16 +21,16 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   private final TalonFX spindexer;
   private final TalonFXConfiguration config;
 
-  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
-
   private final StatusSignal<Temperature> temp;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
 
+  private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
+
   public SpindexerIOTalonFX() {
-    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID);
+    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID, Constants.Spindexer.CANBUS);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;

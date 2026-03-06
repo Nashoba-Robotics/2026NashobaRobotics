@@ -87,7 +87,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2));
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
@@ -179,7 +180,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
-    NamedCommands.registerCommand("intakeRoller", intakeRoller.runVoltageCommand(() -> 12.0));
+    NamedCommands.registerCommand(
+        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
     NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
     NamedCommands.registerCommand(
         "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
@@ -193,10 +195,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-
     autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
     autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption("Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption(
+        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(
