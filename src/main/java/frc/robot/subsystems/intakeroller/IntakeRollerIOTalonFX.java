@@ -26,7 +26,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
-  
+
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
 
   public IntakeRollerIOTalonFX() {

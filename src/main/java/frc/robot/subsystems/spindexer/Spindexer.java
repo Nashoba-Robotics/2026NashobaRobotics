@@ -13,9 +13,8 @@ public class Spindexer extends SubsystemBase {
   private final SpindexerIO io;
   private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
 
-  private final Debouncer motorConnectedDebouncer = 
-      new Debouncer(0.5, DebounceType.kFalling);
-      
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
+
   private final Alert spindexerMotorDisconnectedAlert =
       new Alert("Spindexer motor disconnected!", Alert.AlertType.kWarning);
 
