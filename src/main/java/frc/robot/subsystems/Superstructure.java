@@ -132,13 +132,19 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command deployIntake() {
-    return intakeDeploy.runPositionCommand(
-        Units.degreesToRadians(Presets.Intake.EXTEND_ANGLE_DEG.get()));
+    return new SequentialCommandGroup(
+        intakeDeploy
+            .runVoltageCommand(() -> 4.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
+        intakeDeploy.runVoltageCommand(() -> 0.10));
   }
 
   public Command retractIntake() {
-    return intakeDeploy.runPositionCommand(
-        Units.degreesToRadians(Presets.Intake.TUCK_ANGLE_DEG.get()));
+    return new SequentialCommandGroup(
+        intakeDeploy
+            .runVoltageCommand(() -> -4.0)
+            .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(20)),
+        intakeDeploy.runVoltageCommand(() -> -0.10));
   }
 
   public Command stopAllRollersCommand() {

@@ -52,6 +52,10 @@ public class IntakeDeploy extends SubsystemBase {
     }
   }
 
+  public double getPosition() {
+    return inputs.rotorPositionRads;
+  }
+
   public boolean atSetpoint() {
     return Util.epsilonEquals(
         inputs.positionSetpointRads,
@@ -61,6 +65,10 @@ public class IntakeDeploy extends SubsystemBase {
 
   public boolean isDeployed() {
     return inputs.rotorPositionRads >= Units.degreesToRadians(45);
+  }
+
+  public Command runVoltageCommand(DoubleSupplier volts) {
+    return run(() -> io.runVoltage(volts.getAsDouble())).finallyDo(io::stop);
   }
 
   public Command runPositionCommand(double positionRads) {

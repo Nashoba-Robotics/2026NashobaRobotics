@@ -144,7 +144,7 @@ public final class Constants {
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
 
-    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(120.0);
+    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(137.5);
 
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
