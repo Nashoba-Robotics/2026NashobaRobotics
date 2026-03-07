@@ -279,11 +279,31 @@ public class RobotContainer {
     driver.leftTrigger().onTrue(superstructure.deployIntake());
     driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
 
-    driver.leftBumper().onTrue(superstructure.retractIntake());
+    driver
+        .leftBumper()
+        .onTrue(
+            superstructure
+                .retractIntake()
+                .alongWith(
+                    intakeRoller
+                        .runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS)
+                        .withTimeout(1.0)));
 
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
+    driver.y().whileTrue(spindexer.runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
+
+    driver
+        .b()
+        .whileTrue(
+            new ParallelCommandGroup(
+                leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+                rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+                hood.runTrackedPositionCommand(
+                    () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
   }
 
   public Command getAutonomousCommand() {

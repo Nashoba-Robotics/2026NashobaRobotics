@@ -24,7 +24,7 @@ public final class Presets {
     public static final LoggedTunableNumber FEED_VOLTS =
         new LoggedTunableNumber("Spindexer/Setpoints/FeedVolts", 12.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Spindexer/Setpoints/ExhaustVolts", 0.0);
+        new LoggedTunableNumber("Spindexer/Setpoints/ExhaustVolts", -4.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
         new LoggedTunableNumber("Spindexer/Setpoints/TuningVolts", 0.0);
   }
@@ -39,6 +39,8 @@ public final class Presets {
 
     public static final LoggedTunableNumber INTAKE_VOLTS =
         new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 10.0);
+    public static final LoggedTunableNumber SLOW_INTAKE_VOLTS =
+        new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 3.5);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
         new LoggedTunableNumber("Intake/Setpoints/RollerExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =

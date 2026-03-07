@@ -17,7 +17,7 @@ public class ShootingUtil {
   private static final LinearFilter driveAngleFilter =
       LinearFilter.movingAverage((int) (0.1 / Constants.loopTime));
   private static final LinearFilter hoodAngleFilter =
-      LinearFilter.movingAverage((int) (0.1 / Constants.loopTime));
+      LinearFilter.movingAverage((int) (0.15 / Constants.loopTime));
 
   private static double lastHubDriveAngleRads;
   private static double lastHubHoodAngleRads;
@@ -46,31 +46,31 @@ public class ShootingUtil {
 
   static {
     hubDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(0.0));
-    hubDistanceHoodAngleMap.put(1.02, Rotation2d.fromDegrees(1.0));
-    hubDistanceHoodAngleMap.put(1.5, Rotation2d.fromDegrees(9.0));
-    hubDistanceHoodAngleMap.put(2.0, Rotation2d.fromDegrees(12.0));
-    hubDistanceHoodAngleMap.put(2.5, Rotation2d.fromDegrees(15.0));
-    hubDistanceHoodAngleMap.put(3.0, Rotation2d.fromDegrees(18.0));
-    hubDistanceHoodAngleMap.put(3.5, Rotation2d.fromDegrees(21.0));
-    hubDistanceHoodAngleMap.put(4.0, Rotation2d.fromDegrees(24.0));
-    hubDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(27.0));
-    hubDistanceHoodAngleMap.put(5.0, Rotation2d.fromDegrees(30.0));
+    hubDistanceHoodAngleMap.put(1.1, Rotation2d.fromDegrees(3.0));
+    hubDistanceHoodAngleMap.put(1.53, Rotation2d.fromDegrees(10.0));
+    hubDistanceHoodAngleMap.put(2.0, Rotation2d.fromDegrees(11.0));
+    hubDistanceHoodAngleMap.put(2.49, Rotation2d.fromDegrees(14.0));
+    hubDistanceHoodAngleMap.put(2.99, Rotation2d.fromDegrees(16.0));
+    hubDistanceHoodAngleMap.put(3.52, Rotation2d.fromDegrees(18.0));
+    hubDistanceHoodAngleMap.put(4.0, Rotation2d.fromDegrees(20.0));
+    hubDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(22.0));
+    hubDistanceHoodAngleMap.put(5.0, Rotation2d.fromDegrees(24.0));
 
-    hubDistanceShooterVelocityMap.put(0.0, 200.0);
-    hubDistanceShooterVelocityMap.put(1.0, 200.0);
-    hubDistanceShooterVelocityMap.put(1.5, 205.0);
-    hubDistanceShooterVelocityMap.put(2.0, 250.0);
-    hubDistanceShooterVelocityMap.put(2.5, 265.0);
-    hubDistanceShooterVelocityMap.put(3.0, 275.0);
-    hubDistanceShooterVelocityMap.put(3.5, 285.0);
-    hubDistanceShooterVelocityMap.put(4.0, 295.0);
-    hubDistanceShooterVelocityMap.put(4.5, 305.0);
-    hubDistanceShooterVelocityMap.put(5.0, 315.0);
+    hubDistanceShooterVelocityMap.put(0.0, 250.0);
+    hubDistanceShooterVelocityMap.put(1.1, 250.0);
+    hubDistanceShooterVelocityMap.put(1.53, 260.0);
+    hubDistanceShooterVelocityMap.put(2.01, 280.0);
+    hubDistanceShooterVelocityMap.put(2.49, 290.0);
+    hubDistanceShooterVelocityMap.put(2.99, 300.0);
+    hubDistanceShooterVelocityMap.put(3.52, 310.0);
+    hubDistanceShooterVelocityMap.put(4.0, 320.0);
+    hubDistanceShooterVelocityMap.put(4.5, 330.0);
+    hubDistanceShooterVelocityMap.put(5.0, 340.0);
 
-    hubDistanceTimeOfFlightMap.put(0.0, 1.10);
-    hubDistanceTimeOfFlightMap.put(1.0, 1.10);
-    hubDistanceTimeOfFlightMap.put(3.0, 1.10);
-    hubDistanceTimeOfFlightMap.put(5.0, 1.10);
+    hubDistanceTimeOfFlightMap.put(0.0, 1.20);
+    hubDistanceTimeOfFlightMap.put(1.0, 1.20);
+    hubDistanceTimeOfFlightMap.put(3.0, 1.20);
+    hubDistanceTimeOfFlightMap.put(5.0, 1.20);
 
     shuttleDistanceHoodAngleMap.put(0.0, Rotation2d.fromDegrees(25.0));
     shuttleDistanceHoodAngleMap.put(1.5, Rotation2d.fromDegrees(25.0));
