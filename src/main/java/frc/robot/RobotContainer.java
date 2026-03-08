@@ -182,7 +182,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
+    NamedCommands.registerCommand("intakeDeploy", superstructure.autoDeployIntake());
     NamedCommands.registerCommand(
         "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
     NamedCommands.registerCommand(
@@ -269,7 +269,7 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                // spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
                 loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
@@ -277,7 +277,10 @@ public class RobotContainer {
                 rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
     driver.leftTrigger().onTrue(superstructure.deployIntake());
-    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver
+        .leftTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS)));
 
     driver
         .leftBumper()
