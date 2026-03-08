@@ -135,7 +135,7 @@ public final class Constants {
     public static final double DEPLOY_SUPPLY_LIMIT = 40.0;
 
     public static final double ROLLER_STATOR_LIMIT = 80.0;
-    public static final double ROLLER_SUPPLY_LIMIT = 40.0;
+    public static final double ROLLER_SUPPLY_LIMIT = 60.0;
 
     public static final LoggedTunableNumber kP = new LoggedTunableNumber("Intake/PID/kP", 0.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("Intake/PID/kD", 0.0);
@@ -163,7 +163,7 @@ public final class Constants {
     public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
-    public static final double SUPPLY_LIMIT = 40.0;
+    public static final double SUPPLY_LIMIT = 60.0;
 
     public static final double GEAR_RATIO = 1.0;
   }
@@ -178,8 +178,8 @@ public final class Constants {
     public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
     public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
 
-    public static final double STATOR_LIMIT = 80.0;
-    public static final double SUPPLY_LIMIT = 40.0;
+    public static final double STATOR_LIMIT = 60.0;
+    public static final double SUPPLY_LIMIT = 60.0;
 
     public static final LoggedTunableNumber LEFT_kP =
         new LoggedTunableNumber("Shooter/Left/PID/kP", 10.0);

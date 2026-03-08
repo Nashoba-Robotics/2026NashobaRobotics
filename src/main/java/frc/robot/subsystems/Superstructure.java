@@ -148,11 +148,13 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command retractIntake() {
-    return new SequentialCommandGroup(
-        intakeDeploy
-            .runVoltageCommand(() -> -4.0)
-            .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(20)),
-        intakeDeploy.runVoltageCommand(() -> -0.10));
+    return new ParallelCommandGroup(
+        new SequentialCommandGroup(
+            intakeDeploy
+                .runVoltageCommand(() -> -4.0)
+                .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
+            intakeDeploy.runVoltageCommand(() -> -0.10)),
+        intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
   }
 
   public Command stopAllRollersCommand() {

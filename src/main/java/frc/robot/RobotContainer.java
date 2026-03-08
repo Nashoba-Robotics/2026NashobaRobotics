@@ -183,8 +183,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
     NamedCommands.registerCommand("intakeDeploy", superstructure.autoDeployIntake());
-    NamedCommands.registerCommand(
-        "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
+    NamedCommands.registerCommand("intakeRetract", superstructure.retractIntake());
     NamedCommands.registerCommand(
         "tuckHood",
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
@@ -249,6 +248,7 @@ public class RobotContainer {
                     && rightShooter.atSetpoint()
                     && DriveCommands.atAngleSetpoint());
 
+    // Shoot and shuttle bindings
     driver
         .rightTrigger()
         .and(inAllianceZone)
@@ -265,48 +265,53 @@ public class RobotContainer {
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
+    // Force shoot
     driver
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                // spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
+
+    // Close shot fallback
+    driver
+        .b()
+        .whileTrue(
+            new ParallelCommandGroup(
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
                 loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
                 leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
                 rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
+    // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
     driver
         .leftTrigger()
         .whileTrue(
             new ParallelCommandGroup(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS)));
 
-    driver
-        .leftBumper()
-        .onTrue(
-            superstructure
-                .retractIntake()
-                .alongWith(
-                    intakeRoller
-                        .runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS)
-                        .withTimeout(1.0)));
+    driver.leftBumper().onTrue(superstructure.retractIntake());
 
+    // Manual spit and feed
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
     driver.y().whileTrue(spindexer.runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
-    driver
-        .b()
-        .whileTrue(
-            new ParallelCommandGroup(
-                leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-                rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-                hood.runTrackedPositionCommand(
-                    () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
-                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
+    // Tune shot
+    // driver
+    //     .b()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+    //             rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+    //             hood.runTrackedPositionCommand(
+    //                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () ->
+    // 0.0),
+    //             spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+    //             loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
   }
 
   public Command getAutonomousCommand() {
