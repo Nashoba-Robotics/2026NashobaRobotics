@@ -120,7 +120,8 @@ public final class Constants {
   public static class Intake {
     public static final String CANBUS = "rio";
     public static final int DEPLOY_MOTOR_ID = 16;
-    public static final int ROLLER_MOTOR_ID = 15;
+    public static final int ROLLER_LEADER_MOTOR_ID = 15;
+    public static final int ROLLER_FOLLOWER_MOTOR_ID = 18;
     public static final int ENCODER_ID = 0;
 
     public static final InvertedValue DEPLOY_INVERTED = InvertedValue.Clockwise_Positive;

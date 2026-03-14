@@ -200,7 +200,6 @@ public class RobotContainer {
             hood.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -215,7 +214,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
-    
+
     // Configure the button bindings
     configureButtonBindings();
   }
