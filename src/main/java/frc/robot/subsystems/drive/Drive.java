@@ -379,6 +379,14 @@ public class Drive extends SubsystemBase {
     };
   }
 
+  public double getPitch() {
+    return gyroIO.getPitch();
+  }
+
+  public double getRoll() {
+    return gyroIO.getRoll();
+  }
+
   public AutoFactory getAutoFactory() {
     return autoFactory;
   }

@@ -10,11 +10,14 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.Stopwatch;
 import java.util.Set;
 import org.littletonrobotics.junction.Logger;
@@ -147,6 +150,14 @@ public class AutoModeBase {
 
     Logger.recordOutput("Choreo/Stopwatch Time", stopwatch.getTimeAsDouble());
     return false;
+  }
+
+  private static boolean isBeached(Drive drive) {
+    return ((Math.abs(drive.getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
+            || Math.abs(drive.getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
+        && DriverStation.isAutonomous()
+        && AllianceFlipUtil.applyX(drive.getPose().getX())
+            > FieldConstants.LinesVertical.hubCenter);
   }
 
   public void newRoutine(Command... sequence) {

@@ -1,5 +1,6 @@
 package frc.robot.autos;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -10,4 +11,5 @@ public final class AutoConstants {
   public static final Angle kAutoAngleEpsilon = Units.Degrees.of(1.0);
   public static final Time kDelayTime = Units.Milliseconds.of(80);
   public static final Time kDefaultTrajectoryTimeout = Units.Seconds.of(1.0);
+  public static final Rotation2d beachAngleThreshold = Rotation2d.fromDegrees(7.0);
 }

@@ -13,7 +13,7 @@ public class TestAuto extends AutoModeBase {
     AutoTrajectory test2 = trajectory("Test2");
 
     newRoutine(
-        // test1.resetOdometry(),
+        test1.resetOdometry(),
         cmdWithAccuracy(drive, test1, Units.Seconds.of(4.0), Units.Centimeters.of(3.0)),
         cmdWithAccuracy(drive, test2, Units.Seconds.of(4.0), Units.Centimeters.of(3.0)));
   }
