@@ -86,14 +86,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "intakeRoller",
-      "waypointRelativePos": 1.0209318028359118,
-      "endWaypointRelativePos": 2.0256583389601692,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 4.0,

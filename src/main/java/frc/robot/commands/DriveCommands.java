@@ -171,10 +171,14 @@ public class DriveCommands {
                           : drive.getRotation()));
 
               atAngleSetpoint =
-                  Util.epsilonEquals(
-                      rotationSupplier.get().getRadians(),
-                      drive.getPose().getRotation().getRadians(),
-                      Units.degreesToRadians(ANGLE_TOLERANCE.get()));
+                  MathUtil.angleModulus(
+                          Math.abs(
+                              drive
+                                  .getPose()
+                                  .getRotation()
+                                  .minus(rotationSupplier.get())
+                                  .getRadians()))
+                      < Units.degreesToRadians(ANGLE_TOLERANCE.get());
             },
             drive)
 
@@ -231,10 +235,14 @@ public class DriveCommands {
                           drive.getPose().getX(), pose.get().getX(), DRIVE_TOLERANCE.get())
                       && Util.epsilonEquals(
                           drive.getPose().getY(), pose.get().getY(), DRIVE_TOLERANCE.get())
-                      && Util.epsilonEquals(
-                          drive.getRotation().getRadians(),
-                          pose.get().getRotation().getRadians(),
-                          Units.degreesToRadians(ANGLE_TOLERANCE.get())));
+                      && MathUtil.angleModulus(
+                              Math.abs(
+                                  drive
+                                      .getPose()
+                                      .getRotation()
+                                      .minus(pose.get().getRotation())
+                                      .getRadians()))
+                          < Units.degreesToRadians(ANGLE_TOLERANCE.get()));
             },
             drive)
         // Reset PID controller when command starts

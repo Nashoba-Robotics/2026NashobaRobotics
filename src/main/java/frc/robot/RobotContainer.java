@@ -2,6 +2,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import choreo.auto.AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
@@ -66,6 +68,8 @@ public class RobotContainer {
   private final Superstructure superstructure;
 
   //   private final LEDSubsystem leds = new LEDSubsystem();
+
+  private final AutoFactory autoFactory;
 
   // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -178,6 +182,15 @@ public class RobotContainer {
             leftShooter,
             rightShooter);
 
+    autoFactory = drive.getAutoFactory();
+
+    autoFactory.bind("intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    autoFactory.bind("intakeDeploy", superstructure.autoDeployIntake());
+    autoFactory.bind("intakeRetract", superstructure.retractIntake());
+    autoFactory.bind(
+        "tuckHood",
+        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
+
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
@@ -214,6 +227,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
+
+    autoChooser.addOption("Choreo Test", new TestAuto(drive, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();
