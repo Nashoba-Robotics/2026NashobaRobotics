@@ -65,6 +65,8 @@ public class RobotContainer {
   private final Shooter rightShooter;
   private final Superstructure superstructure;
 
+  //   private final LEDSubsystem leds = new LEDSubsystem();
+
   // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -176,30 +178,14 @@ public class RobotContainer {
             leftShooter,
             rightShooter);
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
-    NamedCommands.registerCommand(
-        "intakeRetract", intakeDeploy.runPositionCommand(Presets.Intake.TUCK_ANGLE_DEG.get()));
+    NamedCommands.registerCommand("intakeDeploy", superstructure.autoDeployIntake());
+    NamedCommands.registerCommand("intakeRetract", superstructure.retractIntake());
     NamedCommands.registerCommand(
         "tuckHood",
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-
-    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
-    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption(
-        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
-    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(
         "RunEverythingForTuning",
@@ -214,6 +200,22 @@ public class RobotContainer {
             hood.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
+    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption(
+        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -249,6 +251,7 @@ public class RobotContainer {
                     && rightShooter.atSetpoint()
                     && DriveCommands.atAngleSetpoint());
 
+    // Shoot and shuttle bindings
     driver
         .rightTrigger()
         .and(inAllianceZone)
@@ -265,8 +268,17 @@ public class RobotContainer {
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
+    // Force shoot
     driver
         .rightBumper()
+        .whileTrue(
+            new ParallelCommandGroup(
+                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
+
+    // Close shot fallback
+    driver
+        .b()
         .whileTrue(
             new ParallelCommandGroup(
                 spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
@@ -276,14 +288,33 @@ public class RobotContainer {
                 leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
                 rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
+    // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
-    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver
+        .leftTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS)));
 
     driver.leftBumper().onTrue(superstructure.retractIntake());
 
+    // Manual spit and feed
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
+    driver.y().whileTrue(spindexer.runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
+
+    // Tune shot
+    // driver
+    //     .b()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+    //             rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+    //             hood.runTrackedPositionCommand(
+    //                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () ->
+    // 0.0),
+    //             spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
+    //             loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
   }
 
   public Command getAutonomousCommand() {

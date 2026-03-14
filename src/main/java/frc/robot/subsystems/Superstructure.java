@@ -84,8 +84,6 @@ public class Superstructure extends SubsystemBase {
     shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
 
     Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
-    Logger.recordOutput(
-        "DriveCommands/atDriveToPoseSetpoint", DriveCommands.atDriveToPoseSetpoint());
   }
 
   public Command hubAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
@@ -132,13 +130,29 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command deployIntake() {
-    return intakeDeploy.runPositionCommand(
-        Units.degreesToRadians(Presets.Intake.EXTEND_ANGLE_DEG.get()));
+    return new SequentialCommandGroup(
+        intakeDeploy
+            .runVoltageCommand(() -> 4.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
+        intakeDeploy.runVoltageCommand(() -> 0.30));
+  }
+
+  public Command autoDeployIntake() {
+    return new SequentialCommandGroup(
+        intakeDeploy
+            .runVoltageCommand(() -> 4.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
+        intakeDeploy.runVoltageCommand(() -> 0.40));
   }
 
   public Command retractIntake() {
-    return intakeDeploy.runPositionCommand(
-        Units.degreesToRadians(Presets.Intake.TUCK_ANGLE_DEG.get()));
+    return new ParallelCommandGroup(
+        new SequentialCommandGroup(
+            intakeDeploy
+                .runVoltageCommand(() -> -4.0)
+                .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
+            intakeDeploy.runVoltageCommand(() -> -0.10)),
+        intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
   }
 
   public Command stopAllRollersCommand() {
@@ -173,7 +187,7 @@ public class Superstructure extends SubsystemBase {
                 new ParallelCommandGroup(
                     loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                     spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))
-        .withTimeout(5.0)
+        .withTimeout(3.5)
         .andThen(autoEndShootCommand());
   }
 
