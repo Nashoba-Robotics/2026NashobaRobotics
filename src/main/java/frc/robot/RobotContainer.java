@@ -65,6 +65,8 @@ public class RobotContainer {
   private final Shooter rightShooter;
   private final Superstructure superstructure;
 
+  //   private final LEDSubsystem leds = new LEDSubsystem();
+
   // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -176,9 +178,6 @@ public class RobotContainer {
             leftShooter,
             rightShooter);
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
@@ -187,18 +186,6 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "tuckHood",
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-
-    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
-    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption(
-        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
-    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     SmartDashboard.putData(
         "RunEverythingForTuning",
@@ -213,6 +200,22 @@ public class RobotContainer {
             hood.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
+    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption(
+        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
+    
     // Configure the button bindings
     configureButtonBindings();
   }

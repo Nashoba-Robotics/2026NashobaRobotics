@@ -192,12 +192,16 @@ public class FieldConstants {
     // Relevant reference points on alliance side
     public static final Translation3d openingTopLeft =
         new Translation3d(LinesVertical.hubCenter, fieldWidth, openingHeight);
+    public static final Translation3d openingTopMiddle =
+        new Translation3d(LinesVertical.hubCenter, fieldWidth - openingWidth / 2, openingHeight);
     public static final Translation3d openingTopRight =
         new Translation3d(LinesVertical.hubCenter, fieldWidth - openingWidth, openingHeight);
 
     // Relevant reference points on opposing side
     public static final Translation3d oppOpeningTopLeft =
         new Translation3d(LinesVertical.oppHubCenter, fieldWidth, openingHeight);
+    public static final Translation3d oppOpeningTopMiddle =
+        new Translation3d(LinesVertical.oppHubCenter, fieldWidth - openingWidth / 2, openingHeight);
     public static final Translation3d oppOpeningTopRight =
         new Translation3d(LinesVertical.oppHubCenter, fieldWidth - openingWidth, openingHeight);
   }
@@ -214,12 +218,16 @@ public class FieldConstants {
     // Relevant reference points on alliance side
     public static final Translation3d openingTopLeft =
         new Translation3d(LinesVertical.hubCenter, openingWidth, openingHeight);
+    public static final Translation3d openingTopMiddle =
+        new Translation3d(LinesVertical.hubCenter, openingWidth / 2, openingHeight);
     public static final Translation3d openingTopRight =
         new Translation3d(LinesVertical.hubCenter, 0, openingHeight);
 
     // Relevant reference points on opposing side
     public static final Translation3d oppOpeningTopLeft =
         new Translation3d(LinesVertical.oppHubCenter, openingWidth, openingHeight);
+    public static final Translation3d oppOpeningTopMiddle =
+        new Translation3d(LinesVertical.oppHubCenter, openingWidth / 2, openingHeight);
     public static final Translation3d oppOpeningTopRight =
         new Translation3d(LinesVertical.oppHubCenter, 0, openingHeight);
   }
