@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -65,7 +66,7 @@ public class RobotContainer {
   private final Shooter rightShooter;
   private final Superstructure superstructure;
 
-  //   private final LEDSubsystem leds = new LEDSubsystem();
+  private final LEDSubsystem leds = new LEDSubsystem();
 
   // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
@@ -200,7 +201,6 @@ public class RobotContainer {
             hood.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -215,7 +215,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
-    
+
     // Configure the button bindings
     configureButtonBindings();
   }
