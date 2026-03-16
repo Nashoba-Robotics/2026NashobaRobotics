@@ -105,7 +105,16 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   @Override
   public void updateInputs(IntakeRollerIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leaderTemp, leaderVelocity, leaderAppliedVolts, leaderStatorCurrent, leaderSupplyCurrent);
+        leaderTemp,
+        leaderVelocity,
+        leaderAppliedVolts,
+        leaderStatorCurrent,
+        leaderSupplyCurrent,
+        followerTemp,
+        followerVelocity,
+        followerAppliedVolts,
+        followerStatorCurrent,
+        followerSupplyCurrent);
 
     inputs.leaderConnected =
         BaseStatusSignal.isAllGood(
@@ -128,7 +137,8 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
             followerStatorCurrent,
             followerSupplyCurrent);
     inputs.followerTempCelsius = followerTemp.getValueAsDouble();
-    inputs.followerVelocityRadsPerSec = Units.rotationsToRadians(followerTemp.getValueAsDouble());
+    inputs.followerVelocityRadsPerSec =
+        Units.rotationsToRadians(followerVelocity.getValueAsDouble());
     inputs.followerAppliedVolts = followerAppliedVolts.getValueAsDouble();
     inputs.followerStatorCurrentAmps = followerStatorCurrent.getValueAsDouble();
     inputs.followerSupplyCurrentAmps = followerSupplyCurrent.getValueAsDouble();

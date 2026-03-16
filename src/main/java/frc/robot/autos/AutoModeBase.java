@@ -160,6 +160,13 @@ public class AutoModeBase {
             > FieldConstants.LinesVertical.hubCenter);
   }
 
+  // private static void antiBeach(Drive drive) {
+  // 	if(isBeached(drive)){
+  // 		double timeStamp = stopwatch.getTimeAsDouble();
+
+  // 	}
+  // }
+
   public void newRoutine(Command... sequence) {
     routine
         .active()

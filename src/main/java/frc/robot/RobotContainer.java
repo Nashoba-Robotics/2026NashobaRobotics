@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -50,14 +48,12 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.AllianceFlipUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Climber climber;
   private final Hood hood;
   private final Spindexer spindexer;
   private final IntakeDeploy intakeDeploy;
@@ -73,7 +69,6 @@ public class RobotContainer {
 
   // Controllers
   private final CommandXboxController driver = new CommandXboxController(0);
-  private final CommandXboxController operator = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -117,8 +112,6 @@ public class RobotContainer {
                     Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
                 false);
 
-        climber = new Climber(new ClimberIO() {});
-
         break;
 
       case SIM:
@@ -136,7 +129,6 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
 
-        climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
@@ -158,7 +150,6 @@ public class RobotContainer {
 
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
-        climber = new Climber(new ClimberIO() {});
         hood = new Hood(new HoodIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
@@ -172,15 +163,7 @@ public class RobotContainer {
 
     superstructure =
         new Superstructure(
-            drive,
-            climber,
-            hood,
-            spindexer,
-            intakeDeploy,
-            intakeRoller,
-            loader,
-            leftShooter,
-            rightShooter);
+            drive, hood, spindexer, intakeDeploy, intakeRoller, loader, leftShooter, rightShooter);
 
     autoFactory = drive.getAutoFactory();
 
@@ -222,13 +205,13 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("Right T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", false));
-    autoChooser.addOption("Left T-2NZ-NoClimb", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption(
-        "Right B-Outpost-Depot-Climb", new PathPlannerAuto("B-Outpost-Depot-Climb"));
+    autoChooser.addOption("PP Right T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", false));
+    autoChooser.addOption("PP Left T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", true));
+    autoChooser.addOption("PP Right B-Outpost-Depot", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
-    autoChooser.addOption("Choreo Test", new TestAuto(drive, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Choreo Right T-2NZSteal", new TestAuto(drive, superstructure, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -250,13 +233,6 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    Trigger inAllianceZone =
-        new Trigger(
-            () -> {
-              Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
-              return (robotPose.getX() <= FieldConstants.LinesVertical.allianceZone + 0.40);
-            });
-
     Trigger inShootingTolerance =
         new Trigger(
             () ->
@@ -265,19 +241,10 @@ public class RobotContainer {
                     && rightShooter.atSetpoint()
                     && DriveCommands.atAngleSetpoint());
 
-    // Shoot and shuttle bindings
+    // Shoot bindings
     driver
         .rightTrigger()
-        .and(inAllianceZone)
-        .whileTrue(superstructure.hubAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
-        .whileTrue(superstructure.shootCommand())
-        .onFalse(superstructure.endShootCommand());
-    driver
-        .rightTrigger()
-        .and(inAllianceZone.negate())
-        .whileTrue(
-            superstructure.shuttleAimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .whileTrue(superstructure.aimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
         .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());

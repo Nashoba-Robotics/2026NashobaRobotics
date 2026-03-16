@@ -114,7 +114,7 @@ public final class Constants {
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 40.0;
 
-    public static final double GEAR_RATIO = 2.0;
+    public static final double GEAR_RATIO = 3.0;
   }
 
   public static class Intake {
@@ -151,8 +151,8 @@ public final class Constants {
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
 
     public static final double ROLLER_GEAR_RATIO = 2.0;
-    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 50.0;
-    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 32.0 / 18.0;
+    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0;
+    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 2.0;
   }
 
   public static class Loader {
