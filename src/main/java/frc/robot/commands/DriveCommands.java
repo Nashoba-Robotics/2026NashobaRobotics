@@ -179,6 +179,8 @@ public class DriveCommands {
                                   .minus(rotationSupplier.get())
                                   .getRadians()))
                       < Units.degreesToRadians(ANGLE_TOLERANCE.get());
+
+              Logger.recordOutput("DriveCommands/AtAngleSetpoint", atAngleSetpoint);
             },
             drive)
 

@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.TestAuto;
+import frc.robot.autos.RightT_2NZSafe_Auto;
+import frc.robot.autos.RightT_2NZSteal_Auto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
@@ -167,13 +168,6 @@ public class RobotContainer {
 
     autoFactory = drive.getAutoFactory();
 
-    autoFactory.bind("intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    autoFactory.bind("intakeDeploy", superstructure.autoDeployIntake());
-    autoFactory.bind("intakeRetract", superstructure.retractIntake());
-    autoFactory.bind(
-        "tuckHood",
-        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
@@ -211,7 +205,11 @@ public class RobotContainer {
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     autoChooser.addOption(
-        "Choreo Right T-2NZSteal", new TestAuto(drive, superstructure, autoFactory).asCommand());
+        "Choreo Right T-2NZSteal",
+        new RightT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Choreo Right T-2NZSafe",
+        new RightT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -274,7 +272,9 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .whileTrue(
-            new ParallelCommandGroup(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS)));
+            new ParallelCommandGroup(
+                intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS),
+                spindexer.runVoltageCommand(Presets.Spindexer.SLOW_FEED_VOLTS)));
 
     driver.leftBumper().onTrue(superstructure.retractIntake());
 

@@ -42,41 +42,6 @@ public final class Constants {
     REPLAY
   }
 
-  public static class Climber {
-    public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 0;
-    public static final int ENCODER_ID = 1;
-
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
-
-    public static final SensorDirectionValue ENCODER_DIRECTION =
-        SensorDirectionValue.Clockwise_Positive;
-    public static final double ENCODER_OFFSET = 0.0;
-    public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
-
-    public static final double STATOR_LIMIT = 0.0;
-    public static final double SUPPLY_LIMIT = 0.0;
-
-    public static final double MOTION_MAGIC_CRUISE_VELOCITY = 0.0;
-    public static final double MOTION_MAGIC_ACCELERATION = 0.0;
-
-    public static final Rotation2d FORWARD_SOFT_LIMIT = new Rotation2d(0.0);
-    public static final Rotation2d REVERSE_SOFT_LIMIT = new Rotation2d(0.0);
-
-    public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
-    public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
-
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Climber/PID/kP", 0.0);
-    public static final LoggedTunableNumber kD = new LoggedTunableNumber("Climber/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Climber/PID/kS", 0.0);
-    public static final LoggedTunableNumber kG = new LoggedTunableNumber("Climber/PID/kG", 0.0);
-    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Climber/PID/kV", 0.0);
-    public static final LoggedTunableNumber kA = new LoggedTunableNumber("Climber/PID/kA", 0.0);
-
-    public static final LoggedTunableNumber POSITION_TOLERANCE =
-        new LoggedTunableNumber("Climber/ToleranceDeg", 0.0);
-  }
-
   public static class Hood {
     public static final String CANBUS = "rio";
     public static final int MOTOR_ID = 12;
@@ -129,7 +94,7 @@ public final class Constants {
 
     public static final SensorDirectionValue ENCODER_DIRECTION =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double ENCODER_OFFSET = 0.028076171875;
+    public static final double ENCODER_OFFSET = -0.76806640625;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.85;
 
     public static final double DEPLOY_STATOR_LIMIT = 60.0;

@@ -4,7 +4,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
@@ -17,9 +16,8 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.util.ShootingUtil;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
 
-public class Superstructure extends SubsystemBase {
+public class Superstructure {
   private final Drive drive;
   private final Hood hood;
   private final Spindexer spindexer;
@@ -51,11 +49,6 @@ public class Superstructure extends SubsystemBase {
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
     leftShooter.setDefaultCommand(leftShooter.stopCommand());
     rightShooter.setDefaultCommand(rightShooter.stopCommand());
-  }
-
-  @Override
-  public void periodic() {
-    Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
   }
 
   public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
@@ -92,8 +85,8 @@ public class Superstructure extends SubsystemBase {
   public Command deployIntake() {
     return new SequentialCommandGroup(
         intakeDeploy
-            .runVoltageCommand(() -> 4.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
+            .runVoltageCommand(() -> 8.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(100)),
         intakeDeploy.runVoltageCommand(() -> 0.30));
   }
 
@@ -101,29 +94,27 @@ public class Superstructure extends SubsystemBase {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
             intakeDeploy
-                .runVoltageCommand(() -> -4.0)
+                .runVoltageCommand(() -> -8.0)
                 .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
-            intakeDeploy.runVoltageCommand(() -> -0.10)),
+            intakeDeploy.runVoltageCommand(() -> -0.30)),
         intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
   }
 
   public Command autoDeployIntake() {
     return new SequentialCommandGroup(
         intakeDeploy
-            .runVoltageCommand(() -> 4.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
-        intakeDeploy.runVoltageCommand(() -> 0.40));
+            .runVoltageCommand(() -> 8.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(100)),
+        intakeDeploy.runVoltageCommand(() -> 0.75));
+  }
+
+  public Command autoRunIntake() {
+    return autoDeployIntake()
+        .alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
   }
 
   public Command autoRetractIntake() {
-    return new ParallelCommandGroup(
-            new SequentialCommandGroup(
-                intakeDeploy
-                    .runVoltageCommand(() -> -4.0)
-                    .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
-                intakeDeploy.runVoltageCommand(() -> -0.10)),
-            intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0))
-        .until(() -> intakeDeploy.getPosition() <= 5);
+    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(5.0));
   }
 
   public Command stopAllRollersCommand() {
