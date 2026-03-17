@@ -53,7 +53,7 @@ public final class Presets {
     public static final LoggedTunableNumber FEED_VOLTS =
         new LoggedTunableNumber("Loader/Setpoints/FeedVolts", 10.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/ExhaustVolts", 0.0);
+        new LoggedTunableNumber("Loader/Setpoints/ExhaustVolts", -3.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
         new LoggedTunableNumber("Loader/Setpoints/SlowExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =

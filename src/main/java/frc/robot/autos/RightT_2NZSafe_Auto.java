@@ -18,7 +18,7 @@ public class RightT_2NZSafe_Auto extends AutoModeBase {
     AutoTrajectory right_Safe_NZ_T = trajectory("Right_Safe_NZ_T");
     AutoTrajectory right_2nd_T_NZ = trajectory("Right_2nd_T_NZ");
     newRoutine(
-        // right_T_NZSafe.resetOdometry(),
+        right_T_NZSafe.resetOdometry(),
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, right_T_NZSafe, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),

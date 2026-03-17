@@ -269,18 +269,18 @@ public class RobotContainer {
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
-    driver
-        .leftTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS),
-                spindexer.runVoltageCommand(Presets.Spindexer.SLOW_FEED_VOLTS)));
+    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
 
     driver.leftBumper().onTrue(superstructure.retractIntake());
 
     // Manual spit and feed
     driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
-    driver.y().whileTrue(spindexer.runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS));
+    driver
+        .y()
+        .whileTrue(
+            spindexer
+                .runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS)
+                .alongWith(loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
