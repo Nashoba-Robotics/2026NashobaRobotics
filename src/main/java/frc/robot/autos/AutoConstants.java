@@ -13,5 +13,5 @@ public final class AutoConstants {
   public static final Time kDefaultTrajectoryTimeout = Units.Seconds.of(1.0);
   public static final Rotation2d beachAngleThreshold = Rotation2d.fromDegrees(7.0);
 
-  public static final Time kDelayIntakeRetract = Units.Seconds.of(1.0);
+  public static final Time kDelayIntakeRetract = Units.Seconds.of(0.5);
 }
