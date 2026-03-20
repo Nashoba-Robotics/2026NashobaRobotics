@@ -22,7 +22,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,7 +35,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -106,12 +105,9 @@ public class Drive extends SubsystemBase {
 
   private final AutoFactory autoFactory;
 
-  private final ProfiledPIDController xController =
-      new ProfiledPIDController(6.0, 0.0, 0.0, new TrapezoidProfile.Constraints(4.40, 6.0));
-  private final ProfiledPIDController yController =
-      new ProfiledPIDController(6.0, 0.0, 0.0, new TrapezoidProfile.Constraints(4.40, 6.0));
-  private final ProfiledPIDController headingController =
-      new ProfiledPIDController(5.0, 0.0, 0.0, new TrapezoidProfile.Constraints(6.0, 9.0));
+  private final PIDController xController = new PIDController(6.0, 0.0, 0.0);
+  private final PIDController yController = new PIDController(6.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(5.0, 0.0, 0.0);
 
   private final Field2d field = new Field2d();
 

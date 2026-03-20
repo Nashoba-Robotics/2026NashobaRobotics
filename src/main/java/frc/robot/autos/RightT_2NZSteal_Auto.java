@@ -28,6 +28,9 @@ public class RightT_2NZSteal_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
+                new SequentialCommandGroup(
+                    superstructure.autoRetractIntake().withTimeout(0.3),
+                    superstructure.deployIntake().withTimeout(0.3)).repeatedly().withTimeout(1.8),
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
@@ -38,6 +41,9 @@ public class RightT_2NZSteal_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
+                new SequentialCommandGroup(
+                    superstructure.autoRetractIntake().withTimeout(0.3),
+                    superstructure.deployIntake().withTimeout(0.3)).repeatedly().withTimeout(1.8),
                 superstructure.autoRetractIntake())));
   }
 }

@@ -100,17 +100,8 @@ public class Superstructure {
         intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
   }
 
-  public Command autoDeployIntake() {
-    return new SequentialCommandGroup(
-        intakeDeploy
-            .runVoltageCommand(() -> 8.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(100)),
-        intakeDeploy.runVoltageCommand(() -> 0.75));
-  }
-
   public Command autoRunIntake() {
-    return autoDeployIntake()
-        .alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    return deployIntake().alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
   }
 
   public Command autoRetractIntake() {

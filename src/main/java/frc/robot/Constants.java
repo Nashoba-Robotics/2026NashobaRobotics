@@ -94,7 +94,7 @@ public final class Constants {
 
     public static final SensorDirectionValue ENCODER_DIRECTION =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double ENCODER_OFFSET = -0.76806640625;
+    public static final double ENCODER_OFFSET = -0.76171875;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.85;
 
     public static final double DEPLOY_STATOR_LIMIT = 60.0;
@@ -110,13 +110,13 @@ public final class Constants {
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
 
-    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(137.5);
+    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(0.0);
 
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
 
     public static final double ROLLER_GEAR_RATIO = 2.0;
-    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0;
+    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0 * 16 / 18;
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 2.0;
   }
 

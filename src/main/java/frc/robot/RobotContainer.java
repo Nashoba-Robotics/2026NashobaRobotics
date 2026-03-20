@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.LeftT_2NZSafe_Auto;
+import frc.robot.autos.LeftT_2NZSteal_Auto;
 import frc.robot.autos.RightT_2NZSafe_Auto;
 import frc.robot.autos.RightT_2NZSteal_Auto;
 import frc.robot.commands.DriveCommands;
@@ -171,8 +173,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot", superstructure.autoShoot());
     NamedCommands.registerCommand(
         "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.autoDeployIntake());
-    NamedCommands.registerCommand("intakeRetract", superstructure.retractIntake());
+    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
+    NamedCommands.registerCommand("intakeRetract", superstructure.autoRetractIntake());
     NamedCommands.registerCommand(
         "tuckHood",
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
@@ -210,6 +212,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Choreo Right T-2NZSafe",
         new RightT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Choreo Left T-2NZSteal",
+        new LeftT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Choreo Left T-2NZSafe",
+        new LeftT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();
