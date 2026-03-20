@@ -52,8 +52,8 @@
         "y": 3.0710699001426542
       },
       "prevControl": {
-        "x": 7.5722222640284,
-        "y": 3.2662871025034135
+        "x": 7.572222264028401,
+        "y": 3.2662871025034144
       },
       "nextControl": {
         "x": 7.259874740251195,
@@ -148,30 +148,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "intakeDeploy",
-      "waypointRelativePos": 0.3646185010128384,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeDeploy"
-        }
-      }
-    },
-    {
-      "name": "intakeRoller",
-      "waypointRelativePos": 1.1478730587440875,
-      "endWaypointRelativePos": 2.6468602295745964,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "intakeRoller"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 6.0,

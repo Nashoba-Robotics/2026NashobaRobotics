@@ -42,41 +42,6 @@ public final class Constants {
     REPLAY
   }
 
-  public static class Climber {
-    public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 0;
-    public static final int ENCODER_ID = 1;
-
-    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
-
-    public static final SensorDirectionValue ENCODER_DIRECTION =
-        SensorDirectionValue.Clockwise_Positive;
-    public static final double ENCODER_OFFSET = 0.0;
-    public static final double ENCODER_DISCONTINUITY_POINT = 0.0;
-
-    public static final double STATOR_LIMIT = 0.0;
-    public static final double SUPPLY_LIMIT = 0.0;
-
-    public static final double MOTION_MAGIC_CRUISE_VELOCITY = 0.0;
-    public static final double MOTION_MAGIC_ACCELERATION = 0.0;
-
-    public static final Rotation2d FORWARD_SOFT_LIMIT = new Rotation2d(0.0);
-    public static final Rotation2d REVERSE_SOFT_LIMIT = new Rotation2d(0.0);
-
-    public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 0.0;
-    public static final double ROTOR_TO_MECHANISM_GEAR_RATIO = 0.0;
-
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Climber/PID/kP", 0.0);
-    public static final LoggedTunableNumber kD = new LoggedTunableNumber("Climber/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Climber/PID/kS", 0.0);
-    public static final LoggedTunableNumber kG = new LoggedTunableNumber("Climber/PID/kG", 0.0);
-    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Climber/PID/kV", 0.0);
-    public static final LoggedTunableNumber kA = new LoggedTunableNumber("Climber/PID/kA", 0.0);
-
-    public static final LoggedTunableNumber POSITION_TOLERANCE =
-        new LoggedTunableNumber("Climber/ToleranceDeg", 0.0);
-  }
-
   public static class Hood {
     public static final String CANBUS = "rio";
     public static final int MOTOR_ID = 12;
@@ -114,13 +79,14 @@ public final class Constants {
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 40.0;
 
-    public static final double GEAR_RATIO = 2.0;
+    public static final double GEAR_RATIO = 3.0;
   }
 
   public static class Intake {
     public static final String CANBUS = "rio";
     public static final int DEPLOY_MOTOR_ID = 16;
-    public static final int ROLLER_MOTOR_ID = 15;
+    public static final int ROLLER_LEADER_MOTOR_ID = 15;
+    public static final int ROLLER_FOLLOWER_MOTOR_ID = 18;
     public static final int ENCODER_ID = 0;
 
     public static final InvertedValue DEPLOY_INVERTED = InvertedValue.Clockwise_Positive;
@@ -128,7 +94,7 @@ public final class Constants {
 
     public static final SensorDirectionValue ENCODER_DIRECTION =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double ENCODER_OFFSET = 0.028076171875;
+    public static final double ENCODER_OFFSET = -0.76171875;
     public static final double ENCODER_DISCONTINUITY_POINT = 0.85;
 
     public static final double DEPLOY_STATOR_LIMIT = 60.0;
@@ -144,14 +110,14 @@ public final class Constants {
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
 
-    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(137.5);
+    public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(0.0);
 
     public static final LoggedTunableNumber POSITION_TOLERANCE =
         new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
 
     public static final double ROLLER_GEAR_RATIO = 2.0;
-    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 50.0;
-    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 32.0 / 18.0;
+    public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 45.0 * 16 / 18;
+    public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 2.0;
   }
 
   public static class Loader {

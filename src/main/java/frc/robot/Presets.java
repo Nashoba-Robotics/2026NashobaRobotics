@@ -23,6 +23,8 @@ public final class Presets {
   public static class Spindexer {
     public static final LoggedTunableNumber FEED_VOLTS =
         new LoggedTunableNumber("Spindexer/Setpoints/FeedVolts", 12.0);
+    public static final LoggedTunableNumber SLOW_FEED_VOLTS =
+        new LoggedTunableNumber("Spindexer/Setpoints/SlowFeedVolts", 4.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
         new LoggedTunableNumber("Spindexer/Setpoints/ExhaustVolts", -4.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
@@ -31,14 +33,14 @@ public final class Presets {
 
   public static class Intake {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
-        new LoggedTunableNumber("Intake/Setpoints/DeployTuckAngleDeg", 45.0);
+        new LoggedTunableNumber("Intake/Setpoints/DeployTuckAngleDeg", 0.0);
     public static final LoggedTunableNumber EXTEND_ANGLE_DEG =
-        new LoggedTunableNumber("Intake/Setpoints/DeployExtendAngleDeg", 120.0);
+        new LoggedTunableNumber("Intake/Setpoints/DeployExtendAngleDeg", 0.0);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Intake/Setpoints/DeployTuningAngleDeg", 0.0);
 
     public static final LoggedTunableNumber INTAKE_VOLTS =
-        new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 10.0);
+        new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 8.0);
     public static final LoggedTunableNumber SLOW_INTAKE_VOLTS =
         new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 3.5);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
@@ -51,7 +53,7 @@ public final class Presets {
     public static final LoggedTunableNumber FEED_VOLTS =
         new LoggedTunableNumber("Loader/Setpoints/FeedVolts", 10.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/ExhaustVolts", 0.0);
+        new LoggedTunableNumber("Loader/Setpoints/ExhaustVolts", -3.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
         new LoggedTunableNumber("Loader/Setpoints/SlowExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
