@@ -14,36 +14,40 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
   public LeftT_2NZSteal_Auto(Drive drive, Superstructure superstructure, AutoFactory factory) {
     super(factory, "LeftT_2NZSteal_Auto");
 
-    AutoTrajectory right_T_NZSteal = trajectory("Left_T_NZSteal");
-    AutoTrajectory right_Safe_NZ_T = trajectory("Left_Safe_NZ_T");
-    AutoTrajectory right_2nd_T_NZ = trajectory("Left_2nd_T_NZ");
+    AutoTrajectory left_T_NZSteal = trajectory("Left_T_NZSteal");
+    AutoTrajectory left_Safe_NZ_T = trajectory("Left_Safe_NZ_T");
+    AutoTrajectory left_2nd_T_NZ = trajectory("Left_2nd_T_NZ");
     newRoutine(
-        right_T_NZSteal.resetOdometry(),
+        left_T_NZSteal.resetOdometry(),
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
-                drive, right_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                drive, left_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
             new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake())),
-        cmdWithAccuracy(drive, right_Safe_NZ_T),
+        cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
                 new SequentialCommandGroup(
-                    superstructure.autoRetractIntake().withTimeout(0.3),
-                    superstructure.deployIntake().withTimeout(0.3)).repeatedly().withTimeout(1.8),
+                        superstructure.autoRetractIntake().withTimeout(0.2),
+                        superstructure.deployIntake().withTimeout(0.2))
+                    .repeatedly()
+                    .withTimeout(2.4),
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
-                drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                drive, left_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
             new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake())),
-        cmdWithAccuracy(drive, right_Safe_NZ_T),
+        cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
                 new SequentialCommandGroup(
-                    superstructure.autoRetractIntake().withTimeout(0.3),
-                    superstructure.deployIntake().withTimeout(0.3)).repeatedly().withTimeout(1.8),
+                        superstructure.autoRetractIntake().withTimeout(0.2),
+                        superstructure.deployIntake().withTimeout(0.2))
+                    .repeatedly()
+                    .withTimeout(2.4),
                 superstructure.autoRetractIntake())));
   }
 }
