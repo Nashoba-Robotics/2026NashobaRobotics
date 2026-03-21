@@ -37,7 +37,7 @@ public class RightT_2NZSteal_Auto extends AutoModeBase {
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake())),
+            new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake())),
         cmdWithAccuracy(drive, right_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),

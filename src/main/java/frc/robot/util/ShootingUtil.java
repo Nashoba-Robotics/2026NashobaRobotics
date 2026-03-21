@@ -62,6 +62,7 @@ public class ShootingUtil {
     hubDistanceHoodAngleMap.put(4.0, Rotation2d.fromDegrees(20.0));
     hubDistanceHoodAngleMap.put(4.5, Rotation2d.fromDegrees(22.0));
     hubDistanceHoodAngleMap.put(5.0, Rotation2d.fromDegrees(24.0));
+    hubDistanceHoodAngleMap.put(5.5, Rotation2d.fromDegrees(28.0));
 
     hubDistanceShooterVelocityMap.put(0.00, 265.0);
     hubDistanceShooterVelocityMap.put(1.10, 265.0);
