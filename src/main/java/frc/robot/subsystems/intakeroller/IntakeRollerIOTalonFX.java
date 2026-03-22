@@ -44,6 +44,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
         new TalonFX(Constants.Intake.ROLLER_FOLLOWER_MOTOR_ID, Constants.Intake.CANBUS);
     rollerFollower.setControl(
         new Follower(Constants.Intake.ROLLER_LEADER_MOTOR_ID, MotorAlignmentValue.Opposed));
+        
     rollerConfig = new TalonFXConfiguration();
 
     rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
