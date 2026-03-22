@@ -32,7 +32,7 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
                         superstructure.autoRetractIntake().withTimeout(0.2),
                         superstructure.deployIntake().withTimeout(0.2))
                     .repeatedly()
-                    .withTimeout(2.4),
+                    .withTimeout(2.8),
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
@@ -47,7 +47,7 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
                         superstructure.autoRetractIntake().withTimeout(0.2),
                         superstructure.deployIntake().withTimeout(0.2))
                     .repeatedly()
-                    .withTimeout(2.4),
+                    .withTimeout(2.8),
                 superstructure.autoRetractIntake())));
   }
 }
