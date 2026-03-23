@@ -14,12 +14,26 @@ public interface ShooterIO {
     public double leaderStatorCurrentAmps = 0.0;
     public double leaderSupplyCurrentAmps = 0.0;
 
-    public boolean followerConnected = false;
-    public double followerTempCelsius = 0.0;
-    public double followerVelocityRadsPerSec = 0.0;
-    public double followerAppliedVolts = 0.0;
-    public double followerStatorCurrentAmps = 0.0;
-    public double followerSupplyCurrentAmps = 0.0;
+    public boolean follower1Connected = false;
+    public double follower1TempCelsius = 0.0;
+    public double follower1VelocityRadsPerSec = 0.0;
+    public double follower1AppliedVolts = 0.0;
+    public double follower1StatorCurrentAmps = 0.0;
+    public double follower1SupplyCurrentAmps = 0.0;
+
+    public boolean follower2Connected = false;
+    public double follower2TempCelsius = 0.0;
+    public double follower2VelocityRadsPerSec = 0.0;
+    public double follower2AppliedVolts = 0.0;
+    public double follower2StatorCurrentAmps = 0.0;
+    public double follower2SupplyCurrentAmps = 0.0;
+
+    public boolean follower3Connected = false;
+    public double follower3TempCelsius = 0.0;
+    public double follower3VelocityRadsPerSec = 0.0;
+    public double follower3AppliedVolts = 0.0;
+    public double follower3StatorCurrentAmps = 0.0;
+    public double follower3SupplyCurrentAmps = 0.0;
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}

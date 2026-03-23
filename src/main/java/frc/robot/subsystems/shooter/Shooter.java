@@ -15,66 +15,42 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-  private final boolean isLeftShooter;
-
   private final Debouncer leaderMotorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
-  private final Debouncer followerMotorConnectedDebouncer =
+  private final Debouncer follower1MotorConnectedDebouncer =
       new Debouncer(0.5, DebounceType.kFalling);
-  private final Alert shooterLeaderDisconnectedAlert;
-  private final Alert shooterFollowerDisconnectedAlert;
+  private final Debouncer follower2MotorConnectedDebouncer =
+      new Debouncer(0.5, DebounceType.kFalling);
+  private final Debouncer follower3MotorConnectedDebouncer =
+      new Debouncer(0.5, DebounceType.kFalling);
 
-  public Shooter(ShooterIO io, boolean isLeftShooter) {
+  private final Alert shooterLeaderDisconnectedAlert = new Alert("ShooterLeader motor disconnected!", Alert.AlertType.kWarning);;
+  private final Alert shooterFollower1DisconnectedAlert = new Alert("ShooterFollower1 motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert shooterFollower2DisconnectedAlert = new Alert("ShooterFollower2 motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert shooterFollower3DisconnectedAlert = new Alert("ShooterFollower3 motor disconnected!", Alert.AlertType.kWarning);
+
+  public Shooter(ShooterIO io) {
     this.io = io;
-    this.isLeftShooter = isLeftShooter;
-
-    shooterLeaderDisconnectedAlert =
-        new Alert(
-            (isLeftShooter ? "Left" : "Right") + "ShooterLeader motor disconnected!",
-            Alert.AlertType.kWarning);
-    shooterFollowerDisconnectedAlert =
-        new Alert(
-            (isLeftShooter ? "Left" : "Right") + "ShooterFollower motor disconnected!",
-            Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter/" + (isLeftShooter ? "Left" : "Right"), inputs);
+    Logger.processInputs("Shooter", inputs);
 
     shooterLeaderDisconnectedAlert.set(
         !leaderMotorConnectedDebouncer.calculate(inputs.leaderConnected));
-    shooterFollowerDisconnectedAlert.set(
-        !followerMotorConnectedDebouncer.calculate(inputs.followerConnected));
+    shooterFollower1DisconnectedAlert.set(
+        !follower1MotorConnectedDebouncer.calculate(inputs.follower1Connected));
+    shooterFollower2DisconnectedAlert.set(
+        !follower2MotorConnectedDebouncer.calculate(inputs.follower2Connected));
+    shooterFollower3DisconnectedAlert.set(
+        !follower3MotorConnectedDebouncer.calculate(inputs.follower3Connected));
 
-    if (isLeftShooter) {
-      if (Constants.Shooter.LEFT_kP.hasChanged(hashCode())
-          || Constants.Shooter.LEFT_kD.hasChanged(hashCode())) {
-        io.setPID(Constants.Shooter.LEFT_kP.get(), Constants.Shooter.LEFT_kD.get());
-      }
-      if (Constants.Shooter.LEFT_kS.hasChanged(hashCode())
-          || Constants.Shooter.LEFT_kV.hasChanged(hashCode())
-          || Constants.Shooter.LEFT_kA.hasChanged(hashCode())) {
-        io.setFeedForward(
-            Constants.Shooter.LEFT_kS.get(),
-            0.0,
-            Constants.Shooter.LEFT_kV.get(),
-            Constants.Shooter.LEFT_kA.get());
-      }
-    } else {
-      if (Constants.Shooter.RIGHT_kP.hasChanged(hashCode())
-          || Constants.Shooter.RIGHT_kD.hasChanged(hashCode())) {
-        io.setPID(Constants.Shooter.RIGHT_kP.get(), Constants.Shooter.RIGHT_kD.get());
-      }
-      if (Constants.Shooter.RIGHT_kS.hasChanged(hashCode())
-          || Constants.Shooter.RIGHT_kV.hasChanged(hashCode())
-          || Constants.Shooter.RIGHT_kA.hasChanged(hashCode())) {
-        io.setFeedForward(
-            Constants.Shooter.RIGHT_kS.get(),
-            0.0,
-            Constants.Shooter.RIGHT_kV.get(),
-            Constants.Shooter.RIGHT_kA.get());
-      }
+    if (Constants.Shooter.kP.hasChanged(hashCode()) || Constants.Shooter.kD.hasChanged(hashCode())){
+      io.setPID(Constants.Shooter.kP.get(), Constants.Shooter.kD.get());
+    }
+    if (Constants.Shooter.kS.hasChanged(hashCode()) || Constants.Shooter.kV.hasChanged(hashCode()) || Constants.Shooter.kA.hasChanged(hashCode())){
+      io.setFeedForward(Constants.Shooter.kS.get(), 0.0, Constants.Shooter.kV.get(), Constants.Shooter.kA.get());
     }
   }
 

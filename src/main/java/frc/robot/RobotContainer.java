@@ -62,8 +62,7 @@ public class RobotContainer {
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
-  private final Shooter leftShooter;
-  private final Shooter rightShooter;
+  private final Shooter shooter;
   private final Superstructure superstructure;
 
   //   private final LEDSubsystem leds = new LEDSubsystem();
@@ -100,20 +99,7 @@ public class RobotContainer {
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
         intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
         loader = new Loader(new LoaderIOTalonFX());
-        leftShooter =
-            new Shooter(
-                new ShooterIOTalonFX(
-                    true,
-                    Constants.Shooter.LEFT_SHOOTER_LEADER_ID,
-                    Constants.Shooter.LEFT_SHOOTER_FOLLOWER_ID),
-                true);
-        rightShooter =
-            new Shooter(
-                new ShooterIOTalonFX(
-                    false,
-                    Constants.Shooter.RIGHT_SHOOTER_LEADER_ID,
-                    Constants.Shooter.RIGHT_SHOOTER_FOLLOWER_ID),
-                false);
+        shooter = new Shooter(new ShooterIOTalonFX());
 
         break;
 
@@ -137,8 +123,7 @@ public class RobotContainer {
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
-        leftShooter = new Shooter(new ShooterIO() {}, true);
-        rightShooter = new Shooter(new ShooterIO() {}, false);
+        shooter = new Shooter(new ShooterIO() {});
 
         break;
 
@@ -158,15 +143,14 @@ public class RobotContainer {
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
         loader = new Loader(new LoaderIO() {});
-        leftShooter = new Shooter(new ShooterIO() {}, true);
-        rightShooter = new Shooter(new ShooterIO() {}, false);
+        shooter = new Shooter(new ShooterIO() {});
 
         break;
     }
 
     superstructure =
         new Superstructure(
-            drive, hood, spindexer, intakeDeploy, intakeRoller, loader, leftShooter, rightShooter);
+            drive, hood, spindexer, intakeDeploy, intakeRoller, loader, shooter);
 
     autoFactory = drive.getAutoFactory();
 
@@ -187,8 +171,7 @@ public class RobotContainer {
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
-            leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-            rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+            shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
             hood.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
 
@@ -243,8 +226,7 @@ public class RobotContainer {
         new Trigger(
             () ->
                 hood.atSetpoint()
-                    && leftShooter.atSetpoint()
-                    && rightShooter.atSetpoint()
+                    && shooter.atSetpoint()
                     && DriveCommands.atAngleSetpoint());
 
     // Shoot bindings
@@ -272,8 +254,7 @@ public class RobotContainer {
                 loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
-                leftShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
-                rightShooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
+                shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());

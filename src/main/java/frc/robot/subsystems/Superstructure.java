@@ -24,8 +24,7 @@ public class Superstructure {
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
   private final Loader loader;
-  private final Shooter leftShooter;
-  private final Shooter rightShooter;
+  private final Shooter shooter;
 
   public Superstructure(
       Drive drive,
@@ -34,21 +33,18 @@ public class Superstructure {
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
       Loader loader,
-      Shooter leftShooter,
-      Shooter rightShooter) {
+      Shooter shooter) {
     this.drive = drive;
     this.hood = hood;
     this.spindexer = spindexer;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
     this.loader = loader;
-    this.leftShooter = leftShooter;
-    this.rightShooter = rightShooter;
+    this.shooter = shooter;
 
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-    leftShooter.setDefaultCommand(leftShooter.stopCommand());
-    rightShooter.setDefaultCommand(rightShooter.stopCommand());
+    shooter.setDefaultCommand(shooter.stopCommand());
   }
 
   public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
@@ -62,9 +58,7 @@ public class Superstructure {
         hood.runTrackedPositionCommand(
             () -> ShootingUtil.makeSetpoint(drive).hoodAngleRads(),
             () -> ShootingUtil.makeSetpoint(drive).hoodVelocityRadsPerSec()),
-        leftShooter.runTrackedVelocityCommand(
-            () -> ShootingUtil.makeSetpoint(drive).shooterSpeedRadsPerSec()),
-        rightShooter.runTrackedVelocityCommand(
+        shooter.runTrackedVelocityCommand(
             () -> ShootingUtil.makeSetpoint(drive).shooterSpeedRadsPerSec()));
   }
 
@@ -113,8 +107,7 @@ public class Superstructure {
         intakeRoller.stopCommand(),
         spindexer.stopCommand(),
         loader.stopCommand(),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand());
+        shooter.stopCommand());
   }
 
   public Command autoShoot() {
@@ -123,8 +116,7 @@ public class Superstructure {
             new SequentialCommandGroup(
                 new WaitUntilCommand(
                     () ->
-                        leftShooter.atSetpoint()
-                            && rightShooter.atSetpoint()
+                        shooter.atSetpoint()
                             && hood.atSetpoint()
                             && DriveCommands.atAngleSetpoint()),
                 new ParallelCommandGroup(
@@ -140,8 +132,7 @@ public class Superstructure {
         new SequentialCommandGroup(
             loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
             loader.stopCommand()),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand(),
+        shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }
 }
