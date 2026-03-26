@@ -1,11 +1,11 @@
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.entryRoller;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface SpindexerIO {
+public interface EntryRollerIO {
 
   @AutoLog
-  public static class SpindexerIOInputs {
+  public static class EntryRollerIOInputs {
     public boolean connected = false;
     public double tempCelsius = 0.0;
     public double velocityRadsPerSec = 0.0;
@@ -14,7 +14,7 @@ public interface SpindexerIO {
     public double supplyCurrentAmps = 0.0;
   }
 
-  public default void updateInputs(SpindexerIOInputs inputs) {}
+  public default void updateInputs(EntryRollerIOInputs inputs) {}
 
   public default void runVoltage(double volts) {}
 

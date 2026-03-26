@@ -29,6 +29,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
+import frc.robot.subsystems.entryRoller.EntryRoller;
+import frc.robot.subsystems.entryRoller.EntryRollerIO;
+import frc.robot.subsystems.entryRoller.EntryRollerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
@@ -38,19 +41,17 @@ import frc.robot.subsystems.intakedeploy.IntakeDeployIOTalonFX;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
 import frc.robot.subsystems.intakeroller.IntakeRollerIO;
 import frc.robot.subsystems.intakeroller.IntakeRollerIOTalonFX;
-import frc.robot.subsystems.loader.Loader;
-import frc.robot.subsystems.loader.LoaderIO;
-import frc.robot.subsystems.loader.LoaderIOTalonFX;
+import frc.robot.subsystems.rollerfloor.RollerFloor;
+import frc.robot.subsystems.rollerfloor.RollerFloorIO;
+import frc.robot.subsystems.rollerfloor.RollerFloorIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
-import frc.robot.subsystems.spindexer.Spindexer;
-import frc.robot.subsystems.spindexer.SpindexerIO;
-import frc.robot.subsystems.spindexer.SpindexerIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.ShootingUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -58,10 +59,10 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Hood hood;
-  private final Spindexer spindexer;
+  private final RollerFloor rollerFloor;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
-  private final Loader loader;
+  private final EntryRoller entryRoller;
   private final Shooter shooter;
   private final Superstructure superstructure;
 
@@ -95,10 +96,10 @@ public class RobotContainer {
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        spindexer = new Spindexer(new SpindexerIOTalonFX());
+        rollerFloor = new RollerFloor(new RollerFloorIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
         intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
-        loader = new Loader(new LoaderIOTalonFX());
+        entryRoller = new EntryRoller(new EntryRollerIOTalonFX());
         shooter = new Shooter(new ShooterIOTalonFX());
 
         break;
@@ -119,10 +120,10 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
 
         hood = new Hood(new HoodIO() {});
-        spindexer = new Spindexer(new SpindexerIO() {});
+        rollerFloor = new RollerFloor(new RollerFloorIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
-        loader = new Loader(new LoaderIO() {});
+        entryRoller = new EntryRoller(new EntryRollerIO() {});
         shooter = new Shooter(new ShooterIO() {});
 
         break;
@@ -139,10 +140,10 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         hood = new Hood(new HoodIO() {});
-        spindexer = new Spindexer(new SpindexerIO() {});
+        rollerFloor = new RollerFloor(new RollerFloorIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
-        loader = new Loader(new LoaderIO() {});
+        entryRoller = new EntryRoller(new EntryRollerIO() {});
         shooter = new Shooter(new ShooterIO() {});
 
         break;
@@ -150,7 +151,7 @@ public class RobotContainer {
 
     superstructure =
         new Superstructure(
-            drive, hood, spindexer, intakeDeploy, intakeRoller, loader, shooter);
+            drive, hood, rollerFloor, intakeDeploy, intakeRoller, entryRoller, shooter);
 
     autoFactory = drive.getAutoFactory();
 
@@ -166,8 +167,8 @@ public class RobotContainer {
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.TUNING_VOLTS),
-            spindexer.runVoltageCommand(Presets.Spindexer.TUNING_VOLTS),
+            entryRoller.runVoltageCommand(Presets.EntryRoller.TUNING_VOLTS),
+            rollerFloor.runVoltageCommand(Presets.RollerFloor.TUNING_VOLTS),
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
@@ -224,10 +225,7 @@ public class RobotContainer {
 
     Trigger inShootingTolerance =
         new Trigger(
-            () ->
-                hood.atSetpoint()
-                    && shooter.atSetpoint()
-                    && DriveCommands.atAngleSetpoint());
+            () -> hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atAngleSetpoint());
 
     // Shoot bindings
     driver
@@ -242,16 +240,16 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
+                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
+                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS)));
 
     // Close shot fallback
     driver
         .b()
         .whileTrue(
             new ParallelCommandGroup(
-                spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-                loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
+                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
+                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
                 shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
@@ -267,24 +265,28 @@ public class RobotContainer {
     driver
         .y()
         .whileTrue(
-            spindexer
-                .runVoltageCommand(Presets.Spindexer.EXHAUST_VOLTS)
-                .alongWith(loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS)));
+            rollerFloor
+                .runVoltageCommand(Presets.RollerFloor.EXHAUST_VOLTS)
+                .alongWith(entryRoller.runVoltageCommand(Presets.EntryRoller.EXHAUST_VOLTS)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
     // Tune shot
-    // driver
-    //     .b()
-    //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             leftShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-    //             rightShooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-    //             hood.runTrackedPositionCommand(
-    //                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () ->
-    // 0.0),
-    //             spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-    //             loader.runVoltageCommand(Presets.Loader.FEED_VOLTS)));
+    driver
+        .b()
+        .whileTrue(
+            new ParallelCommandGroup(
+                DriveCommands.joystickDriveAtAngle(
+                    drive,
+                    () -> 0.0,
+                    () -> 0.0,
+                    () -> ShootingUtil.makeSetpoint(drive).driveAngleRads(),
+                    () -> ShootingUtil.makeSetpoint(drive).driveVelocityRadsPerSec()),
+                shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+                hood.runTrackedPositionCommand(
+                    () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
+                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
+                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS)));
   }
 
   public Command getAutonomousCommand() {

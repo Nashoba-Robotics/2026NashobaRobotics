@@ -56,13 +56,19 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   public ShooterIOTalonFX() {
     shooterLeader = new TalonFX(Constants.Shooter.SHOOTER_LEADER_ID, Constants.Shooter.CANBUS);
-    shooterFollower1 = new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER1_ID, Constants.Shooter.CANBUS);
-    shooterFollower2 = new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER2_ID, Constants.Shooter.CANBUS);
-    shooterFollower3 = new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER3_ID, Constants.Shooter.CANBUS);
+    shooterFollower1 =
+        new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER1_ID, Constants.Shooter.CANBUS);
+    shooterFollower2 =
+        new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER2_ID, Constants.Shooter.CANBUS);
+    shooterFollower3 =
+        new TalonFX(Constants.Shooter.SHOOTER_FOLLOWER3_ID, Constants.Shooter.CANBUS);
 
-    shooterFollower1.setControl(new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
-    shooterFollower2.setControl(new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
-    shooterFollower3.setControl(new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
+    shooterFollower1.setControl(
+        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
+    shooterFollower2.setControl(
+        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
+    shooterFollower3.setControl(
+        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
 
     config = new TalonFXConfiguration();
 
@@ -138,7 +144,6 @@ public class ShooterIOTalonFX implements ShooterIO {
         follower3AppliedVolts,
         follower3StatorCurrent,
         follower3SupplyCurrent);
-        
 
     shooterLeader.optimizeBusUtilization();
     shooterFollower1.optimizeBusUtilization();

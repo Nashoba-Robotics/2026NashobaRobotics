@@ -70,9 +70,10 @@ public final class Constants {
     public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 17.0;
   }
 
-  public static class Spindexer {
+  public static class RollerFloor {
     public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 14;
+    public static final int LEADER_MOTOR_ID = 14;
+    public static final int FOLLOWER_MOTOR_ID = 0;
 
     public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
@@ -120,13 +121,11 @@ public final class Constants {
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 2.0;
   }
 
-  public static class Loader {
+  public static class EntryRoller {
     public static final String CANBUS = "rio";
-    public static final int LEFT_MOTOR_ID = 13;
-    public static final int RIGHT_MOTOR_ID = 17;
+    public static final int MOTOR_ID = 13;
 
-    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-    public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 60.0;

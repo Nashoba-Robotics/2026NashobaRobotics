@@ -1,4 +1,4 @@
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.entryRoller;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -8,26 +8,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Spindexer extends SubsystemBase {
+public class EntryRoller extends SubsystemBase {
 
-  private final SpindexerIO io;
-  private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
+  private final EntryRollerIO io;
+  private final EntryRollerIOInputsAutoLogged inputs = new EntryRollerIOInputsAutoLogged();
 
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5, DebounceType.kFalling);
 
-  private final Alert spindexerMotorDisconnectedAlert =
-      new Alert("Spindexer motor disconnected!", Alert.AlertType.kWarning);
+  private final Alert entryRollerMotorDisconnectedAlert =
+      new Alert("EntryRoller motor disconnected!", Alert.AlertType.kWarning);
 
-  public Spindexer(SpindexerIO io) {
+  public EntryRoller(EntryRollerIO io) {
     this.io = io;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Spindexer", inputs);
+    Logger.processInputs("EntryRoller", inputs);
 
-    spindexerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
+    entryRollerMotorDisconnectedAlert.set(!motorConnectedDebouncer.calculate(inputs.connected));
   }
 
   public Command runVoltageCommand(DoubleSupplier volts) {

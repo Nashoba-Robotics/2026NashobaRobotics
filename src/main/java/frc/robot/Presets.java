@@ -20,15 +20,15 @@ public final class Presets {
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
 
-  public static class Spindexer {
+  public static class RollerFloor {
     public static final LoggedTunableNumber FEED_VOLTS =
-        new LoggedTunableNumber("Spindexer/Setpoints/FeedVolts", 12.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/FeedVolts", 12.0);
     public static final LoggedTunableNumber SLOW_FEED_VOLTS =
-        new LoggedTunableNumber("Spindexer/Setpoints/SlowFeedVolts", 4.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/SlowFeedVolts", 4.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Spindexer/Setpoints/ExhaustVolts", -4.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/ExhaustVolts", -4.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
-        new LoggedTunableNumber("Spindexer/Setpoints/TuningVolts", 0.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/TuningVolts", 0.0);
   }
 
   public static class Intake {
@@ -49,15 +49,15 @@ public final class Presets {
         new LoggedTunableNumber("Intake/Setpoints/RollerTuningVolts", 0.0);
   }
 
-  public static class Loader {
+  public static class EntryRoller {
     public static final LoggedTunableNumber FEED_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/FeedVolts", 10.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/FeedVolts", 10.0);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/ExhaustVolts", -3.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/ExhaustVolts", -3.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/SlowExhaustVolts", -6.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/SlowExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
-        new LoggedTunableNumber("Loader/Setpoints/TuningVolts", 0.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/TuningVolts", 0.0);
   }
 
   public static class Shooter {

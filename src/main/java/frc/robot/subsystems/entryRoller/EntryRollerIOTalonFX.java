@@ -1,4 +1,4 @@
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.entryRoller;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -16,9 +16,9 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
 
-public class SpindexerIOTalonFX implements SpindexerIO {
+public class EntryRollerIOTalonFX implements EntryRollerIO {
 
-  private final TalonFX spindexer;
+  private final TalonFX entryRoller;
   private final TalonFXConfiguration config;
 
   private final StatusSignal<Temperature> temp;
@@ -29,39 +29,39 @@ public class SpindexerIOTalonFX implements SpindexerIO {
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
 
-  public SpindexerIOTalonFX() {
-    spindexer = new TalonFX(Constants.Spindexer.MOTOR_ID, Constants.Spindexer.CANBUS);
+  public EntryRollerIOTalonFX() {
+    entryRoller = new TalonFX(Constants.EntryRoller.MOTOR_ID, Constants.EntryRoller.CANBUS);
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = Constants.Spindexer.STATOR_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.EntryRoller.STATOR_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.Spindexer.SUPPLY_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.EntryRoller.SUPPLY_LIMIT;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    config.Feedback.SensorToMechanismRatio = Constants.Spindexer.GEAR_RATIO;
+    config.Feedback.SensorToMechanismRatio = Constants.EntryRoller.GEAR_RATIO;
 
-    config.MotorOutput.Inverted = Constants.Spindexer.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.Inverted = Constants.EntryRoller.INVERTED;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    PhoenixUtil.tryUntilOk(5, () -> spindexer.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> entryRoller.getConfigurator().apply(config));
 
-    temp = spindexer.getDeviceTemp();
-    velocity = spindexer.getVelocity();
-    appliedVolts = spindexer.getMotorVoltage();
-    statorCurrent = spindexer.getStatorCurrent();
-    supplyCurrent = spindexer.getSupplyCurrent();
+    temp = entryRoller.getDeviceTemp();
+    velocity = entryRoller.getVelocity();
+    appliedVolts = entryRoller.getMotorVoltage();
+    statorCurrent = entryRoller.getStatorCurrent();
+    supplyCurrent = entryRoller.getSupplyCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
-    spindexer.optimizeBusUtilization();
+    entryRoller.optimizeBusUtilization();
 
     PhoenixUtil.registerSignals(false, temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
   }
 
   @Override
-  public void updateInputs(SpindexerIOInputs inputs) {
+  public void updateInputs(EntryRollerIOInputs inputs) {
     BaseStatusSignal.refreshAll(temp, velocity, appliedVolts, statorCurrent, supplyCurrent);
 
     inputs.connected =
@@ -75,11 +75,11 @@ public class SpindexerIOTalonFX implements SpindexerIO {
 
   @Override
   public void runVoltage(double volts) {
-    spindexer.setControl(voltageOut.withOutput(volts));
+    entryRoller.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
   public void stop() {
-    spindexer.setControl(new NeutralOut());
+    entryRoller.setControl(new NeutralOut());
   }
 }
