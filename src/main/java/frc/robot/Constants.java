@@ -70,14 +70,24 @@ public final class Constants {
     public static final double SENSOR_TO_MECHANISM_GEAR_RATIO = 17.0;
   }
 
-  public static class Spindexer {
+  public static class RollerFloor {
     public static final String CANBUS = "rio";
-    public static final int MOTOR_ID = 14;
+    public static final int LEADER_MOTOR_ID = 14;
+    public static final int FOLLOWER_MOTOR_ID = 0;
 
     public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 40.0;
+
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("RollerFloor/PID/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("RollerFloor/PID/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("RollerFloor/PID/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("RollerFloor/PID/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 15.0);
 
     public static final double GEAR_RATIO = 3.0;
   }
@@ -120,53 +130,48 @@ public final class Constants {
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 2.0;
   }
 
-  public static class Loader {
+  public static class EntryRoller {
     public static final String CANBUS = "rio";
-    public static final int LEFT_MOTOR_ID = 13;
-    public static final int RIGHT_MOTOR_ID = 17;
+    public static final int MOTOR_ID = 13;
 
-    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-    public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 60.0;
+
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("EntryRoller/PID/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryRoller/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("EntryRoller/PID/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("EntryRoller/PID/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("EntryRoller/ToleranceRadsPerSec", 15.0);
 
     public static final double GEAR_RATIO = 1.0;
   }
 
   public static class Shooter {
     public static final String CANBUS = "rio";
-    public static final int LEFT_SHOOTER_LEADER_ID = 8;
-    public static final int LEFT_SHOOTER_FOLLOWER_ID = 9;
-    public static final int RIGHT_SHOOTER_LEADER_ID = 10;
-    public static final int RIGHT_SHOOTER_FOLLOWER_ID = 11;
+    public static final int SHOOTER_LEADER_ID = 8;
+    public static final int SHOOTER_FOLLOWER1_ID = 9;
+    public static final int SHOOTER_FOLLOWER2_ID = 10;
+    public static final int SHOOTER_FOLLOWER3_ID = 11;
 
-    public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-    public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber LEFT_kP =
-        new LoggedTunableNumber("Shooter/Left/PID/kP", 10.0);
-    public static final LoggedTunableNumber LEFT_kD =
-        new LoggedTunableNumber("Shooter/Left/PID/kD", 0.0);
-    public static final LoggedTunableNumber LEFT_kS =
-        new LoggedTunableNumber("Shooter/Left/PID/kS", 5.2);
-    public static final LoggedTunableNumber LEFT_kV =
-        new LoggedTunableNumber("Shooter/Left/PID/kV", 0.043);
-    public static final LoggedTunableNumber LEFT_kA =
-        new LoggedTunableNumber("Shooter/Left/PID/kA", 0.0);
-
-    public static final LoggedTunableNumber RIGHT_kP =
+    public static final LoggedTunableNumber kP =
         new LoggedTunableNumber("Shooter/Right/PID/kP", 10.0);
-    public static final LoggedTunableNumber RIGHT_kD =
+    public static final LoggedTunableNumber kD =
         new LoggedTunableNumber("Shooter/Right/PID/kD", 0.0);
-    public static final LoggedTunableNumber RIGHT_kS =
+    public static final LoggedTunableNumber kS =
         new LoggedTunableNumber("Shooter/Right/PID/kS", 5.2);
-    public static final LoggedTunableNumber RIGHT_kV =
+    public static final LoggedTunableNumber kV =
         new LoggedTunableNumber("Shooter/Right/PID/kV", 0.043);
-    public static final LoggedTunableNumber RIGHT_kA =
+    public static final LoggedTunableNumber kA =
         new LoggedTunableNumber("Shooter/Right/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =

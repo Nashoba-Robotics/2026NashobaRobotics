@@ -8,47 +8,45 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.entryRoller.EntryRoller;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
-import frc.robot.subsystems.loader.Loader;
+import frc.robot.subsystems.rollerfloor.RollerFloor;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.util.ShootingUtil;
 import java.util.function.DoubleSupplier;
 
 public class Superstructure {
   private final Drive drive;
   private final Hood hood;
-  private final Spindexer spindexer;
+  private final RollerFloor rollerFloor;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
-  private final Loader loader;
-  private final Shooter leftShooter;
-  private final Shooter rightShooter;
+  private final EntryRoller entryRoller;
+  private final Shooter shooter;
 
   public Superstructure(
       Drive drive,
       Hood hood,
-      Spindexer spindexer,
+      RollerFloor rollerFloor,
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
-      Loader loader,
-      Shooter leftShooter,
-      Shooter rightShooter) {
+      EntryRoller entryRoller,
+      Shooter shooter) {
     this.drive = drive;
     this.hood = hood;
-    this.spindexer = spindexer;
+    this.rollerFloor = rollerFloor;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
-    this.loader = loader;
-    this.leftShooter = leftShooter;
-    this.rightShooter = rightShooter;
+    this.entryRoller = entryRoller;
+    this.shooter = shooter;
 
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-    leftShooter.setDefaultCommand(leftShooter.stopCommand());
-    rightShooter.setDefaultCommand(rightShooter.stopCommand());
+    shooter.setDefaultCommand(shooter.stopCommand());
+    entryRoller.setDefaultCommand(entryRoller.stopCommand());
+    rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
   }
 
   public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
@@ -62,24 +60,24 @@ public class Superstructure {
         hood.runTrackedPositionCommand(
             () -> ShootingUtil.makeSetpoint(drive).hoodAngleRads(),
             () -> ShootingUtil.makeSetpoint(drive).hoodVelocityRadsPerSec()),
-        leftShooter.runTrackedVelocityCommand(
-            () -> ShootingUtil.makeSetpoint(drive).shooterSpeedRadsPerSec()),
-        rightShooter.runTrackedVelocityCommand(
+        shooter.runTrackedVelocityCommand(
             () -> ShootingUtil.makeSetpoint(drive).shooterSpeedRadsPerSec()));
   }
 
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-        loader.runVoltageCommand(Presets.Loader.FEED_VOLTS));
+        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()));
   }
 
   public Command endShootCommand() {
     return new ParallelCommandGroup(
-        spindexer.stopCommand(),
+        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.25),
-            loader.stopCommand()));
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.25),
+            entryRoller.stopCommand()));
   }
 
   public Command deployIntake() {
@@ -111,10 +109,9 @@ public class Superstructure {
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
-        spindexer.stopCommand(),
-        loader.stopCommand(),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand());
+        rollerFloor.stopCommand(),
+        entryRoller.stopCommand(),
+        shooter.stopCommand());
   }
 
   public Command autoShoot() {
@@ -123,25 +120,25 @@ public class Superstructure {
             new SequentialCommandGroup(
                 new WaitUntilCommand(
                     () ->
-                        leftShooter.atSetpoint()
-                            && rightShooter.atSetpoint()
+                        shooter.atSetpoint()
                             && hood.atSetpoint()
                             && DriveCommands.atAngleSetpoint()),
                 new ParallelCommandGroup(
-                    loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
-                    spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))
+                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
+                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()))))
         .withTimeout(3.5)
         .andThen(autoEndShootCommand());
   }
 
   public Command autoEndShootCommand() {
     return new ParallelCommandGroup(
-        spindexer.stopCommand(),
+        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
-            loader.stopCommand()),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand(),
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.5),
+            entryRoller.stopCommand()),
+        shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }
 }
