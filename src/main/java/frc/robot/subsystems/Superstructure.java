@@ -45,6 +45,8 @@ public class Superstructure {
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
     shooter.setDefaultCommand(shooter.stopCommand());
+    entryRoller.setDefaultCommand(entryRoller.stopCommand());
+    rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
   }
 
   public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
@@ -64,15 +66,17 @@ public class Superstructure {
 
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
-        entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS));
+        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()));
   }
 
   public Command endShootCommand() {
     return new ParallelCommandGroup(
         rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller.runVoltageCommand(Presets.EntryRoller.EXHAUST_VOLTS).withTimeout(0.25),
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.25),
             entryRoller.stopCommand()));
   }
 
@@ -120,8 +124,8 @@ public class Superstructure {
                             && hood.atSetpoint()
                             && DriveCommands.atAngleSetpoint()),
                 new ParallelCommandGroup(
-                    entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS),
-                    rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS))))
+                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
+                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()))))
         .withTimeout(3.5)
         .andThen(autoEndShootCommand());
   }
@@ -130,7 +134,9 @@ public class Superstructure {
     return new ParallelCommandGroup(
         rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller.runVoltageCommand(Presets.EntryRoller.EXHAUST_VOLTS).withTimeout(0.5),
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.5),
             entryRoller.stopCommand()),
         shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));

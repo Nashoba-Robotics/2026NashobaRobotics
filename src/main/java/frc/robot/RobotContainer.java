@@ -167,8 +167,8 @@ public class RobotContainer {
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
-            entryRoller.runVoltageCommand(Presets.EntryRoller.TUNING_VOLTS),
-            rollerFloor.runVoltageCommand(Presets.RollerFloor.TUNING_VOLTS),
+            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED.getAsDouble()),
+            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED.getAsDouble()),
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
@@ -240,16 +240,16 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
-                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS)));
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
 
     // Close shot fallback
     driver
         .b()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
-                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS),
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
                 shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
@@ -266,8 +266,10 @@ public class RobotContainer {
         .y()
         .whileTrue(
             rollerFloor
-                .runVoltageCommand(Presets.RollerFloor.EXHAUST_VOLTS)
-                .alongWith(entryRoller.runVoltageCommand(Presets.EntryRoller.EXHAUST_VOLTS)));
+                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED.getAsDouble())
+                .alongWith(
+                    entryRoller.runVelocityCommand(
+                        Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
@@ -285,8 +287,8 @@ public class RobotContainer {
                 shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
                 hood.runTrackedPositionCommand(
                     () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
-                rollerFloor.runVoltageCommand(Presets.RollerFloor.FEED_VOLTS),
-                entryRoller.runVoltageCommand(Presets.EntryRoller.FEED_VOLTS)));
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
   }
 
   public Command getAutonomousCommand() {

@@ -9,7 +9,7 @@ public interface ShooterIO {
     public boolean leaderConnected = false;
     public double leaderTempCelsius = 0.0;
     public double leaderVelocityRadsPerSec = 0.0;
-    public double leaderVelocitySetpointRadsPerSec = 0.0;
+    public double velocitySetpointRadsPerSec = 0.0;
     public double leaderAppliedVolts = 0.0;
     public double leaderStatorCurrentAmps = 0.0;
     public double leaderSupplyCurrentAmps = 0.0;

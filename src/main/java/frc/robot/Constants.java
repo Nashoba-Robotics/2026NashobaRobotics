@@ -80,6 +80,15 @@ public final class Constants {
     public static final double STATOR_LIMIT = 60.0;
     public static final double SUPPLY_LIMIT = 40.0;
 
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("RollerFloor/PID/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("RollerFloor/PID/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("RollerFloor/PID/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("RollerFloor/PID/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 15.0);
+
     public static final double GEAR_RATIO = 3.0;
   }
 
@@ -129,6 +138,15 @@ public final class Constants {
 
     public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 60.0;
+
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("EntryRoller/PID/kP", 0.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryRoller/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 0.0);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("EntryRoller/PID/kV", 0.0);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("EntryRoller/PID/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("EntryRoller/ToleranceRadsPerSec", 15.0);
 
     public static final double GEAR_RATIO = 1.0;
   }

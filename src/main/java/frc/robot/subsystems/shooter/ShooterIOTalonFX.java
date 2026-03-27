@@ -28,7 +28,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   private final StatusSignal<Temperature> leaderTemp;
   private final StatusSignal<AngularVelocity> leaderVelocity;
-  private final StatusSignal<Double> leaderVelocitySetpoint;
+  private final StatusSignal<Double> velocitySetpoint;
   private final StatusSignal<Voltage> leaderAppliedVolts;
   private final StatusSignal<Current> leaderStatorCurrent;
   private final StatusSignal<Current> leaderSupplyCurrent;
@@ -98,7 +98,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     leaderTemp = shooterLeader.getDeviceTemp();
     leaderVelocity = shooterLeader.getVelocity();
-    leaderVelocitySetpoint = shooterLeader.getClosedLoopReference();
+    velocitySetpoint = shooterLeader.getClosedLoopReference();
     leaderAppliedVolts = shooterLeader.getMotorVoltage();
     leaderStatorCurrent = shooterLeader.getStatorCurrent();
     leaderSupplyCurrent = shooterLeader.getSupplyCurrent();
@@ -125,7 +125,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         1 / Constants.loopTime,
         leaderTemp,
         leaderVelocity,
-        leaderVelocitySetpoint,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -154,7 +154,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         false,
         leaderTemp,
         leaderVelocity,
-        leaderVelocitySetpoint,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -180,7 +180,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     BaseStatusSignal.refreshAll(
         leaderTemp,
         leaderVelocity,
-        leaderVelocitySetpoint,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -204,14 +204,14 @@ public class ShooterIOTalonFX implements ShooterIO {
         BaseStatusSignal.isAllGood(
             leaderTemp,
             leaderVelocity,
-            leaderVelocitySetpoint,
+            velocitySetpoint,
             leaderAppliedVolts,
             leaderStatorCurrent,
             leaderSupplyCurrent);
     inputs.leaderTempCelsius = leaderTemp.getValueAsDouble();
     inputs.leaderVelocityRadsPerSec = Units.rotationsToRadians(leaderVelocity.getValueAsDouble());
-    inputs.leaderVelocitySetpointRadsPerSec =
-        Units.rotationsToRadians(leaderVelocitySetpoint.getValueAsDouble());
+    inputs.velocitySetpointRadsPerSec =
+        Units.rotationsToRadians(velocitySetpoint.getValueAsDouble());
     inputs.leaderAppliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.leaderStatorCurrentAmps = leaderStatorCurrent.getValueAsDouble();
     inputs.leaderSupplyCurrentAmps = leaderSupplyCurrent.getValueAsDouble();

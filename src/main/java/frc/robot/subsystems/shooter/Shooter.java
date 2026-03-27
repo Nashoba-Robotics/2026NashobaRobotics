@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase {
 
   public boolean atSetpoint() {
     return Util.epsilonEquals(
-        inputs.leaderVelocitySetpointRadsPerSec,
+        inputs.velocitySetpointRadsPerSec,
         inputs.leaderVelocityRadsPerSec,
         Constants.Shooter.VELOCITY_TOLERANCE.get());
   }
