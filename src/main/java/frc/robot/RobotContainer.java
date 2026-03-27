@@ -21,6 +21,7 @@ import frc.robot.autos.LeftT_2NZSteal_Auto;
 import frc.robot.autos.RightT_2NZSafe_Auto;
 import frc.robot.autos.RightT_2NZSteal_Auto;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -65,6 +66,7 @@ public class RobotContainer {
   private final EntryRoller entryRoller;
   private final Shooter shooter;
   private final Superstructure superstructure;
+  private final LEDSubsystem leds = new LEDSubsystem();
 
   //   private final LEDSubsystem leds = new LEDSubsystem();
 
