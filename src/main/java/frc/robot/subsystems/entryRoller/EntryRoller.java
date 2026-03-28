@@ -1,4 +1,4 @@
-package frc.robot.subsystems.entryRoller;
+package frc.robot.subsystems.entryroller;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;

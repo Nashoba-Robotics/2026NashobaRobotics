@@ -30,9 +30,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
-import frc.robot.subsystems.entryRoller.EntryRoller;
-import frc.robot.subsystems.entryRoller.EntryRollerIO;
-import frc.robot.subsystems.entryRoller.EntryRollerIOTalonFX;
+import frc.robot.subsystems.entryroller.EntryRoller;
+import frc.robot.subsystems.entryroller.EntryRollerIO;
+import frc.robot.subsystems.entryroller.EntryRollerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
@@ -52,7 +52,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.ShootingUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -227,7 +226,10 @@ public class RobotContainer {
 
     Trigger inShootingTolerance =
         new Trigger(
-            () -> hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atAngleSetpoint());
+            () ->
+                hood.atSetpoint()
+                    && shooter.atSetpoint()
+                    && DriveCommands.atShootingSetpoint(drive));
 
     // Shoot bindings
     driver
@@ -276,21 +278,22 @@ public class RobotContainer {
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
     // Tune shot
-    driver
-        .b()
-        .whileTrue(
-            new ParallelCommandGroup(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    () -> 0.0,
-                    () -> 0.0,
-                    () -> ShootingUtil.makeSetpoint(drive).driveAngleRads(),
-                    () -> ShootingUtil.makeSetpoint(drive).driveVelocityRadsPerSec()),
-                shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
-                hood.runTrackedPositionCommand(
-                    () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
+    // driver
+    //     .b()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             DriveCommands.joystickDriveAtAngle(
+    //                 drive,
+    //                 () -> 0.0,
+    //                 () -> 0.0,
+    //                 () -> ShootingUtil.makeSetpoint(drive).driveAngleRads(),
+    //                 () -> ShootingUtil.makeSetpoint(drive).driveVelocityRadsPerSec()),
+    //             shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+    //             hood.runTrackedPositionCommand(
+    //                 () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () ->
+    // 0.0),
+    //             rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+    //             entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
   }
 
   public Command getAutonomousCommand() {

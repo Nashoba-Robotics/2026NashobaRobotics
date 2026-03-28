@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.entryRoller.EntryRoller;
+import frc.robot.subsystems.entryroller.EntryRoller;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
@@ -122,7 +122,7 @@ public class Superstructure {
                     () ->
                         shooter.atSetpoint()
                             && hood.atSetpoint()
-                            && DriveCommands.atAngleSetpoint()),
+                            && DriveCommands.atShootingSetpoint(drive)),
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()))))

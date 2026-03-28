@@ -31,6 +31,7 @@ public class ShootingUtil {
       new Translation2d(Units.inchesToMeters(7.0), Units.inchesToMeters(0.0));
 
   public record ShooterSetpoint(
+      boolean isShuttling,
       Rotation2d driveAngleRads,
       double hoodAngleRads,
       Rotation2d driveVelocityRadsPerSec,
@@ -182,6 +183,7 @@ public class ShootingUtil {
 
     setpoint =
         new ShooterSetpoint(
+            isShuttling,
             Rotation2d.fromRadians(driveAngleRads),
             hoodAngleRads,
             Rotation2d.fromRadians(driveVelocityRadsPerSec),
