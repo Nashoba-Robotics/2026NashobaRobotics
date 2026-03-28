@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.LoggedTunableNumber;
-import frc.robot.util.Util;
+import frc.robot.util.ShootingUtil;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -40,25 +40,28 @@ public class DriveCommands {
   private static final double ANGLE_KD = 0.0;
   private static final double ANGLE_MAX_VELOCITY = 12.0;
   private static final double ANGLE_MAX_ACCELERATION = 30.0;
-  private static final LoggedTunableNumber ANGLE_TOLERANCE =
-      new LoggedTunableNumber("DriveCommands/AngleToleranceDeg", 3.0);
 
   private static final double DRIVE_KP = 3.5;
   private static final double DRIVE_KD = 0.0;
   private static final double DRIVE_MAX_VELOCITY = 4.0;
   private static final double DRIVE_MAX_ACCELERATION = 20.0;
-  private static final LoggedTunableNumber DRIVE_TOLERANCE =
-      new LoggedTunableNumber("DriveCommands/PositionToleranceMeters", 0.025);
 
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
-  private static boolean atAngleSetpoint = false;
-  private static boolean atDriveSetpoint = false;
+  private static final LoggedTunableNumber HUB_SHOOTING_TOLERANCE =
+      new LoggedTunableNumber("DriveCommands/HubShootingToleranceDeg", 3.0);
+  private static final LoggedTunableNumber SHUTTLING_TOLERANCE =
+      new LoggedTunableNumber("DriveCommands/ShuttlingToleranceDeg", 15.0);
+  private static final LoggedTunableNumber DRIVE_TOLERANCE =
+      new LoggedTunableNumber("DriveCommands/PositionToleranceMeters", 0.025);
 
-  private DriveCommands() {}
+  private static final LoggedTunableNumber driveLockMetersPerSecondThreshold =
+      new LoggedTunableNumber("DriveCommands/DriveLockMetersPerSecondThreshold", 0.1);
+  private static final LoggedTunableNumber driveLockOmegaRadsPerSecThreshold =
+      new LoggedTunableNumber("DriveCommands/DriveLockOmegaRadsPerSecThreshold", 0.15);
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -163,18 +166,26 @@ public class DriveCommands {
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
 
-              atAngleSetpoint =
-                  Util.epsilonEquals(
-                      rotationSupplier.get().getRadians(),
-                      drive.getPose().getRotation().getRadians(),
-                      Units.degreesToRadians(ANGLE_TOLERANCE.get()));
+              boolean shouldLockWheels =
+                  Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
+                          < driveLockMetersPerSecondThreshold.get()
+                      && Math.abs(speeds.omegaRadiansPerSecond)
+                          < driveLockOmegaRadsPerSecThreshold.get()
+                      && !ShootingUtil.makeSetpoint(drive).isShuttling()
+                      && atShootingSetpoint(drive);
+
+              Logger.recordOutput("DriveCommands/shouldLockWheels", shouldLockWheels);
+
+              if (shouldLockWheels) drive.stopWithX();
+              else {
+                drive.runVelocity(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                        speeds,
+                        isFlipped
+                            ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                            : drive.getRotation()));
+              }
             },
             drive)
 
@@ -182,7 +193,6 @@ public class DriveCommands {
         .beforeStarting(
             () -> {
               angleController.reset(drive.getRotation().getRadians());
-              atAngleSetpoint = false;
             });
   }
 
@@ -225,16 +235,6 @@ public class DriveCommands {
 
               ChassisSpeeds speeds = new ChassisSpeeds(driveX, driveY, omega);
               drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
-
-              atDriveSetpoint =
-                  (Util.epsilonEquals(
-                          drive.getPose().getX(), pose.get().getX(), DRIVE_TOLERANCE.get())
-                      && Util.epsilonEquals(
-                          drive.getPose().getY(), pose.get().getY(), DRIVE_TOLERANCE.get())
-                      && Util.epsilonEquals(
-                          drive.getRotation().getRadians(),
-                          pose.get().getRotation().getRadians(),
-                          Units.degreesToRadians(ANGLE_TOLERANCE.get())));
             },
             drive)
         // Reset PID controller when command starts
@@ -248,8 +248,6 @@ public class DriveCommands {
                   drive.getRotation().getRadians(), fieldRelSpeeds.omegaRadiansPerSecond);
               driveXController.reset(drive.getPose().getX(), fieldRelSpeeds.vxMetersPerSecond);
               driveYController.reset(drive.getPose().getY(), fieldRelSpeeds.vyMetersPerSecond);
-
-              atDriveSetpoint = false;
             })
         .finallyDo(drive::stop);
   }
@@ -386,12 +384,23 @@ public class DriveCommands {
                     })));
   }
 
-  public static boolean atAngleSetpoint() {
-    return atAngleSetpoint;
-  }
+  public static boolean atShootingSetpoint(Drive drive) {
+    boolean atShootingSetpoint =
+        MathUtil.angleModulus(
+                Math.abs(
+                    drive
+                        .getPose()
+                        .getRotation()
+                        .minus(ShootingUtil.makeSetpoint(drive).driveAngleRads())
+                        .getRadians()))
+            < Units.degreesToRadians(
+                ShootingUtil.makeSetpoint(drive).isShuttling()
+                    ? SHUTTLING_TOLERANCE.get()
+                    : HUB_SHOOTING_TOLERANCE.get());
 
-  public static boolean atDriveToPoseSetpoint() {
-    return atDriveSetpoint;
+    Logger.recordOutput("DriveCommands/AtShootingSetpoint", atShootingSetpoint);
+
+    return atShootingSetpoint;
   }
 
   private static class WheelRadiusCharacterizationState {

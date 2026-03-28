@@ -9,6 +9,8 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -20,6 +22,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -100,6 +103,12 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
+  private final AutoFactory autoFactory;
+
+  private final PIDController xController = new PIDController(7.0, 0.0, 0.0);
+  private final PIDController yController = new PIDController(7.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(6.0, 0.0, 0.0);
+
   private final Field2d field = new Field2d();
 
   public Drive(
@@ -141,6 +150,9 @@ public class Drive extends SubsystemBase {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
+    // Configure AutoFactory for Choreo
+    autoFactory = new AutoFactory(this::getPose, this::setPose, this::followTrajectory, true, this);
+
     // Configure SysId
     sysId =
         new SysIdRoutine(
@@ -151,6 +163,8 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
 
     SmartDashboard.putData("poseEstimatorField", field);
   }
@@ -363,5 +377,34 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  public double getPitch() {
+    return gyroIO.getPitch();
+  }
+
+  public double getRoll() {
+    return gyroIO.getRoll();
+  }
+
+  public AutoFactory getAutoFactory() {
+    return autoFactory;
+  }
+
+  public void followTrajectory(SwerveSample sample) {
+    Pose2d pose = getPose();
+
+    ChassisSpeeds speeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            new ChassisSpeeds(
+                sample.vx + xController.calculate(pose.getX(), sample.x),
+                sample.vy + yController.calculate(pose.getY(), sample.y),
+                sample.omega
+                    + headingController.calculate(pose.getRotation().getRadians(), sample.heading)),
+            getRotation());
+
+    runVelocity(speeds);
+
+    Logger.recordOutput("Choreo/SetpointPose", sample.getPose());
   }
 }

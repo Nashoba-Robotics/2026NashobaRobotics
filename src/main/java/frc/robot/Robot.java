@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.ShootingUtil;
 import java.lang.reflect.Field;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -71,6 +72,7 @@ public class Robot extends LoggedRobot {
     } catch (Exception e) {
       DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
     }
+
     CommandScheduler.getInstance().setPeriod(loopOverrunWarningTimeout);
 
     // Configure brownout voltage
@@ -84,6 +86,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     Logger.recordOutput("MatchTime", DriverStation.getMatchTime());
+
+    ShootingUtil.clearShooterSetpoint();
 
     CommandScheduler.getInstance().run();
   }

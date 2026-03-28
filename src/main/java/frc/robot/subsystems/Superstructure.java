@@ -1,244 +1,144 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.FieldConstants;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.entryroller.EntryRoller;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
-import frc.robot.subsystems.loader.Loader;
+import frc.robot.subsystems.rollerfloor.RollerFloor;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.spindexer.Spindexer;
-import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ShootingUtil;
-import frc.robot.util.ShootingUtil.ShooterSetpoint;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
 
-public class Superstructure extends SubsystemBase {
+public class Superstructure {
   private final Drive drive;
-  private final Climber climber;
   private final Hood hood;
-  private final Spindexer spindexer;
+  private final RollerFloor rollerFloor;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
-  private final Loader loader;
-  private final Shooter leftShooter;
-  private final Shooter rightShooter;
-
-  private ShooterSetpoint hubShootingSetpoint;
-  private ShooterSetpoint shuttleShootingSetpoint;
+  private final EntryRoller entryRoller;
+  private final Shooter shooter;
 
   public Superstructure(
       Drive drive,
-      Climber climber,
       Hood hood,
-      Spindexer spindexer,
+      RollerFloor rollerFloor,
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
-      Loader loader,
-      Shooter leftShooter,
-      Shooter rightShooter) {
+      EntryRoller entryRoller,
+      Shooter shooter) {
     this.drive = drive;
-    this.climber = climber;
     this.hood = hood;
-    this.spindexer = spindexer;
+    this.rollerFloor = rollerFloor;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
-    this.loader = loader;
-    this.leftShooter = leftShooter;
-    this.rightShooter = rightShooter;
-
-    hubShootingSetpoint =
-        ShootingUtil.makeHubSetpoint(
-            drive,
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
-    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
+    this.entryRoller = entryRoller;
+    this.shooter = shooter;
 
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-    leftShooter.setDefaultCommand(leftShooter.stopCommand());
-    rightShooter.setDefaultCommand(rightShooter.stopCommand());
+    shooter.setDefaultCommand(shooter.stopCommand());
+    entryRoller.setDefaultCommand(entryRoller.stopCommand());
+    rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
   }
 
-  @Override
-  public void periodic() {
-    hubShootingSetpoint =
-        ShootingUtil.makeHubSetpoint(
-            drive,
-            AllianceFlipUtil.apply(
-                new Pose2d(
-                    FieldConstants.Hub.innerCenterPoint.toTranslation2d(), Rotation2d.kZero)));
-    shuttleShootingSetpoint = ShootingUtil.makeShuttleSetpoint(drive, getShuttleTargetPose());
-
-    Logger.recordOutput("DriveCommands/atAngleSetpoint", DriveCommands.atAngleSetpoint());
-  }
-
-  public Command hubAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
+  public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
     return new ParallelCommandGroup(
         DriveCommands.joystickDriveAtAngle(
             drive,
             driveXSupplier,
             driveYSupplier,
-            this::getHubShootingSetpointDriveAngle,
-            this::getHubShootingSetpointDriveVelocity),
+            () -> ShootingUtil.makeSetpoint(drive).driveAngleRads(),
+            () -> ShootingUtil.makeSetpoint(drive).driveVelocityRadsPerSec()),
         hood.runTrackedPositionCommand(
-            this::getHubShootingSetpointHoodAngle, this::getHubShootingSetpointHoodVelocity),
-        leftShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed),
-        rightShooter.runTrackedVelocityCommand(this::getHubShootingSetpointShooterSpeed));
-  }
-
-  public Command shuttleAimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {
-    return new ParallelCommandGroup(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            driveXSupplier,
-            driveYSupplier,
-            this::getShuttleShootingSetpointDriveAngle,
-            this::getShuttleShootingSetpointDriveVelocity),
-        hood.runTrackedPositionCommand(
-            this::getShuttleShootingSetpointHoodAngle,
-            this::getShuttleShootingSetpointHoodVelocity),
-        leftShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed),
-        rightShooter.runTrackedVelocityCommand(this::getShuttleShootingSetpointShooterSpeed));
+            () -> ShootingUtil.makeSetpoint(drive).hoodAngleRads(),
+            () -> ShootingUtil.makeSetpoint(drive).hoodVelocityRadsPerSec()),
+        shooter.runTrackedVelocityCommand(
+            () -> ShootingUtil.makeSetpoint(drive).shooterSpeedRadsPerSec()));
   }
 
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS),
-        loader.runVoltageCommand(Presets.Loader.FEED_VOLTS));
+        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
+        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()));
   }
 
   public Command endShootCommand() {
     return new ParallelCommandGroup(
-        spindexer.stopCommand(),
+        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.25),
-            loader.stopCommand()));
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.25),
+            entryRoller.stopCommand()));
   }
 
   public Command deployIntake() {
     return new SequentialCommandGroup(
         intakeDeploy
-            .runVoltageCommand(() -> 4.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
+            .runVoltageCommand(() -> 8.0)
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(100)),
         intakeDeploy.runVoltageCommand(() -> 0.30));
-  }
-
-  public Command autoDeployIntake() {
-    return new SequentialCommandGroup(
-        intakeDeploy
-            .runVoltageCommand(() -> 4.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(110)),
-        intakeDeploy.runVoltageCommand(() -> 0.40));
   }
 
   public Command retractIntake() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
             intakeDeploy
-                .runVoltageCommand(() -> -4.0)
+                .runVoltageCommand(() -> -8.0)
                 .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
-            intakeDeploy.runVoltageCommand(() -> -0.10)),
+            intakeDeploy.runVoltageCommand(() -> -0.30)),
         intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
+  }
+
+  public Command autoRunIntake() {
+    return deployIntake().alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+  }
+
+  public Command autoRetractIntake() {
+    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(5.0));
   }
 
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
-        spindexer.stopCommand(),
-        loader.stopCommand(),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand());
-  }
-
-  public Pose2d getShuttleTargetPose() {
-    Pose2d robotPose = AllianceFlipUtil.apply(drive.getPose());
-    return AllianceFlipUtil.apply(
-        new Pose2d(
-            (robotPose.getY() <= FieldConstants.fieldWidth / 2)
-                ? FieldConstants.RightBump.centerPoint
-                : FieldConstants.LeftBump.centerPoint,
-            Rotation2d.kZero));
+        rollerFloor.stopCommand(),
+        entryRoller.stopCommand(),
+        shooter.stopCommand());
   }
 
   public Command autoShoot() {
     return new ParallelCommandGroup(
-            hubAimCommand(() -> 0.0, () -> 0.0),
+            aimCommand(() -> 0.0, () -> 0.0),
             new SequentialCommandGroup(
                 new WaitUntilCommand(
                     () ->
-                        leftShooter.atSetpoint()
-                            && rightShooter.atSetpoint()
+                        shooter.atSetpoint()
                             && hood.atSetpoint()
-                            && DriveCommands.atAngleSetpoint()),
+                            && DriveCommands.atShootingSetpoint(drive)),
                 new ParallelCommandGroup(
-                    loader.runVoltageCommand(Presets.Loader.FEED_VOLTS),
-                    spindexer.runVoltageCommand(Presets.Spindexer.FEED_VOLTS))))
+                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
+                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()))))
         .withTimeout(3.5)
         .andThen(autoEndShootCommand());
   }
 
   public Command autoEndShootCommand() {
     return new ParallelCommandGroup(
-        spindexer.stopCommand(),
+        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            loader.runVoltageCommand(Presets.Loader.EXHAUST_VOLTS).withTimeout(0.5),
-            loader.stopCommand()),
-        leftShooter.stopCommand(),
-        rightShooter.stopCommand(),
+            entryRoller
+                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
+                .withTimeout(0.5),
+            entryRoller.stopCommand()),
+        shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-  }
-
-  public Rotation2d getHubShootingSetpointDriveAngle() {
-    return hubShootingSetpoint.driveAngleRads();
-  }
-
-  public Rotation2d getHubShootingSetpointDriveVelocity() {
-    return hubShootingSetpoint.driveVelocityRadsPerSec();
-  }
-
-  public double getHubShootingSetpointHoodAngle() {
-    return hubShootingSetpoint.hoodAngleRads();
-  }
-
-  public double getHubShootingSetpointHoodVelocity() {
-    return hubShootingSetpoint.hoodVelocityRadsPerSec();
-  }
-
-  public double getHubShootingSetpointShooterSpeed() {
-    return hubShootingSetpoint.shooterSpeedRadsPerSec();
-  }
-
-  public Rotation2d getShuttleShootingSetpointDriveAngle() {
-    return shuttleShootingSetpoint.driveAngleRads();
-  }
-
-  public Rotation2d getShuttleShootingSetpointDriveVelocity() {
-    return shuttleShootingSetpoint.driveVelocityRadsPerSec();
-  }
-
-  public double getShuttleShootingSetpointHoodAngle() {
-    return shuttleShootingSetpoint.hoodAngleRads();
-  }
-
-  public double getShuttleShootingSetpointHoodVelocity() {
-    return shuttleShootingSetpoint.hoodVelocityRadsPerSec();
-  }
-
-  public double getShuttleShootingSetpointShooterSpeed() {
-    return shuttleShootingSetpoint.shooterSpeedRadsPerSec();
   }
 }

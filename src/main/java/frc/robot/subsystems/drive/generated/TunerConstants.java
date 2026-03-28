@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
@@ -29,7 +28,7 @@ public class TunerConstants {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(35.0).withKI(0).withKD(0).withKS(3.18).withKV(1.2);
+      new Slot0Configs().withKP(40.0).withKI(0).withKD(0).withKS(3.18).withKV(1.2);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors

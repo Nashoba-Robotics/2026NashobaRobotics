@@ -1,14 +1,15 @@
-package frc.robot.subsystems.intakeroller;
+package frc.robot.subsystems.rollerfloor;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeRollerIO {
+public interface RollerFloorIO {
 
   @AutoLog
-  public static class IntakeRollerIOInputs {
+  public static class RollerFloorIOInputs {
     public boolean leaderConnected = false;
     public double leaderTempCelsius = 0.0;
     public double leaderVelocityRadsPerSec = 0.0;
+    public double velocitySetpointRadsPerSec = 0.0;
     public double leaderAppliedVolts = 0.0;
     public double leaderStatorCurrentAmps = 0.0;
     public double leaderSupplyCurrentAmps = 0.0;
@@ -21,9 +22,15 @@ public interface IntakeRollerIO {
     public double followerSupplyCurrentAmps = 0.0;
   }
 
-  public default void updateInputs(IntakeRollerIOInputs inputs) {}
+  public default void updateInputs(RollerFloorIOInputs inputs) {}
 
   public default void runVoltage(double volts) {}
 
+  public default void runVelocity(double velocityRadsPerSec) {}
+
   public default void stop() {}
+
+  public default void setPID(double kP, double kD) {}
+
+  public default void setFeedForward(double kS, double kG, double kV, double kA) {}
 }

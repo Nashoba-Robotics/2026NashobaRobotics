@@ -1,28 +1,25 @@
-package frc.robot.subsystems.climber;
+package frc.robot.subsystems.entryroller;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ClimberIO {
+public interface EntryRollerIO {
 
   @AutoLog
-  public static class ClimberIOInputs {
-    public boolean motorConnected = false;
-    public boolean encoderConnected = false;
+  public static class EntryRollerIOInputs {
+    public boolean connected = false;
     public double tempCelsius = 0.0;
-    public double absolutePositionRads = 0.0;
-    public double rotorPositionRads = 0.0;
-    public double positionSetpointRads = 0.0;
     public double velocityRadsPerSec = 0.0;
+    public double velocitySetpointRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double statorCurrentAmps = 0.0;
     public double supplyCurrentAmps = 0.0;
   }
 
-  public default void updateInputs(ClimberIOInputs inputs) {}
+  public default void updateInputs(EntryRollerIOInputs inputs) {}
 
   public default void runVoltage(double volts) {}
 
-  public default void runPosition(double positionRads) {}
+  public default void runVelocity(double velocityRadsPerSec) {}
 
   public default void stop() {}
 
