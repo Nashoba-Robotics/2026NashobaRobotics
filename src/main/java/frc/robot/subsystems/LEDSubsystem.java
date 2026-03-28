@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
@@ -30,7 +31,7 @@ public class LEDSubsystem extends SubsystemBase {
   private StrobeAnimation strobe = new StrobeAnimation(0, LEDCount);
 
   public LEDSubsystem() {
-    candle = new CANdle(6);
+    candle = new CANdle(Constants.Led.DEVICE_ID, Constants.Led.CANBUS);
   }
 
   public Command disableLEDsCommand() {
@@ -70,32 +71,6 @@ public class LEDSubsystem extends SubsystemBase {
             candle.setControl(
                 strobe.withColor(new RGBWColor(r, g, b)).withFrameRate(frameRate).withSlot(0)));
   }
-
-  //   public boolean shift1Active() {
-
-  //     Optional<Alliance> alliance = DriverStation.getAlliance();
-
-  //     String gameData = DriverStation.getGameSpecificMessage();
-
-  //     boolean redInactiveFirst = false;
-
-  //     switch (gameData.charAt(0)) {
-  //       case 'R' -> redInactiveFirst = true;
-  //       case 'B' -> redInactiveFirst = false;
-  //       default -> {
-  //         // If we have invalid game data, assume we have first shift.
-  //         return true;
-  //       }
-  //     }
-
-  //     // Shift was active for blue if red won auto, or red if blue won auto.
-  //     boolean shiftOne =
-  //         switch (alliance.get()) {
-  //           case Red -> !redInactiveFirst;
-  //           case Blue -> redInactiveFirst;
-  //         };
-  //     return shiftOne;
-  //   }
 
   public boolean isHubActive() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -158,64 +133,6 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
-  //   public boolean HubShifting() {
-  //     Optional<Alliance> alliance = DriverStation.getAlliance();
-  //     // If we have no alliance, we cannot be enabled, therefore no indicator.
-  //     if (alliance.isEmpty()) {
-  //       return false;
-  //     }
-  //     // Auto doesn't need shooting indicators.
-  //     if (DriverStation.isAutonomousEnabled()) {
-  //       return false;
-  //     }
-  //     // At this point, if we're not teleop enabled, there is no hub.
-  //     if (!DriverStation.isTeleopEnabled()) {
-  //       return false;
-  //     }
-  //     // We're teleop enabled, compute.
-  //     double matchTime = DriverStation.getMatchTime();
-  //     // If we have no game data, we cannot compute, assume not shifting yet, as its likely early
-
-  //     if (matchTime > 132) {
-  //       // Transition shift ending in two seconds, anything before this does not need flashing
-  //       return false;
-  //     } else if (matchTime > 130) {
-  //       // Shift 1 starts at this point, flashing has been enabled
-  //       if (shift1Active()) {
-  //         return false;
-  //       } else {
-  //         return true;
-  //       }
-  //     } else if (matchTime > 110) {
-  //       // Shift 1 ending in two seconds
-  //       return false;
-  //     } else if (matchTime > 105) {
-  //       // Shift 2 starts
-  //       return true;
-  //     } else if (matchTime > 85) {
-  //       // Shift 2 is ending in two seconds
-  //       return false;
-  //     } else if (matchTime > 80) {
-  //       // Shift 3 starts
-  //       return true;
-  //     } else if (matchTime > 60) {
-  //       // Shift 3 is ending in two seconds
-  //       return false;
-  //     } else if (matchTime > 55) {
-  //       // Shift 4 starts
-  //       return true;
-  //     } else if (matchTime > 35) {
-  //       // Shift 4 is ending in two seconds
-  //       return false;
-  //     } else if (matchTime > 30) {
-  //       // Endgame starts
-  //       return true;
-  //     } else {
-  //       // End game, not flashing.
-  //       return false;
-  //     }
-  //   }
-
   boolean isAllianceBlue() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -231,9 +148,8 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (periodicEnabled == false) 
-      return;
-    
+    if (periodicEnabled == false) return;
+
     boolean isHubActive = isHubActive();
     Logger.recordOutput("Hubactive Flag", isHubActive);
 
@@ -250,27 +166,5 @@ public class LEDSubsystem extends SubsystemBase {
       // Inacttive hub we set color to white
       candle.setControl(color.withColor(new RGBWColor(255, 255, 255)));
     }
-
-    // if (DriverStation.isAutonomousEnabled()) {
-    //   setColor(225, 225, 225);
-    // }
-
-    // if (HubShifting()) {
-
-    //   switch (alliance.get()) {
-    //     case Blue -> setStrobeAnimation(2, 102, 177, 50);
-    //     case Red -> setStrobeAnimation(238, 28, 35, 50);
-    //   }
-
-    // } else if (isHubActive()) {
-
-    //   switch (alliance.get()) {
-    //     case Blue -> setColor(2, 102, 177);
-    //     case Red -> setColor(238, 28, 35);
-    //   }
-    // } else {
-
-    //   setColor(255, 255, 255);
-    // }
   }
 }
