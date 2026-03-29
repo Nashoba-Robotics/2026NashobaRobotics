@@ -157,18 +157,11 @@ public class AutoModeBase {
     return false;
   }
 
-  private static boolean isBeached(Drive drive) {
-    return ((Math.abs(drive.getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
-            || Math.abs(drive.getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
-        && DriverStation.isAutonomous()
-        && AllianceFlipUtil.applyX(drive.getPose().getX())
-            > FieldConstants.LinesVertical.hubCenter);
-  }
+
 
   public static Command antiBeach(Drive drive) {
     return new SequentialCommandGroup(
-        new WaitUntilCommand(() -> isBeached(drive)),
-        new SequentialCommandGroup(
+        new WaitUntilCommand(() -> drive.isBeached()),
             new ConditionalCommand(
                 DriveCommands.driveToPose(
                     drive,
@@ -184,7 +177,7 @@ public class AutoModeBase {
                             drive.getRotation())),
                 () ->
                     drive.getPose().getX() > AllianceFlipUtil.applyX(8.4)
-                        || drive.getPose().getX() > AllianceFlipUtil.applyX(10.3))));
+                        || drive.getPose().getX() > AllianceFlipUtil.applyX(10.3)));
   }
 
   public void newRoutine(Command... sequence) {
