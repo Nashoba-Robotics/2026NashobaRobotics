@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -178,5 +179,10 @@ public final class Constants {
         new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 15.0);
 
     public static final double GEAR_RATIO = 1.35;
+  }
+
+  public static class Led {
+    public static final CANBus CANBUS = new CANBus("drivet");
+    public static final int DEVICE_ID = 6;
   }
 }

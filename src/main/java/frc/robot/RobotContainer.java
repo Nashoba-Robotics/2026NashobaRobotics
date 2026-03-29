@@ -67,8 +67,6 @@ public class RobotContainer {
   private final Superstructure superstructure;
   private final LEDSubsystem leds = new LEDSubsystem();
 
-  //   private final LEDSubsystem leds = new LEDSubsystem();
-
   private final AutoFactory autoFactory;
 
   // Controllers

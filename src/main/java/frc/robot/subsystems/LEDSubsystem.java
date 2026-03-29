@@ -13,12 +13,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class LEDSubsystem extends SubsystemBase {
   private final CANdle candle;
-
-  private int LEDCount = 83;
+  // set to false to disable LEDs
+  private final boolean periodicEnabled = true;
+  private int LEDCount = 50;
 
   private EmptyAnimation disabled = new EmptyAnimation(0);
   private RainbowAnimation rainbow = new RainbowAnimation(0, LEDCount);
@@ -28,8 +31,7 @@ public class LEDSubsystem extends SubsystemBase {
   private StrobeAnimation strobe = new StrobeAnimation(0, LEDCount);
 
   public LEDSubsystem() {
-    candle = new CANdle(0);
-    candle.setControl(color.withColor(new RGBWColor(48, 247, 231)));
+    candle = new CANdle(Constants.Led.DEVICE_ID, Constants.Led.CANBUS);
   }
 
   public Command disableLEDsCommand() {
@@ -70,32 +72,6 @@ public class LEDSubsystem extends SubsystemBase {
                 strobe.withColor(new RGBWColor(r, g, b)).withFrameRate(frameRate).withSlot(0)));
   }
 
-  public boolean shift1Active() {
-
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-
-    String gameData = DriverStation.getGameSpecificMessage();
-
-    boolean redInactiveFirst = false;
-
-    switch (gameData.charAt(0)) {
-      case 'R' -> redInactiveFirst = true;
-      case 'B' -> redInactiveFirst = false;
-      default -> {
-        // If we have invalid game data, assume we have first shift.
-        return true;
-      }
-    }
-
-    // Shift was active for blue if red won auto, or red if blue won auto.
-    boolean shiftOne =
-        switch (alliance.get()) {
-          case Red -> !redInactiveFirst;
-          case Blue -> redInactiveFirst;
-        };
-    return shiftOne;
-  }
-
   public boolean isHubActive() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // If we have no alliance, we cannot be enabled, therefore no hub.
@@ -115,116 +91,80 @@ public class LEDSubsystem extends SubsystemBase {
     double matchTime = DriverStation.getMatchTime();
     String gameData = DriverStation.getGameSpecificMessage();
     // If we have no game data, we cannot compute, assume hub is active, as its likely early in
-
+    // teleop.
     if (gameData.isEmpty()) {
       return true;
     }
+    boolean redInactiveFirst = false;
+    switch (gameData.charAt(0)) {
+      case 'R' -> redInactiveFirst = true;
+      case 'B' -> redInactiveFirst = false;
+      default -> {
+        // If we have invalid game data, assume hub is active.
+        return true;
+      }
+    }
+
+    // Shift was is active for blue if red won auto, or red if blue won auto.
+    boolean shift1Active =
+        switch (alliance.get()) {
+          case Red -> !redInactiveFirst;
+          case Blue -> redInactiveFirst;
+        };
 
     if (matchTime > 130) {
       // Transition shift, hub is active.
       return true;
     } else if (matchTime > 105) {
       // Shift 1
-      return shift1Active();
+      return shift1Active;
     } else if (matchTime > 80) {
       // Shift 2
-      return !shift1Active();
+      return !shift1Active;
     } else if (matchTime > 55) {
       // Shift 3
-      return shift1Active();
+      return shift1Active;
     } else if (matchTime > 30) {
       // Shift 4
-      return !shift1Active();
+      return !shift1Active;
     } else {
       // End game, hub always active.
       return true;
     }
   }
 
-  public boolean HubShifting() {
+  boolean isAllianceBlue() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
-    // If we have no alliance, we cannot be enabled, therefore no indicator.
-    if (alliance.isEmpty()) {
-      return false;
-    }
-    // Auto doesn't need shooting indicators.
-    if (DriverStation.isAutonomousEnabled()) {
-      return false;
-    }
-    // At this point, if we're not teleop enabled, there is no hub.
-    if (!DriverStation.isTeleopEnabled()) {
-      return false;
-    }
-    // We're teleop enabled, compute.
-    double matchTime = DriverStation.getMatchTime();
-    // If we have no game data, we cannot compute, assume not shifting yet, as its likely earl
-
-    if (matchTime > 132) {
-      // Transition shift ending in two seconds, anything before this does not need flashing
-      return false;
-    } else if (matchTime > 130) {
-      // Shift 1 starts at this point, flashing has been enabled
-      if (shift1Active()) {
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Red) {
         return false;
-      } else {
+      }
+      if (alliance.get() == Alliance.Blue) {
         return true;
       }
-    } else if (matchTime > 110) {
-      // Shift 1 ending in two seconds
-      return false;
-    } else if (matchTime > 105) {
-      // Shift 2 starts
-      return true;
-    } else if (matchTime > 85) {
-      // Shift 2 is ending in two seconds
-      return false;
-    } else if (matchTime > 80) {
-      // Shift 3 starts
-      return true;
-    } else if (matchTime > 60) {
-      // Shift 3 is ending in two seconds
-      return false;
-    } else if (matchTime > 55) {
-      // Shift 4 starts
-      return true;
-    } else if (matchTime > 35) {
-      // Shift 4 is ending in two seconds
-      return false;
-    } else if (matchTime > 30) {
-      // Endgame starts
-      return true;
-    } else {
-      // End game, not flashing.
-      return false;
-    }
+    } // Field error return blue
+    return true;
   }
 
   @Override
   public void periodic() {
-    // Logger.recordOutput("Hubactive Flag", isHubActive());
+    if (periodicEnabled == false) return;
 
-    // Optional<Alliance> alliance = DriverStation.getAlliance();
+    boolean isHubActive = isHubActive();
+    Logger.recordOutput("Hubactive Flag", isHubActive);
 
-    // if (DriverStation.isAutonomousEnabled()) {
-    //   setColor(225, 225, 225);
-    // }
-
-    // if (HubShifting()) {
-
-    //   switch (alliance.get()) {
-    //     case Blue -> setStrobeAnimation(2, 102, 177, 50);
-    //     case Red -> setStrobeAnimation(238, 28, 35, 50);
-    //   }
-
-    // } else if (isHubActive()) {
-
-    //   switch (alliance.get()) {
-    //     case Blue -> setColor(2, 102, 177);
-    //     case Red -> setColor(238, 28, 35);
-    //   }
-    // } else {
-
-    //   setColor(255, 255, 255);
-    // }
+    if (isHubActive == true) {
+      boolean isAllianceBlue = isAllianceBlue();
+      if (isAllianceBlue == true) {
+        // On Blue Alliance setting color blue
+        candle.setControl(color.withColor(new RGBWColor(0, 0, 255)));
+      } else {
+        // On Red Alliance setting color red
+        candle.setControl(color.withColor(new RGBWColor(255, 0, 0)));
+      }
+    } else {
+      // Inacttive hub we set color to white
+      candle.setControl(color.withColor(new RGBWColor(255, 255, 255)));
+    }
   }
 }
