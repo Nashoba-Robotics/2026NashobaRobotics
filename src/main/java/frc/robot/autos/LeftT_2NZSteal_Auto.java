@@ -20,34 +20,28 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
     newRoutine(
         left_T_NZSteal.resetOdometry(),
         new ParallelDeadlineGroup(
-            cmdWithAccuracy(
-                drive, left_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake())),
+                cmdWithAccuracy(
+                    drive, left_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                new SequentialCommandGroup(
-                        superstructure.autoRetractIntake().withTimeout(0.2),
-                        superstructure.deployIntake().withTimeout(0.2))
-                    .repeatedly()
-                    .withTimeout(2.8),
-                superstructure.autoRetractIntake())),
+                superstructure.autoShakeIntake())),
         new ParallelDeadlineGroup(
-            cmdWithAccuracy(
-                drive, left_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake())),
+                cmdWithAccuracy(
+                    drive, left_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                new SequentialCommandGroup(
-                        superstructure.autoRetractIntake().withTimeout(0.2),
-                        superstructure.deployIntake().withTimeout(0.2))
-                    .repeatedly()
-                    .withTimeout(2.8),
-                superstructure.autoRetractIntake())));
+                superstructure.autoShakeIntake())));
   }
 }

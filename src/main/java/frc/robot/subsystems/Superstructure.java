@@ -106,6 +106,13 @@ public class Superstructure {
     return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(5.0));
   }
 
+  public Command autoShakeIntake() {
+    return new SequentialCommandGroup(
+        autoRetractIntake().withTimeout(0.2),
+        deployIntake().withTimeout(0.2).repeatedly().withTimeout(2.8),
+        autoRetractIntake());
+  }
+
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
         intakeRoller.stopCommand(),
