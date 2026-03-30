@@ -20,9 +20,9 @@ public class RightT_2NZSteal_Auto extends AutoModeBase {
     newRoutine(
         right_T_NZSteal.resetOdometry(),
         new ParallelDeadlineGroup(
-            cmdWithAccuracy(
-                drive, right_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
+                cmdWithAccuracy(
+                    drive, right_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_NZ_T),
@@ -37,9 +37,9 @@ public class RightT_2NZSteal_Auto extends AutoModeBase {
                     .withTimeout(2.8),
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
-            cmdWithAccuracy(
-                drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
+                cmdWithAccuracy(
+                    drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_NZ_T),
