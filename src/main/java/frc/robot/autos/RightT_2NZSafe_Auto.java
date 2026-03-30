@@ -30,12 +30,7 @@ public class RightT_2NZSafe_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                new SequentialCommandGroup(
-                        superstructure.autoRetractIntake().withTimeout(0.2),
-                        superstructure.deployIntake().withTimeout(0.2))
-                    .repeatedly()
-                    .withTimeout(2.8),
-                superstructure.autoRetractIntake())),
+                superstructure.autoShakeIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
@@ -47,11 +42,6 @@ public class RightT_2NZSafe_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                new SequentialCommandGroup(
-                        superstructure.autoRetractIntake().withTimeout(0.2),
-                        superstructure.deployIntake().withTimeout(0.2))
-                    .repeatedly()
-                    .withTimeout(2.8),
-                superstructure.autoRetractIntake())));
+                superstructure.autoShakeIntake())));
   }
 }
