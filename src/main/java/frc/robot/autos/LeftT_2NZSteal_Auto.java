@@ -22,8 +22,9 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, left_T_NZSteal, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            antiBeach(drive),
-            new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake())),
+            new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
@@ -38,8 +39,9 @@ public class LeftT_2NZSteal_Auto extends AutoModeBase {
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, left_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            antiBeach(drive),
-            new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake())),
+            new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),

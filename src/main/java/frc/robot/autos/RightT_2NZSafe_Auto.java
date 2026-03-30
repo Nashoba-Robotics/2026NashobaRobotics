@@ -22,8 +22,9 @@ public class RightT_2NZSafe_Auto extends AutoModeBase {
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, right_T_NZSafe, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            antiBeach(drive),
-            new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake())),
+            new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),
@@ -38,8 +39,9 @@ public class RightT_2NZSafe_Auto extends AutoModeBase {
         new ParallelDeadlineGroup(
             cmdWithAccuracy(
                 drive, right_2nd_T_NZ, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-            antiBeach(drive),
-            new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake())),
+            new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_NZ_T),
         new ParallelCommandGroup(
             superstructure.autoShoot(),

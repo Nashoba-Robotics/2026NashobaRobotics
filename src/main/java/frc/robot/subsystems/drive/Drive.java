@@ -45,8 +45,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants;
+import frc.robot.Constants.Mode;
 import frc.robot.autos.AutoConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -391,12 +391,11 @@ public class Drive extends SubsystemBase {
     return gyroIO.getRoll();
   }
 
-    public boolean isBeached() {
+  public boolean isBeached() {
     return ((Math.abs(getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
             || Math.abs(getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
         && DriverStation.isAutonomous()
-        && AllianceFlipUtil.applyX(getPose().getX())
-            > FieldConstants.LinesVertical.hubCenter);
+        && AllianceFlipUtil.applyX(getPose().getX()) > FieldConstants.LinesVertical.hubCenter);
   }
 
   public AutoFactory getAutoFactory() {

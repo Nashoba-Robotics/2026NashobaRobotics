@@ -5,24 +5,16 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.FieldConstants;
-import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.Stopwatch;
 import java.util.Set;
 import org.littletonrobotics.junction.Logger;
@@ -157,27 +149,9 @@ public class AutoModeBase {
     return false;
   }
 
-
-
   public static Command antiBeach(Drive drive) {
-    return new SequentialCommandGroup(
-        new WaitUntilCommand(() -> drive.isBeached()),
-            new ConditionalCommand(
-                DriveCommands.driveToPose(
-                    drive,
-                    () ->
-                        new Pose2d(
-                            new Translation2d(drive.getPose().getX(), drive.getPose().getY() - 0.5),
-                            drive.getRotation())),
-                DriveCommands.driveToPose(
-                    drive,
-                    () ->
-                        new Pose2d(
-                            new Translation2d(drive.getPose().getX(), drive.getPose().getY() + 0.5),
-                            drive.getRotation())),
-                () ->
-                    drive.getPose().getX() > AllianceFlipUtil.applyX(8.4)
-                        || drive.getPose().getX() > AllianceFlipUtil.applyX(10.3)));
+    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.0, -1.5, 0)), drive)
+        .until(() -> !drive.isBeached());
   }
 
   public void newRoutine(Command... sequence) {
