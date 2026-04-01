@@ -66,17 +66,15 @@ public class Superstructure {
 
   public Command shootCommand() {
     return new ParallelCommandGroup(
-        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()));
+        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED));
   }
 
   public Command endShootCommand() {
     return new ParallelCommandGroup(
         rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller
-                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
-                .withTimeout(0.25),
+            entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED).withTimeout(0.25),
             entryRoller.stopCommand()));
   }
 
@@ -131,8 +129,8 @@ public class Superstructure {
                             && hood.atSetpoint()
                             && DriveCommands.atShootingSetpoint(drive)),
                 new ParallelCommandGroup(
-                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
-                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()))))
+                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
+                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
         .withTimeout(3.5)
         .andThen(autoEndShootCommand());
   }
@@ -141,9 +139,7 @@ public class Superstructure {
     return new ParallelCommandGroup(
         rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller
-                .runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())
-                .withTimeout(0.5),
+            entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED).withTimeout(0.5),
             entryRoller.stopCommand()),
         shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));

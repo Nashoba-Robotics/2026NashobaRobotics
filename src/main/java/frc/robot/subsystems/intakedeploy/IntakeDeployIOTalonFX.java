@@ -61,9 +61,9 @@ public class IntakeDeployIOTalonFX implements IntakeDeployIO {
     motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.DEPLOY_SUPPLY_LIMIT;
 
-    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    motorConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.ENCODER_ID;
-    motorConfig.Feedback.RotorToSensorRatio = Constants.Intake.DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO;
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    // motorConfig.Feedback.FeedbackRemoteSensorID = Constants.Intake.ENCODER_ID;
+    // motorConfig.Feedback.RotorToSensorRatio = Constants.Intake.DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO;
     motorConfig.Feedback.SensorToMechanismRatio =
         Constants.Intake.DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO;
 

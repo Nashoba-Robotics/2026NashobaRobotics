@@ -63,7 +63,7 @@ public class HoodIOTalonFX implements HoodIO {
     // motorConfig.Feedback.RotorToSensorRatio = Constants.Hood.ROTOR_TO_SENSOR_GEAR_RATIO;
     // motorConfig.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    motorConfig.Feedback.SensorToMechanismRatio = 144.5;
+    motorConfig.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = Constants.Hood.INVERTED;

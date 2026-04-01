@@ -66,9 +66,9 @@ public class ShooterIOTalonFX implements ShooterIO {
     shooterFollower1.setControl(
         new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
     shooterFollower2.setControl(
-        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
+        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Opposed));
     shooterFollower3.setControl(
-        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Aligned));
+        new Follower(Constants.Shooter.SHOOTER_LEADER_ID, MotorAlignmentValue.Opposed));
 
     config = new TalonFXConfiguration();
 

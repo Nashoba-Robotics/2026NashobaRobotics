@@ -166,8 +166,8 @@ public class RobotContainer {
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
-            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED.getAsDouble()),
-            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED.getAsDouble()),
+            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED),
+            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED),
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
@@ -242,16 +242,16 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)));
 
     // Close shot fallback
     driver
         .b()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
                 shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
@@ -268,10 +268,8 @@ public class RobotContainer {
         .y()
         .whileTrue(
             rollerFloor
-                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED.getAsDouble())
-                .alongWith(
-                    entryRoller.runVelocityCommand(
-                        Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())));
+                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED)
+                .alongWith(entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 

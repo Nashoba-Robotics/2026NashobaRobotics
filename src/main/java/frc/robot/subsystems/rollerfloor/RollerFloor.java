@@ -64,8 +64,8 @@ public class RollerFloor extends SubsystemBase {
     return run(() -> io.runVoltage(volts.getAsDouble())).finallyDo(() -> io.stop());
   }
 
-  public Command runVelocityCommand(double velocityRadsPerSec) {
-    return run(() -> io.runVelocity(velocityRadsPerSec));
+  public Command runVelocityCommand(DoubleSupplier velocityRadsPerSec) {
+    return run(() -> io.runVelocity(velocityRadsPerSec.getAsDouble()));
   }
 
   public void stop() {

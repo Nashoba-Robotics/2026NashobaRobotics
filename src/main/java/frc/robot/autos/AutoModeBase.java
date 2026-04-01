@@ -150,7 +150,7 @@ public class AutoModeBase {
   }
 
   public static Command antiBeach(Drive drive) {
-    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.0, -1.5, 0)), drive)
+    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0.0, 0.0)), drive)
         .until(() -> !drive.isBeached());
   }
 
