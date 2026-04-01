@@ -82,7 +82,7 @@ public class Superstructure {
     return new SequentialCommandGroup(
         intakeDeploy
             .runVoltageCommand(() -> 8.0)
-            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(100)),
+            .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(130)),
         intakeDeploy.runVoltageCommand(() -> 0.30));
   }
 
@@ -91,7 +91,7 @@ public class Superstructure {
         new SequentialCommandGroup(
             intakeDeploy
                 .runVoltageCommand(() -> -8.0)
-                .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(10)),
+                .until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(25)),
             intakeDeploy.runVoltageCommand(() -> -0.30)),
         intakeRoller.runVoltageCommand(Presets.Intake.SLOW_INTAKE_VOLTS).withTimeout(1.0));
   }

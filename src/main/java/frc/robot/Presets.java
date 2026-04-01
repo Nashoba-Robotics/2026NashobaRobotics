@@ -8,18 +8,18 @@ public final class Presets {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuckAngleDeg", 1.5);
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
-        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 10.0);
+        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 20.0);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
 
   public static class RollerFloor {
     public static final LoggedTunableNumber FEED_SPEED =
-        new LoggedTunableNumber("RollerFloor/Setpoints/FeedSpeed", 0.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/FeedSpeed", 300.0);
     public static final LoggedTunableNumber SLOW_FEED_SPEED =
-        new LoggedTunableNumber("RollerFloor/Setpoints/SlowFeedSpeed", 0.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/SlowFeedSpeed", 50.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
-        new LoggedTunableNumber("RollerFloor/Setpoints/ExhaustSpeed", 0.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/ExhaustSpeed", -75.0);
     public static final LoggedTunableNumber TUNING_SPEED =
         new LoggedTunableNumber("RollerFloor/Setpoints/TuningSpeed", 0.0);
   }
@@ -44,9 +44,9 @@ public final class Presets {
 
   public static class EntryRoller {
     public static final LoggedTunableNumber FEED_SPEED =
-        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 0.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 225.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
-        new LoggedTunableNumber("EntryRoller/Setpoints/ExhaustSpeed", 0.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/ExhaustSpeed", -70.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_SPEED =
         new LoggedTunableNumber("EntryRoller/Setpoints/SlowExhaustSpeed", 0.0);
     public static final LoggedTunableNumber TUNING_SPEED =
@@ -55,7 +55,7 @@ public final class Presets {
 
   public static class Shooter {
     public static final LoggedTunableNumber CLOSE_HUB_SPEED =
-        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 250.0);
+        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 325.0);
     public static final LoggedTunableNumber TUNING_SPEED =
         new LoggedTunableNumber("Shooter/Setpoints/TuningSpeedRadsPerSec", 0.0);
   }

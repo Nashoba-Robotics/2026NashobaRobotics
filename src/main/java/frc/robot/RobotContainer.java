@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.LeftT_2NZSafe_Auto;
@@ -239,7 +241,7 @@ public class RobotContainer {
 
     // Force shoot
     driver
-        .rightBumper()
+        .b()
         .whileTrue(
             new ParallelCommandGroup(
                 rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
@@ -247,14 +249,17 @@ public class RobotContainer {
 
     // Close shot fallback
     driver
-        .b()
+        .rightBumper()
         .whileTrue(
-            new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
-                hood.runPositionCommand(
-                    Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
-                shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
+            new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                    shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
+                    hood.runPositionCommand(
+                        Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble()))),
+                new WaitUntilCommand(() -> shooter.atSetpoint() && hood.atSetpoint()),
+                new ParallelCommandGroup(
+                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED))));
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
