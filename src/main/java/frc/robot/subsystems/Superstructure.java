@@ -4,6 +4,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
 import frc.robot.commands.DriveCommands;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShootingUtil;
 import java.util.function.DoubleSupplier;
 
-public class Superstructure {
+public class Superstructure extends SubsystemBase {
   private final Drive drive;
   private final Hood hood;
   private final RollerFloor rollerFloor;
@@ -47,6 +48,11 @@ public class Superstructure {
     shooter.setDefaultCommand(shooter.stopCommand());
     entryRoller.setDefaultCommand(entryRoller.stopCommand());
     rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
+  }
+
+  @Override
+  public void periodic() {
+    ShootingUtil.makeSetpoint(drive);
   }
 
   public Command aimCommand(DoubleSupplier driveXSupplier, DoubleSupplier driveYSupplier) {

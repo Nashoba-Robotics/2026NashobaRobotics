@@ -36,7 +36,7 @@ import org.littletonrobotics.junction.Logger;
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
 
-  private static final double ANGLE_KP = 8.0;
+  private static final double ANGLE_KP = 4.0;
   private static final double ANGLE_KD = 0.0;
   private static final double ANGLE_MAX_VELOCITY = 12.0;
   private static final double ANGLE_MAX_ACCELERATION = 30.0;
@@ -167,13 +167,13 @@ public class DriveCommands {
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
 
-              boolean shouldLockWheels =
-                  Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
-                          < driveLockMetersPerSecondThreshold.get()
-                      && Math.abs(speeds.omegaRadiansPerSecond)
-                          < driveLockOmegaRadsPerSecThreshold.get()
-                      && !ShootingUtil.makeSetpoint(drive).isShuttling()
-                      && atShootingSetpoint(drive);
+              boolean shouldLockWheels = false;
+              //   Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
+              //           < driveLockMetersPerSecondThreshold.get()
+              //       && Math.abs(speeds.omegaRadiansPerSecond)
+              //           < driveLockOmegaRadsPerSecThreshold.get()
+              //       && !ShootingUtil.makeSetpoint(drive).isShuttling()
+              //       && atShootingSetpoint(drive);
 
               Logger.recordOutput("DriveCommands/shouldLockWheels", shouldLockWheels);
 
