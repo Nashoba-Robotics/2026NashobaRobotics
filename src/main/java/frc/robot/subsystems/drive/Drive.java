@@ -46,7 +46,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
+import frc.robot.autos.AutoConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -105,9 +108,9 @@ public class Drive extends SubsystemBase {
 
   private final AutoFactory autoFactory;
 
-  private final PIDController xController = new PIDController(7.0, 0.0, 0.0);
-  private final PIDController yController = new PIDController(7.0, 0.0, 0.0);
-  private final PIDController headingController = new PIDController(6.0, 0.0, 0.0);
+  private final PIDController xController = new PIDController(8.5, 0.0, 1.0);
+  private final PIDController yController = new PIDController(8.5, 0.0, 1.0);
+  private final PIDController headingController = new PIDController(5.0, 0.0, 0.10);
 
   private final Field2d field = new Field2d();
 
@@ -174,6 +177,7 @@ public class Drive extends SubsystemBase {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
+    Logger.recordOutput("Beached", isBeached());
     for (var module : modules) {
       module.periodic();
     }
@@ -385,6 +389,13 @@ public class Drive extends SubsystemBase {
 
   public double getRoll() {
     return gyroIO.getRoll();
+  }
+
+  public boolean isBeached() {
+    return ((Math.abs(getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
+            || Math.abs(getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
+        && DriverStation.isAutonomous()
+        && AllianceFlipUtil.applyX(getPose().getX()) > FieldConstants.LinesVertical.hubCenter);
   }
 
   public AutoFactory getAutoFactory() {

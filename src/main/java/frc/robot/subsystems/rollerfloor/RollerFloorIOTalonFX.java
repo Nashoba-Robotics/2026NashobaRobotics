@@ -66,7 +66,7 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
     config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
     config.MotorOutput.Inverted = Constants.RollerFloor.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     PhoenixUtil.tryUntilOk(5, () -> leader.getConfigurator().apply(config));
     PhoenixUtil.tryUntilOk(5, () -> follower.getConfigurator().apply(config));

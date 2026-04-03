@@ -4,8 +4,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import choreo.auto.AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,13 +12,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.LeftT_2NZSafe_Auto;
-import frc.robot.autos.LeftT_2NZSteal_Auto;
-import frc.robot.autos.RightT_2NZSafe_Auto;
-import frc.robot.autos.RightT_2NZSteal_Auto;
+import frc.robot.autos.LeftT_2NZSafe_Bump_Auto;
+import frc.robot.autos.LeftT_2NZSafe_NoBump_Auto;
+import frc.robot.autos.LeftT_2NZSteal_NoBump_Auto;
+import frc.robot.autos.RightT_2NZSafe_Bump_Auto;
+import frc.robot.autos.RightT_2NZSafe_NoBump_Auto;
+import frc.robot.autos.RightT_2NZSteal_NoBump_Auto;
+import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -29,9 +33,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
-import frc.robot.subsystems.entryRoller.EntryRoller;
-import frc.robot.subsystems.entryRoller.EntryRollerIO;
-import frc.robot.subsystems.entryRoller.EntryRollerIOTalonFX;
+import frc.robot.subsystems.entryroller.EntryRoller;
+import frc.robot.subsystems.entryroller.EntryRollerIO;
+import frc.robot.subsystems.entryroller.EntryRollerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
@@ -65,8 +69,7 @@ public class RobotContainer {
   private final EntryRoller entryRoller;
   private final Shooter shooter;
   private final Superstructure superstructure;
-
-  //   private final LEDSubsystem leds = new LEDSubsystem();
+  private final LEDSubsystem leds = new LEDSubsystem();
 
   private final AutoFactory autoFactory;
 
@@ -155,20 +158,11 @@ public class RobotContainer {
 
     autoFactory = drive.getAutoFactory();
 
-    NamedCommands.registerCommand("shoot", superstructure.autoShoot());
-    NamedCommands.registerCommand(
-        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
-    NamedCommands.registerCommand("intakeRetract", superstructure.autoRetractIntake());
-    NamedCommands.registerCommand(
-        "tuckHood",
-        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
-            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED.getAsDouble()),
-            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED.getAsDouble()),
+            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED),
+            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED),
             intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
@@ -185,23 +179,29 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("PP Right T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", false));
-    autoChooser.addOption("PP Left T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption("PP Right B-Outpost-Depot", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     autoChooser.addOption(
-        "Choreo Right T-2NZSteal",
-        new RightT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Steal DoubleSweep NoBump",
+        new RightT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Right T-2NZSafe",
-        new RightT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Safe DoubleSweep NoBump",
+        new RightT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Left T-2NZSteal",
-        new LeftT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+        "Left Steal DoubleSweep NoBump",
+        new LeftT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Left T-2NZSafe",
-        new LeftT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+        "Left Safe DoubleSweep NoBump",
+        new LeftT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
+
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump",
+        new LeftT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump",
+        new RightT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+
+    autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -225,13 +225,16 @@ public class RobotContainer {
 
     Trigger inShootingTolerance =
         new Trigger(
-            () -> hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atAngleSetpoint());
+            () ->
+                hood.atSetpoint()
+                    && shooter.atSetpoint()
+                    && DriveCommands.atShootingSetpoint(drive));
 
     // Shoot bindings
     driver
         .rightTrigger()
         .whileTrue(superstructure.aimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
+        .and(inShootingTolerance.debounce(0.20, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
@@ -240,19 +243,22 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)));
 
     // Close shot fallback
     driver
         .b()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble()),
+                shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
                 hood.runPositionCommand(
                     Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
-                shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble())));
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> shooter.atSetpoint() && hood.atSetpoint()),
+                    new ParallelCommandGroup(
+                        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)))));
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
@@ -266,16 +272,14 @@ public class RobotContainer {
         .y()
         .whileTrue(
             rollerFloor
-                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED.getAsDouble())
-                .alongWith(
-                    entryRoller.runVelocityCommand(
-                        Presets.EntryRoller.EXHAUST_SPEED.getAsDouble())));
+                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED)
+                .alongWith(entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 
     // Tune shot
     driver
-        .b()
+        .povRight()
         .whileTrue(
             new ParallelCommandGroup(
                 DriveCommands.joystickDriveAtAngle(
@@ -287,8 +291,11 @@ public class RobotContainer {
                 shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
                 hood.runTrackedPositionCommand(
                     () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED.getAsDouble()),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED.getAsDouble())));
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(inShootingTolerance),
+                    new ParallelCommandGroup(
+                        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
+                        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)))));
   }
 
   public Command getAutonomousCommand() {

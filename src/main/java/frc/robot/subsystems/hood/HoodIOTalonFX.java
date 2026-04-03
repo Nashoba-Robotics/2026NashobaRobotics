@@ -41,7 +41,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<Current> supplyCurrent;
 
   private final LoggedTunableNumber minAngleDeg = new LoggedTunableNumber("Hood/minAngleDeg", 0.0);
-  private final LoggedTunableNumber maxAngleDeg = new LoggedTunableNumber("Hood/maxAngleDeg", 43.0);
+  private final LoggedTunableNumber maxAngleDeg = new LoggedTunableNumber("Hood/maxAngleDeg", 37.0);
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(true);
   private final PositionTorqueCurrentFOC positionTorqueCurrentFOC = new PositionTorqueCurrentFOC(0);
@@ -63,7 +63,7 @@ public class HoodIOTalonFX implements HoodIO {
     // motorConfig.Feedback.RotorToSensorRatio = Constants.Hood.ROTOR_TO_SENSOR_GEAR_RATIO;
     // motorConfig.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    motorConfig.Feedback.SensorToMechanismRatio = 144.5;
+    motorConfig.Feedback.SensorToMechanismRatio = Constants.Hood.SENSOR_TO_MECHANISM_GEAR_RATIO;
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = Constants.Hood.INVERTED;
