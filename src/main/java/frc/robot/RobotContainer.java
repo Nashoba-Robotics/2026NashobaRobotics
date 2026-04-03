@@ -22,6 +22,7 @@ import frc.robot.autos.LeftT_2NZSafe_Auto;
 import frc.robot.autos.LeftT_2NZSteal_Auto;
 import frc.robot.autos.RightT_2NZSafe_Auto;
 import frc.robot.autos.RightT_2NZSteal_Auto;
+import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
@@ -204,6 +205,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Choreo Left T-2NZSafe",
         new LeftT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+
+    autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 
     // Configure the button bindings
     configureButtonBindings();

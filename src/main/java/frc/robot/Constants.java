@@ -78,7 +78,7 @@ public final class Constants {
 
     public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
-    public static final double STATOR_LIMIT = 60.0;
+    public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
@@ -166,10 +166,10 @@ public final class Constants {
 
     public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
-    public static final double STATOR_LIMIT = 85.0;
+    public static final double STATOR_LIMIT = 120.0;
     public static final double SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 10.0);
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 20.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("Shooter/PID/kD", 0.0);
     public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 3.6);
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.0175);

@@ -108,8 +108,8 @@ public class Drive extends SubsystemBase {
 
   private final AutoFactory autoFactory;
 
-  private final PIDController xController = new PIDController(7.0, 0.0, 0.0);
-  private final PIDController yController = new PIDController(7.0, 0.0, 0.0);
+  private final PIDController xController = new PIDController(8.5, 0.0, 1.0);
+  private final PIDController yController = new PIDController(8.5, 0.0, 1.0);
   private final PIDController headingController = new PIDController(6.0, 0.0, 0.0);
 
   private final Field2d field = new Field2d();
