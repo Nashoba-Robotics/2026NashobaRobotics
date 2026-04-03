@@ -4,8 +4,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import choreo.auto.AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,10 +16,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.LeftT_2NZSafe_Auto;
-import frc.robot.autos.LeftT_2NZSteal_Auto;
-import frc.robot.autos.RightT_2NZSafe_Auto;
-import frc.robot.autos.RightT_2NZSteal_Auto;
+import frc.robot.autos.LeftT_2NZSafe_Bump_Auto;
+import frc.robot.autos.LeftT_2NZSafe_NoBump_Auto;
+import frc.robot.autos.LeftT_2NZSteal_NoBump_Auto;
+import frc.robot.autos.RightT_2NZSafe_Bump_Auto;
+import frc.robot.autos.RightT_2NZSafe_NoBump_Auto;
+import frc.robot.autos.RightT_2NZSteal_NoBump_Auto;
 import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.LEDSubsystem;
@@ -158,15 +158,6 @@ public class RobotContainer {
 
     autoFactory = drive.getAutoFactory();
 
-    NamedCommands.registerCommand("shoot", superstructure.autoShoot());
-    NamedCommands.registerCommand(
-        "intakeRoller", intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
-    NamedCommands.registerCommand("intakeDeploy", superstructure.deployIntake());
-    NamedCommands.registerCommand("intakeRetract", superstructure.autoRetractIntake());
-    NamedCommands.registerCommand(
-        "tuckHood",
-        hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
-
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
@@ -188,23 +179,27 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("PP Right T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", false));
-    autoChooser.addOption("PP Left T-2NZ", new PathPlannerAuto("T-2NZ-No Climb", true));
-    autoChooser.addOption("PP Right B-Outpost-Depot", new PathPlannerAuto("B-Outpost-Depot-Climb"));
     autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
 
     autoChooser.addOption(
-        "Choreo Right T-2NZSteal",
-        new RightT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Steal DoubleSweep NoBump",
+        new RightT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Right T-2NZSafe",
-        new RightT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Safe DoubleSweep NoBump",
+        new RightT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Left T-2NZSteal",
-        new LeftT_2NZSteal_Auto(drive, superstructure, autoFactory).asCommand());
+        "Left Steal DoubleSweep NoBump",
+        new LeftT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
     autoChooser.addOption(
-        "Choreo Left T-2NZSafe",
-        new LeftT_2NZSafe_Auto(drive, superstructure, autoFactory).asCommand());
+        "Left Safe DoubleSweep NoBump",
+        new LeftT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
+
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump",
+        new LeftT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump",
+        new RightT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
 
     autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 
@@ -239,13 +234,13 @@ public class RobotContainer {
     driver
         .rightTrigger()
         .whileTrue(superstructure.aimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
-        .and(inShootingTolerance.debounce(0.15, DebounceType.kFalling))
+        .and(inShootingTolerance.debounce(0.20, DebounceType.kFalling))
         .whileTrue(superstructure.shootCommand())
         .onFalse(superstructure.endShootCommand());
 
     // Force shoot
     driver
-        .b()
+        .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
                 rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
@@ -253,7 +248,7 @@ public class RobotContainer {
 
     // Close shot fallback
     driver
-        .rightBumper()
+        .b()
         .whileTrue(
             new ParallelCommandGroup(
                 shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),

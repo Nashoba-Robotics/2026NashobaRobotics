@@ -27,7 +27,7 @@ public class VisionConstants {
   public static Transform3d robotToCamera1 =
       new Transform3d(0.066, 0.340, 0.360, new Rotation3d(0.0, -0.261799, 1.570796));
   public static Transform3d robotToCamera2 =
-      new Transform3d(0.066, -0.340, 0.360, new Rotation3d(-0.041906, -0.261799, -1.570796));
+      new Transform3d(0.066, -0.341, 0.352, new Rotation3d(-0.041906, -0.261799, -1.570796));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

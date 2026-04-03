@@ -36,10 +36,10 @@ import org.littletonrobotics.junction.Logger;
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
 
-  private static final double ANGLE_KP = 4.0;
-  private static final double ANGLE_KD = 0.0;
-  private static final double ANGLE_MAX_VELOCITY = 12.0;
-  private static final double ANGLE_MAX_ACCELERATION = 30.0;
+  private static final double ANGLE_KP = 5.0;
+  private static final double ANGLE_KD = 0.10;
+  private static final double ANGLE_MAX_VELOCITY = 10.0;
+  private static final double ANGLE_MAX_ACCELERATION = 20.0;
 
   private static final double DRIVE_KP = 3.5;
   private static final double DRIVE_KD = 0.0;
