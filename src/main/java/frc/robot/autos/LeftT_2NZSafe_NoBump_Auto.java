@@ -43,6 +43,12 @@ public class LeftT_2NZSafe_NoBump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())));
+                superstructure.autoShakeIntake())),
+        new ParallelDeadlineGroup(
+                cmdWithAccuracy(
+                    drive, left_2nd_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.50), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)));
   }
 }

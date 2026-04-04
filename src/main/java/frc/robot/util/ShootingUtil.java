@@ -88,7 +88,7 @@ public class ShootingUtil {
     shuttleDistanceShooterVelocityMap.put(0.0, 210.0);
     shuttleDistanceShooterVelocityMap.put(1.5, 210.0);
     shuttleDistanceShooterVelocityMap.put(2.5, 275.0);
-    shuttleDistanceShooterVelocityMap.put(6.5, 325.0);
+    shuttleDistanceShooterVelocityMap.put(6.5, 345.0);
 
     shuttleDistanceTimeOfFlightMap.put(0.0, 0.75);
     shuttleDistanceTimeOfFlightMap.put(3.0, 0.75);
