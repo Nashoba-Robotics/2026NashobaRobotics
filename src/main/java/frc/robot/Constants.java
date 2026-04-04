@@ -82,7 +82,7 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("RollerFloor/PID/kP", 12.0);
+        new LoggedTunableNumber("RollerFloor/PID/kP", 15.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
     public static final LoggedTunableNumber kS =
         new LoggedTunableNumber("RollerFloor/PID/kS", 9.25);
@@ -144,7 +144,7 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 60.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("EntryRoller/PID/kP", 10.0);
+        new LoggedTunableNumber("EntryRoller/PID/kP", 17.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryRoller/PID/kD", 0.0);
     public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 2.5);
     public static final LoggedTunableNumber kV =
