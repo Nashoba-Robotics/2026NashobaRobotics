@@ -107,7 +107,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command autoRetractIntake() {
-    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(5.0));
+    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(25.0));
   }
 
   public Command autoShakeIntake() {

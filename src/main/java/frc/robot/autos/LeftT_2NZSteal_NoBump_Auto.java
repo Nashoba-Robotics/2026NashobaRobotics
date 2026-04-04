@@ -3,7 +3,6 @@ package frc.robot.autos;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -27,7 +26,7 @@ public class LeftT_2NZSteal_NoBump_Auto extends AutoModeBase {
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_Trench),
-        new ParallelCommandGroup(
+        new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
@@ -39,7 +38,7 @@ public class LeftT_2NZSteal_NoBump_Auto extends AutoModeBase {
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, left_Safe_Trench),
-        new ParallelCommandGroup(
+        new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
