@@ -30,7 +30,7 @@ public class LeftT_2NZSteal_NoBump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, left_2nd_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
@@ -42,7 +42,7 @@ public class LeftT_2NZSteal_NoBump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, left_2nd_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),

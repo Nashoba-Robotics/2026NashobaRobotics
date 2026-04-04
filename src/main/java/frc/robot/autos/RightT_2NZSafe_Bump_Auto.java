@@ -29,7 +29,7 @@ public class RightT_2NZSafe_Bump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, right_2nd_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
@@ -41,7 +41,7 @@ public class RightT_2NZSafe_Bump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, right_2nd_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
