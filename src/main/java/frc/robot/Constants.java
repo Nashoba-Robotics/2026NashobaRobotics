@@ -176,7 +176,7 @@ public final class Constants {
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Shooter/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 15.0);
+        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 7.5);
 
     public static final double GEAR_RATIO = 1.34;
   }
