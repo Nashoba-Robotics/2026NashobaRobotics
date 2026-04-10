@@ -169,7 +169,7 @@ public final class Constants {
     public static final double STATOR_LIMIT = 120.0;
     public static final double SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 18.0);
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 15.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("Shooter/PID/kD", 0.0);
     public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 4.5);
     public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.02);
