@@ -107,14 +107,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command autoRetractIntake() {
-    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(5.0));
+    return retractIntake().until(() -> intakeDeploy.getPosition() <= Units.degreesToRadians(25.0));
   }
 
   public Command autoShakeIntake() {
     return new SequentialCommandGroup(
-        autoRetractIntake().withTimeout(0.2),
-        deployIntake().withTimeout(0.2).repeatedly().withTimeout(2.8),
-        autoRetractIntake());
+            autoRetractIntake().withTimeout(0.25), deployIntake().withTimeout(0.25))
+        .repeatedly()
+        .withTimeout(2.25)
+        .andThen(autoRetractIntake());
   }
 
   public Command stopAllRollersCommand() {
@@ -137,7 +138,7 @@ public class Superstructure extends SubsystemBase {
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
-        .withTimeout(3.5)
+        .withTimeout(3.0)
         .andThen(autoEndShootCommand());
   }
 
