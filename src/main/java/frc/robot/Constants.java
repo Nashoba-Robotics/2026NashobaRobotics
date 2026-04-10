@@ -82,7 +82,7 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("RollerFloor/PID/kP", 12.0);
+        new LoggedTunableNumber("RollerFloor/PID/kP", 15.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
     public static final LoggedTunableNumber kS =
         new LoggedTunableNumber("RollerFloor/PID/kS", 9.25);
@@ -144,7 +144,7 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 60.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("EntryRoller/PID/kP", 10.0);
+        new LoggedTunableNumber("EntryRoller/PID/kP", 17.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryRoller/PID/kD", 0.0);
     public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 2.5);
     public static final LoggedTunableNumber kV =
@@ -169,14 +169,14 @@ public final class Constants {
     public static final double STATOR_LIMIT = 120.0;
     public static final double SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 20.0);
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 15.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("Shooter/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 3.6);
-    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.0175);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 4.5);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.02);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Shooter/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 15.0);
+        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 7.5);
 
     public static final double GEAR_RATIO = 1.34;
   }

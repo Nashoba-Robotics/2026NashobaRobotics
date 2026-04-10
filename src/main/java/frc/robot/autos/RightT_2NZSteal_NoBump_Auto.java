@@ -3,7 +3,6 @@ package frc.robot.autos;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -27,11 +26,11 @@ public class RightT_2NZSteal_NoBump_Auto extends AutoModeBase {
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_Trench),
-        new ParallelCommandGroup(
+        new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive, right_2nd_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
@@ -39,10 +38,16 @@ public class RightT_2NZSteal_NoBump_Auto extends AutoModeBase {
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
         cmdWithAccuracy(drive, right_Safe_Trench),
-        new ParallelCommandGroup(
+        new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.autoShakeIntake())));
+                superstructure.autoRetractIntake())),
+        new ParallelDeadlineGroup(
+                cmdWithAccuracy(
+                    drive, right_2nd_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
+            .until(drive::isBeached)
+            .handleInterrupt(() -> antiBeach(drive)));
   }
 }
