@@ -15,7 +15,7 @@ public final class Presets {
 
   public static class RollerFloor {
     public static final LoggedTunableNumber FEED_SPEED =
-        new LoggedTunableNumber("RollerFloor/Setpoints/FeedSpeed", 200.0);
+        new LoggedTunableNumber("RollerFloor/Setpoints/FeedSpeed", 280.0);
     public static final LoggedTunableNumber SLOW_FEED_SPEED =
         new LoggedTunableNumber("RollerFloor/Setpoints/SlowFeedSpeed", 50.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
@@ -44,7 +44,7 @@ public final class Presets {
 
   public static class EntryRoller {
     public static final LoggedTunableNumber FEED_SPEED =
-        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 175.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 225.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
         new LoggedTunableNumber("EntryRoller/Setpoints/ExhaustSpeed", -70.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_SPEED =

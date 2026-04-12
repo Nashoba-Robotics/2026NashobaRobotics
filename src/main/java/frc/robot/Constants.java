@@ -82,18 +82,17 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("RollerFloor/PID/kP", 15.0);
+        new LoggedTunableNumber("RollerFloor/PID/kP", 16.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS =
-        new LoggedTunableNumber("RollerFloor/PID/kS", 9.25);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("RollerFloor/PID/kS", 5.4);
     public static final LoggedTunableNumber kV =
-        new LoggedTunableNumber("RollerFloor/PID/kV", 0.065);
+        new LoggedTunableNumber("RollerFloor/PID/kV", 0.02);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("RollerFloor/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 15.0);
+        new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 7.5);
 
-    public static final double GEAR_RATIO = 1.0;
+    public static final double GEAR_RATIO = 1.8;
   }
 
   public static class Intake {
