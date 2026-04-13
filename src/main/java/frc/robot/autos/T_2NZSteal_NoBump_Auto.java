@@ -9,22 +9,23 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 
-public class LeftT_2NZSafe_Bump_Auto extends AutoModeBase {
-  public LeftT_2NZSafe_Bump_Auto(Drive drive, Superstructure superstructure, AutoFactory factory) {
-    super(factory, "Left Safe DoubleSweep Bump");
+public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
+  public T_2NZSteal_NoBump_Auto(
+      Drive drive, Superstructure superstructure, AutoFactory factory, boolean isLeft) {
+    super(factory, (isLeft ? "Left " : "Right ") + "Steal DoubleSweep NoBump");
 
-    AutoTrajectory left_T_NZSafe_B = trajectory("Left_T_NZSafe_B");
-    AutoTrajectory left_Safe_Bump = trajectory("Left_Safe_Bump");
-    AutoTrajectory left_2nd_T_NZ_B = trajectory("Left_2nd_T_NZ_B");
+    AutoTrajectory T_NZSteal_T = trajectory("T_NZSteal_T", isLeft);
+    AutoTrajectory Safe_Trench = trajectory("Safe_Trench", isLeft);
+    AutoTrajectory second_T_NZ_T = trajectory("Second_T_NZ_T", isLeft);
     newRoutine(
-        left_T_NZSafe_B.resetOdometry(),
+        T_NZSteal_T.resetOdometry(),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, left_T_NZSafe_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
-                new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
+                    drive, T_NZSteal_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
-        cmdWithAccuracy(drive, left_Safe_Bump),
+        cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -32,11 +33,11 @@ public class LeftT_2NZSafe_Bump_Auto extends AutoModeBase {
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, left_2nd_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
-                superstructure.autoRunIntake())
+                    drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
-        cmdWithAccuracy(drive, left_Safe_Bump),
+        cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -44,8 +45,8 @@ public class LeftT_2NZSafe_Bump_Auto extends AutoModeBase {
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, left_2nd_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
-                superstructure.autoRunIntake())
+                    drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)));
   }

@@ -17,14 +17,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.LeftT_2NZSafe_Bump_Auto;
-import frc.robot.autos.LeftT_2NZSafe_NoBump_Auto;
-import frc.robot.autos.LeftT_2NZSteal_Bump_Auto;
-import frc.robot.autos.LeftT_2NZSteal_NoBump_Auto;
-import frc.robot.autos.RightT_2NZSafe_Bump_Auto;
-import frc.robot.autos.RightT_2NZSafe_NoBump_Auto;
-import frc.robot.autos.RightT_2NZSteal_Bump_Auto;
-import frc.robot.autos.RightT_2NZSteal_NoBump_Auto;
+import frc.robot.autos.T_2NZSafe_Bump_Auto;
+import frc.robot.autos.T_2NZSafe_NoBump_Auto;
+import frc.robot.autos.T_2NZSteal_Bump_Auto;
+import frc.robot.autos.T_2NZSteal_NoBump_Auto;
 import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.LEDSubsystem;
@@ -186,29 +182,29 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Right Steal DoubleSweep NoBump",
-        new RightT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
-    autoChooser.addOption(
-        "Right Safe DoubleSweep NoBump",
-        new RightT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
+        new T_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory, false).asCommand());
     autoChooser.addOption(
         "Left Steal DoubleSweep NoBump",
-        new LeftT_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
+        new T_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory, true).asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep NoBump",
+        new T_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory, false).asCommand());
     autoChooser.addOption(
         "Left Safe DoubleSweep NoBump",
-        new LeftT_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory).asCommand());
+        new T_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory, true).asCommand());
 
     autoChooser.addOption(
-        "Left Safe DoubleSweep Bump",
-        new LeftT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
-    autoChooser.addOption(
-        "Right Safe DoubleSweep Bump",
-        new RightT_2NZSafe_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Steal DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false).asCommand());
     autoChooser.addOption(
         "Left Steal DoubleSweep Bump",
-        new LeftT_2NZSteal_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true).asCommand());
     autoChooser.addOption(
-        "Right Steal DoubleSweep Bump",
-        new RightT_2NZSteal_Bump_Auto(drive, superstructure, autoFactory).asCommand());
+        "Right Safe DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false).asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true).asCommand());
 
     autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 

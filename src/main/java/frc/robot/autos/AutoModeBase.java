@@ -30,12 +30,14 @@ public class AutoModeBase {
   /**
    * @return Trajectory from choreo
    */
-  public AutoTrajectory trajectory(String name) {
-    return routine.trajectory(name);
+  public AutoTrajectory trajectory(String name, boolean mirrorTrajectory) {
+    return (mirrorTrajectory ? routine.trajectory(name).mirrorY() : routine.trajectory(name));
   }
 
-  public AutoTrajectory trajectory(String name, int index) {
-    return routine.trajectory(name, index);
+  public AutoTrajectory trajectory(String name, int index, boolean mirrorTrajectory) {
+    return (mirrorTrajectory
+        ? routine.trajectory(name, index).mirrorY()
+        : routine.trajectory(name, index));
   }
 
   /**
