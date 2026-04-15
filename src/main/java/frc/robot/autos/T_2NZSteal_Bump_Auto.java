@@ -2,7 +2,6 @@ package frc.robot.autos;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoTrajectory;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -15,17 +14,23 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
     super(factory, (isLeft ? "Left " : "Right ") + "Steal DoubleSweep Bump");
 
     AutoTrajectory T_NZSteal_B = trajectory("T_NZSteal_B", isLeft);
-    AutoTrajectory Safe_Bump = trajectory("Safe_Bump", isLeft);
+    AutoTrajectory safe_Bump = trajectory("Safe_Bump", isLeft);
     AutoTrajectory second_T_NZ_B = trajectory("Second_T_NZ_B", isLeft);
+    AutoTrajectory end_T_NZ = trajectory("End_T_NZ", isLeft);
+
     newRoutine(
         T_NZSteal_B.resetOdometry(),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, T_NZSteal_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
+                    drive,
+                    T_NZSteal_B,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
                 new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
-        cmdWithAccuracy(drive, Safe_Bump),
+        cmdWithAccuracy(
+            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -33,11 +38,15 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, second_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
+                    drive,
+                    second_T_NZ_B,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)),
-        cmdWithAccuracy(drive, Safe_Bump),
+        cmdWithAccuracy(
+            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -45,7 +54,10 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                 superstructure.retractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, second_T_NZ_B, Units.Seconds.of(20.0), Units.Centimeters.of(25.0)),
+                    drive,
+                    end_T_NZ,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
             .until(drive::isBeached)
             .handleInterrupt(() -> antiBeach(drive)));

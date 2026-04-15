@@ -54,7 +54,20 @@ public class AutoModeBase {
                     trajectory.cmd()::initialize,
                     trajectory.cmd()::execute,
                     trajectory.cmd()::end,
-                    () -> rotationIsFinished(drive, trajectory)),
+                    () -> rotationIsFinished(drive, trajectory, AutoConstants.kAutoAngleEpsilon)),
+            Set.of(drive))
+        .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
+  }
+
+  public static Command cmdWithRotationAccuracy(
+      Drive drive, AutoTrajectory trajectory, Time timeout, Angle epsilonAngle) {
+    return Commands.defer(
+            () ->
+                new FunctionalCommand(
+                    trajectory.cmd()::initialize,
+                    trajectory.cmd()::execute,
+                    trajectory.cmd()::end,
+                    () -> rotationIsFinished(drive, trajectory, epsilonAngle)),
             Set.of(drive))
         .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
   }
@@ -77,7 +90,26 @@ public class AutoModeBase {
                     trajectory.cmd()::initialize,
                     trajectory.cmd()::execute,
                     trajectory.cmd()::end,
-                    () -> isFinished(drive, trajectory, epsilonDist)),
+                    () ->
+                        isFinished(
+                            drive, trajectory, epsilonDist, AutoConstants.kAutoAngleEpsilon)),
+            Set.of(drive))
+        .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
+  }
+
+  public static Command cmdWithAccuracy(
+      Drive drive,
+      AutoTrajectory trajectory,
+      Time timeout,
+      Distance epsilonDist,
+      Angle epsilonAngle) {
+    return Commands.defer(
+            () ->
+                new FunctionalCommand(
+                    trajectory.cmd()::initialize,
+                    trajectory.cmd()::execute,
+                    trajectory.cmd()::end,
+                    () -> isFinished(drive, trajectory, epsilonDist, epsilonAngle)),
             Set.of(drive))
         .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
   }
@@ -90,6 +122,12 @@ public class AutoModeBase {
   public static Command cmdWithAccuracy(
       Drive drive, AutoTrajectory trajectory, Distance epsilonDist) {
     return cmdWithAccuracy(drive, trajectory, AutoConstants.kDefaultTrajectoryTimeout, epsilonDist);
+  }
+
+  public static Command cmdWithAccuracy(
+      Drive drive, AutoTrajectory trajectory, Distance epsilonDist, Angle epsilonAngle) {
+    return cmdWithAccuracy(
+        drive, trajectory, AutoConstants.kDefaultTrajectoryTimeout, epsilonDist, epsilonAngle);
   }
 
   public static Command cmdWithAccuracy(Drive drive, AutoTrajectory trajectory) {
@@ -107,10 +145,10 @@ public class AutoModeBase {
             });
   }
 
-  private static boolean rotationIsFinished(Drive drive, AutoTrajectory trajectory) {
+  private static boolean rotationIsFinished(
+      Drive drive, AutoTrajectory trajectory, Angle epsilonAngle) {
     Pose2d currentPose = drive.getPose();
     Pose2d finalPose = trajectory.getFinalPose().get();
-    Angle epsilonAngle = AutoConstants.kAutoAngleEpsilon;
 
     return MathUtil.angleModulus(
             Math.abs(currentPose.getRotation().minus(finalPose.getRotation()).getRadians()))
@@ -130,9 +168,10 @@ public class AutoModeBase {
         < epsilonDist.in(Units.Meters);
   }
 
-  private static boolean isFinished(Drive drive, AutoTrajectory trajectory, Distance epsilonDist) {
+  private static boolean isFinished(
+      Drive drive, AutoTrajectory trajectory, Distance epsilonDist, Angle epsilonAngle) {
     boolean translationCompleted = translationIsFinished(drive, trajectory, epsilonDist);
-    boolean rotationCompleted = rotationIsFinished(drive, trajectory);
+    boolean rotationCompleted = rotationIsFinished(drive, trajectory, epsilonAngle);
 
     Logger.recordOutput("Choreo/Translation Completed", translationCompleted);
     Logger.recordOutput("Choreo/Rotation Completed", rotationCompleted);

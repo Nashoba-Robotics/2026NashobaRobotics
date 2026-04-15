@@ -278,9 +278,10 @@ public class RobotContainer {
     driver
         .y()
         .whileTrue(
-            rollerFloor
-                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED)
-                .alongWith(entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED)));
+            new ParallelCommandGroup(
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED),
+                shooter.runTrackedVelocityCommand(Presets.Shooter.EXHAUST_SPEED)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 

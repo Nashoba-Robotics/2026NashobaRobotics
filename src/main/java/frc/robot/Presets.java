@@ -56,6 +56,8 @@ public final class Presets {
   public static class Shooter {
     public static final LoggedTunableNumber CLOSE_HUB_SPEED =
         new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 250.0);
+    public static final LoggedTunableNumber EXHAUST_SPEED =
+        new LoggedTunableNumber("Shooter/Setpoints/ExhaustSpeedRadsPerSec", -100.0);
     public static final LoggedTunableNumber TUNING_SPEED =
         new LoggedTunableNumber("Shooter/Setpoints/TuningSpeedRadsPerSec", 0.0);
   }

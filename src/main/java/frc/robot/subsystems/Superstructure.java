@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
+import frc.robot.autos.AutoConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.entryroller.EntryRoller;
@@ -138,7 +139,7 @@ public class Superstructure extends SubsystemBase {
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
-        .withTimeout(3.0)
+        .withTimeout(AutoConstants.kShootingTime)
         .andThen(autoEndShootCommand());
   }
 
