@@ -27,8 +27,8 @@ public class T_2NZSafe_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
                 new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)),
+            .until(drive::isBeached),
+        antiBeach(drive),
         cmdWithAccuracy(
             drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
@@ -43,8 +43,8 @@ public class T_2NZSafe_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)),
+            .until(drive::isBeached),
+        antiBeach(drive),
         cmdWithAccuracy(
             drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
@@ -59,7 +59,7 @@ public class T_2NZSafe_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)));
+            .until(drive::isBeached),
+        antiBeach(drive));
   }
 }

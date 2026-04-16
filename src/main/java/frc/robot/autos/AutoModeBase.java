@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.Stopwatch;
@@ -191,8 +192,19 @@ public class AutoModeBase {
   }
 
   public static Command antiBeach(Drive drive) {
-    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0.0, 0.0)), drive)
-        .until(() -> !drive.isBeached());
+    System.out.println("antiBeach");
+    // return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.0, 0.0, 0.0)), drive)
+    //     .until(() -> !drive.isBeached());
+    // return () ->
+    //     CommandScheduler.getInstance()
+    //         .schedule(
+    //             Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.0, 0.0, 0.0)), drive)
+    //                 .until(() -> !drive.isBeached()));
+    return new ConditionalCommand(
+        Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0, 0)), drive)
+            .until(() -> !drive.isBeached()),
+        Commands.none(),
+        () -> drive.isBeached());
   }
 
   public void newRoutine(Command... sequence) {

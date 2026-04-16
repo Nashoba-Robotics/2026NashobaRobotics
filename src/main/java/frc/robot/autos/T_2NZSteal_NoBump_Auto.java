@@ -23,8 +23,8 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                 cmdWithAccuracy(
                     drive, T_NZSteal_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)),
+            .until(drive::isBeached),
+        antiBeach(drive),
         cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
@@ -35,8 +35,8 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                 cmdWithAccuracy(
                     drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)),
+            .until(drive::isBeached),
+        antiBeach(drive),
         cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
@@ -47,7 +47,7 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                 cmdWithAccuracy(
                     drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
-            .until(drive::isBeached)
-            .handleInterrupt(() -> antiBeach(drive)));
+            .until(drive::isBeached),
+        antiBeach(drive));
   }
 }
