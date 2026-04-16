@@ -46,7 +46,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
+import frc.robot.autos.AutoConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -389,11 +392,11 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isBeached() {
-    // return ((Math.abs(getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
-    //         || Math.abs(getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
-    //     && DriverStation.isAutonomous()
-    //     && AllianceFlipUtil.applyX(getPose().getX()) > FieldConstants.LinesVertical.hubCenter);
-    return getPose().getX() > 7.5;
+    return ((Math.abs(getPitch()) > AutoConstants.beachAngleThreshold.getDegrees()
+            || Math.abs(getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
+        && DriverStation.isAutonomous()
+        && AllianceFlipUtil.applyX(getPose().getX()) > FieldConstants.LinesVertical.hubCenter);
+    // return getPose().getX() > 7.5;
   }
 
   public AutoFactory getAutoFactory() {

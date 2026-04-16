@@ -12,7 +12,7 @@ public final class AutoConstants {
   public static final Time kDelayTime = Units.Milliseconds.of(80);
   public static final Time kDefaultTrajectoryTimeout = Units.Seconds.of(10.0);
 
-  public static final Rotation2d beachAngleThreshold = Rotation2d.fromDegrees(7.0);
+  public static final Rotation2d beachAngleThreshold = Rotation2d.fromDegrees(10.0);
 
   public static final Distance kBumpLinearEpsilon = Units.Centimeters.of(20.0);
   public static final Angle kBumpAngleEpsilon = Units.Degree.of(15.0);
