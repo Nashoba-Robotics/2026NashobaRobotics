@@ -9,6 +9,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,9 +37,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-
+  // 5 0.15
   private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.15;
+  private static final double ANGLE_KD = 0.20;
   private static final double ANGLE_MAX_VELOCITY = 10.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
 
@@ -61,7 +63,9 @@ public class DriveCommands {
   private static final LoggedTunableNumber driveLockMetersPerSecondThreshold =
       new LoggedTunableNumber("DriveCommands/DriveLockMetersPerSecondThreshold", 0.1);
   private static final LoggedTunableNumber driveLockOmegaRadsPerSecThreshold =
-      new LoggedTunableNumber("DriveCommands/DriveLockOmegaRadsPerSecThreshold", 0.15);
+      new LoggedTunableNumber("DriveCommands/DriveLockOmegaRadsPerSecThreshold", 0.20);
+
+  private static final Debouncer xLockWheelsDebouncer = new Debouncer(0.15, DebounceType.kBoth);
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -167,13 +171,14 @@ public class DriveCommands {
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
 
-              boolean shouldLockWheels = false;
-              //   Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
-              //           < driveLockMetersPerSecondThreshold.get()
-              //       && Math.abs(speeds.omegaRadiansPerSecond)
-              //           < driveLockOmegaRadsPerSecThreshold.get()
-              //       && !ShootingUtil.makeSetpoint(drive).isShuttling()
-              //       && atShootingSetpoint(drive);
+              boolean shouldLockWheels =
+                  xLockWheelsDebouncer.calculate(
+                      Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)
+                              < driveLockMetersPerSecondThreshold.get()
+                          && Math.abs(speeds.omegaRadiansPerSecond)
+                              < driveLockOmegaRadsPerSecThreshold.get()
+                          && !ShootingUtil.makeSetpoint(drive).isShuttling()
+                          && atShootingSetpoint(drive));
 
               Logger.recordOutput("DriveCommands/shouldLockWheels", shouldLockWheels);
 
