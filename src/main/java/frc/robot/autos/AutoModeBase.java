@@ -192,14 +192,19 @@ public class AutoModeBase {
     return false;
   }
 
-  public static Command antiBeach(Drive drive) {
-    return new SequentialCommandGroup(
-        new ConditionalCommand(
-                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0, 0)), drive)
-                    .until(() -> !drive.isBeached()),
-                Commands.none(),
-                () -> drive.isBeached())
-            .withTimeout(1.5)); // TODO make the robot go to the safe spot after the auto ends
+  public static Command antiBeach(Drive drive, AutoTrajectory safeTraj) {
+    return new ConditionalCommand(
+        new SequentialCommandGroup(
+            Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0, 0)), drive)
+                .until(() -> !drive.isBeached())
+                .withTimeout(1.5),
+            cmdWithAccuracy(
+                drive,
+                safeTraj,
+                AutoConstants.kBumpLinearEpsilon,
+                AutoConstants.kBumpAngleEpsilon)),
+        Commands.none(),
+        () -> drive.isBeached());
   }
 
   public void newRoutine(Command... sequence) {

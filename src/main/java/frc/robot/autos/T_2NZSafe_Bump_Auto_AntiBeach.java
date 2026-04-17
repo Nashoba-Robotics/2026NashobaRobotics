@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 
-public class T_2NZSafe_Bump_Auto extends AutoModeBase {
-  public T_2NZSafe_Bump_Auto(
+public class T_2NZSafe_Bump_Auto_AntiBeach extends AutoModeBase {
+  public T_2NZSafe_Bump_Auto_AntiBeach(
       Drive drive, Superstructure superstructure, AutoFactory factory, boolean isLeft) {
     super(factory, (isLeft ? "Left " : "Right ") + "Safe DoubleSweep Bump");
 

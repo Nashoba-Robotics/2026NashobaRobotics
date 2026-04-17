@@ -17,6 +17,8 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
     AutoTrajectory T_NZSteal_T = trajectory("T_NZSteal_T", isLeft);
     AutoTrajectory Safe_Trench = trajectory("Safe_Trench", isLeft);
     AutoTrajectory second_T_NZ_T = trajectory("Second_T_NZ_T", isLeft);
+    AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Trench", isLeft);
+
     newRoutine(
         T_NZSteal_T.resetOdometry(),
         new ParallelDeadlineGroup(
@@ -24,7 +26,7 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                     drive, T_NZSteal_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(0.65), superstructure.autoRunIntake()))
             .until(drive::isBeached),
-        antiBeach(drive),
+        antiBeach(drive, antiBeach_Safe),
         cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
@@ -36,7 +38,7 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                     drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
             .until(drive::isBeached),
-        antiBeach(drive),
+        antiBeach(drive, antiBeach_Safe),
         cmdWithAccuracy(drive, Safe_Trench),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
@@ -48,6 +50,6 @@ public class T_2NZSteal_NoBump_Auto extends AutoModeBase {
                     drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
                 new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
             .until(drive::isBeached),
-        antiBeach(drive));
+        antiBeach(drive, antiBeach_Safe));
   }
 }

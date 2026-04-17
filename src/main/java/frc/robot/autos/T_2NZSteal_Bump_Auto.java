@@ -17,6 +17,7 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
     AutoTrajectory safe_Bump = trajectory("Safe_Bump", isLeft);
     AutoTrajectory second_T_NZ_B = trajectory("Second_T_NZ_B", isLeft);
     AutoTrajectory end_T_NZ = trajectory("End_T_NZ", isLeft);
+    AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Bump", isLeft);
 
     newRoutine(
         T_NZSteal_B.resetOdometry(),
@@ -28,7 +29,7 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpAngleEpsilon),
                 new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
             .until(drive::isBeached),
-        antiBeach(drive),
+        antiBeach(drive, antiBeach_Safe),
         cmdWithAccuracy(
             drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
@@ -44,7 +45,7 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
             .until(drive::isBeached),
-        antiBeach(drive),
+        antiBeach(drive, antiBeach_Safe),
         cmdWithAccuracy(
             drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
@@ -60,6 +61,6 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                     AutoConstants.kBumpAngleEpsilon),
                 superstructure.autoRunIntake())
             .until(drive::isBeached),
-        antiBeach(drive));
+        antiBeach(drive, antiBeach_Safe));
   }
 }
