@@ -30,8 +30,13 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                 new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
-        cmdWithAccuracy(
-            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
+        new ParallelDeadlineGroup(
+            cmdWithAccuracy(
+                drive,
+                safe_Bump,
+                AutoConstants.kBumpLinearEpsilon,
+                AutoConstants.kBumpAngleEpsilon),
+            superstructure.autoRunIntake()),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -46,8 +51,13 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                 superstructure.autoRunIntake())
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
-        cmdWithAccuracy(
-            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
+        new ParallelDeadlineGroup(
+            cmdWithAccuracy(
+                drive,
+                safe_Bump,
+                AutoConstants.kBumpLinearEpsilon,
+                AutoConstants.kBumpAngleEpsilon),
+            superstructure.autoRunIntake()),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
