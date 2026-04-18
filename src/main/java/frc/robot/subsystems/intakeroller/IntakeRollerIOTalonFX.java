@@ -23,6 +23,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final TalonFX rollerLeader;
   private final TalonFX rollerFollower;
   private final TalonFXConfiguration rollerConfig;
+  private boolean swapped = false;
 
   private final StatusSignal<Temperature> leaderTemp;
   private final StatusSignal<AngularVelocity> leaderVelocity;
@@ -147,11 +148,21 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
   @Override
   public void runVoltage(double volts) {
-    rollerLeader.setControl(voltageOut.withOutput(volts));
+    if (isSwapped()) rollerFollower.setControl(voltageOut.withOutput(volts));
+    else rollerLeader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
   public void stop() {
-    rollerLeader.setControl(new NeutralOut());
+    if (isSwapped()) rollerFollower.setControl(new NeutralOut());
+    else rollerLeader.setControl(new NeutralOut());
+  }
+
+  public boolean isSwapped() {
+    return swapped;
+  }
+
+  public void swap() {
+    swapped = !swapped;
   }
 }
