@@ -2,32 +2,36 @@ package frc.robot.autos;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoTrajectory;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 
-public class T_2NZSafe_NoBump_Auto extends AutoModeBase {
-  public T_2NZSafe_NoBump_Auto(
+public class T_2NZSafe_Bump_Auto_AntiBeach extends AutoModeBase {
+  public T_2NZSafe_Bump_Auto_AntiBeach(
       Drive drive, Superstructure superstructure, AutoFactory factory, boolean isLeft) {
-    super(factory, (isLeft ? "Left " : "Right ") + "Safe DoubleSweep NoBump");
+    super(factory, (isLeft ? "Left " : "Right ") + "Safe DoubleSweep Bump");
 
-    AutoTrajectory T_NZSafe_T = trajectory("T_NZSafe_T", isLeft);
-    AutoTrajectory Safe_Trench = trajectory("Safe_Trench", isLeft);
-    AutoTrajectory second_T_NZ_T = trajectory("Second_T_NZ_T", isLeft);
-    AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Trench", isLeft);
+    AutoTrajectory T_NZSafe_B = trajectory("T_NZSafe_B", isLeft);
+    AutoTrajectory safe_Bump = trajectory("Safe_Bump", isLeft);
+    AutoTrajectory second_T_NZ_B = trajectory("Second_T_NZ_B", isLeft);
+    AutoTrajectory end_T_NZ = trajectory("End_T_NZ", isLeft);
+    AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Bump", isLeft);
 
     newRoutine(
-        T_NZSafe_T.resetOdometry(),
+        T_NZSafe_B.resetOdometry(),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, T_NZSafe_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
+                    drive,
+                    T_NZSafe_B,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
                 new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
-        cmdWithAccuracy(drive, Safe_Trench),
+        cmdWithAccuracy(
+            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -35,11 +39,15 @@ public class T_2NZSafe_NoBump_Auto extends AutoModeBase {
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
+                    drive,
+                    second_T_NZ_B,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
+                superstructure.autoRunIntake())
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
-        cmdWithAccuracy(drive, Safe_Trench),
+        cmdWithAccuracy(
+            drive, safe_Bump, AutoConstants.kBumpLinearEpsilon, AutoConstants.kBumpAngleEpsilon),
         new ParallelDeadlineGroup(
             superstructure.autoShoot(),
             new SequentialCommandGroup(
@@ -47,8 +55,11 @@ public class T_2NZSafe_NoBump_Auto extends AutoModeBase {
                 superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
-                    drive, second_T_NZ_T, Units.Seconds.of(20.0), Units.Centimeters.of(5.0)),
-                new SequentialCommandGroup(new WaitCommand(1.25), superstructure.autoRunIntake()))
+                    drive,
+                    end_T_NZ,
+                    AutoConstants.kBumpLinearEpsilon,
+                    AutoConstants.kBumpAngleEpsilon),
+                superstructure.autoRunIntake())
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe));
   }

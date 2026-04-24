@@ -108,9 +108,9 @@ public class Drive extends SubsystemBase {
 
   private final AutoFactory autoFactory;
 
-  private final PIDController xController = new PIDController(8.5, 0.0, 1.0);
-  private final PIDController yController = new PIDController(8.5, 0.0, 1.0);
-  private final PIDController headingController = new PIDController(5.0, 0.0, 0.10);
+  private final PIDController xController = new PIDController(10.0, 0.0, 1.5);
+  private final PIDController yController = new PIDController(10.0, 0.0, 1.5);
+  private final PIDController headingController = new PIDController(7.5, 0.0, 0.5);
 
   private final Field2d field = new Field2d();
 
@@ -396,6 +396,7 @@ public class Drive extends SubsystemBase {
             || Math.abs(getRoll()) > AutoConstants.beachAngleThreshold.getDegrees())
         && DriverStation.isAutonomous()
         && AllianceFlipUtil.applyX(getPose().getX()) > FieldConstants.LinesVertical.hubCenter);
+    // return getPose().getX() > 7.5;
   }
 
   public AutoFactory getAutoFactory() {

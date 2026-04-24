@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.T_2NZSafe_Bump_Auto;
+import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
 import frc.robot.autos.T_2NZSafe_NoBump_Auto;
 import frc.robot.autos.T_2NZSteal_Bump_Auto;
 import frc.robot.autos.T_2NZSteal_NoBump_Auto;
@@ -178,7 +179,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot());
 
     autoChooser.addOption(
         "Right Steal DoubleSweep NoBump",
@@ -208,6 +209,10 @@ public class RobotContainer {
 
     autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump Anti Beach",
+        new T_2NZSafe_Bump_Auto_AntiBeach(drive, superstructure, autoFactory, true).asCommand());
+
     CommandScheduler.getInstance().schedule(autoFactory.warmupCmd());
 
     // Configure the button bindings
@@ -230,12 +235,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    Trigger inShootingTolerance =
-        new Trigger(
-            () ->
-                hood.atSetpoint()
-                    && shooter.atSetpoint()
-                    && DriveCommands.atShootingSetpoint(drive));
+    Trigger inShootingTolerance = new Trigger(superstructure::inShootingTolerance);
 
     // Shoot bindings
     driver
@@ -278,9 +278,10 @@ public class RobotContainer {
     driver
         .y()
         .whileTrue(
-            rollerFloor
-                .runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED)
-                .alongWith(entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED)));
+            new ParallelCommandGroup(
+                rollerFloor.runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED),
+                entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED),
+                shooter.runTrackedVelocityCommand(Presets.Shooter.EXHAUST_SPEED)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
 

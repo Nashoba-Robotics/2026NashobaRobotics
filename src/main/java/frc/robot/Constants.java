@@ -84,15 +84,15 @@ public final class Constants {
     public static final LoggedTunableNumber kP =
         new LoggedTunableNumber("RollerFloor/PID/kP", 16.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("RollerFloor/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("RollerFloor/PID/kS", 5.4);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("RollerFloor/PID/kS", 6.5);
     public static final LoggedTunableNumber kV =
-        new LoggedTunableNumber("RollerFloor/PID/kV", 0.02);
+        new LoggedTunableNumber("RollerFloor/PID/kV", 0.05);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("RollerFloor/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 7.5);
 
-    public static final double GEAR_RATIO = 1.8;
+    public static final double GEAR_RATIO = 1.545;
   }
 
   public static class Intake {
@@ -140,7 +140,7 @@ public final class Constants {
     public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
-    public static final double SUPPLY_LIMIT = 60.0;
+    public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
         new LoggedTunableNumber("EntryRoller/PID/kP", 17.0);

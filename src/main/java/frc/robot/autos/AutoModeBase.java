@@ -13,7 +13,9 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.Stopwatch;
 import java.util.Set;
@@ -54,7 +56,20 @@ public class AutoModeBase {
                     trajectory.cmd()::initialize,
                     trajectory.cmd()::execute,
                     trajectory.cmd()::end,
-                    () -> rotationIsFinished(drive, trajectory)),
+                    () -> rotationIsFinished(drive, trajectory, AutoConstants.kAutoAngleEpsilon)),
+            Set.of(drive))
+        .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
+  }
+
+  public static Command cmdWithRotationAccuracy(
+      Drive drive, AutoTrajectory trajectory, Time timeout, Angle epsilonAngle) {
+    return Commands.defer(
+            () ->
+                new FunctionalCommand(
+                    trajectory.cmd()::initialize,
+                    trajectory.cmd()::execute,
+                    trajectory.cmd()::end,
+                    () -> rotationIsFinished(drive, trajectory, epsilonAngle)),
             Set.of(drive))
         .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
   }
@@ -77,7 +92,26 @@ public class AutoModeBase {
                     trajectory.cmd()::initialize,
                     trajectory.cmd()::execute,
                     trajectory.cmd()::end,
-                    () -> isFinished(drive, trajectory, epsilonDist)),
+                    () ->
+                        isFinished(
+                            drive, trajectory, epsilonDist, AutoConstants.kAutoAngleEpsilon)),
+            Set.of(drive))
+        .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
+  }
+
+  public static Command cmdWithAccuracy(
+      Drive drive,
+      AutoTrajectory trajectory,
+      Time timeout,
+      Distance epsilonDist,
+      Angle epsilonAngle) {
+    return Commands.defer(
+            () ->
+                new FunctionalCommand(
+                    trajectory.cmd()::initialize,
+                    trajectory.cmd()::execute,
+                    trajectory.cmd()::end,
+                    () -> isFinished(drive, trajectory, epsilonDist, epsilonAngle)),
             Set.of(drive))
         .withTimeout(trajectory.getRawTrajectory().getTotalTime() + timeout.in(Units.Seconds));
   }
@@ -90,6 +124,12 @@ public class AutoModeBase {
   public static Command cmdWithAccuracy(
       Drive drive, AutoTrajectory trajectory, Distance epsilonDist) {
     return cmdWithAccuracy(drive, trajectory, AutoConstants.kDefaultTrajectoryTimeout, epsilonDist);
+  }
+
+  public static Command cmdWithAccuracy(
+      Drive drive, AutoTrajectory trajectory, Distance epsilonDist, Angle epsilonAngle) {
+    return cmdWithAccuracy(
+        drive, trajectory, AutoConstants.kDefaultTrajectoryTimeout, epsilonDist, epsilonAngle);
   }
 
   public static Command cmdWithAccuracy(Drive drive, AutoTrajectory trajectory) {
@@ -107,10 +147,10 @@ public class AutoModeBase {
             });
   }
 
-  private static boolean rotationIsFinished(Drive drive, AutoTrajectory trajectory) {
+  private static boolean rotationIsFinished(
+      Drive drive, AutoTrajectory trajectory, Angle epsilonAngle) {
     Pose2d currentPose = drive.getPose();
     Pose2d finalPose = trajectory.getFinalPose().get();
-    Angle epsilonAngle = AutoConstants.kAutoAngleEpsilon;
 
     return MathUtil.angleModulus(
             Math.abs(currentPose.getRotation().minus(finalPose.getRotation()).getRadians()))
@@ -130,9 +170,10 @@ public class AutoModeBase {
         < epsilonDist.in(Units.Meters);
   }
 
-  private static boolean isFinished(Drive drive, AutoTrajectory trajectory, Distance epsilonDist) {
+  private static boolean isFinished(
+      Drive drive, AutoTrajectory trajectory, Distance epsilonDist, Angle epsilonAngle) {
     boolean translationCompleted = translationIsFinished(drive, trajectory, epsilonDist);
-    boolean rotationCompleted = rotationIsFinished(drive, trajectory);
+    boolean rotationCompleted = rotationIsFinished(drive, trajectory, epsilonAngle);
 
     Logger.recordOutput("Choreo/Translation Completed", translationCompleted);
     Logger.recordOutput("Choreo/Rotation Completed", rotationCompleted);
@@ -151,9 +192,19 @@ public class AutoModeBase {
     return false;
   }
 
-  public static Command antiBeach(Drive drive) {
-    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0.0, 0.0)), drive)
-        .until(() -> !drive.isBeached());
+  public static Command antiBeach(Drive drive, AutoTrajectory safeTraj) {
+    return new ConditionalCommand(
+        new SequentialCommandGroup(
+            Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0.5, 0, 0)), drive)
+                .until(() -> !drive.isBeached())
+                .withTimeout(1.5),
+            cmdWithAccuracy(
+                drive,
+                safeTraj,
+                AutoConstants.kBumpLinearEpsilon,
+                AutoConstants.kBumpAngleEpsilon)),
+        Commands.none(),
+        () -> drive.isBeached());
   }
 
   public void newRoutine(Command... sequence) {
