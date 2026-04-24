@@ -179,7 +179,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
 
-    autoChooser.addOption("dumbShoot", superstructure.autoShoot().withTimeout(7.0));
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot());
 
     autoChooser.addOption(
         "Right Steal DoubleSweep NoBump",
@@ -235,12 +235,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    Trigger inShootingTolerance =
-        new Trigger(
-            () ->
-                hood.atSetpoint()
-                    && shooter.atSetpoint()
-                    && DriveCommands.atShootingSetpoint(drive));
+    Trigger inShootingTolerance = new Trigger(superstructure::inShootingTolerance);
 
     // Shoot bindings
     driver

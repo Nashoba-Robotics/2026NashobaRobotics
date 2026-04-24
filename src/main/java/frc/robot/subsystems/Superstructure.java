@@ -2,10 +2,10 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Presets;
 import frc.robot.autos.AutoConstants;
 import frc.robot.commands.DriveCommands;
@@ -131,11 +131,8 @@ public class Superstructure extends SubsystemBase {
     return new ParallelCommandGroup(
             aimCommand(() -> 0.0, () -> 0.0),
             new SequentialCommandGroup(
-                new WaitUntilCommand(
-                    () ->
-                        shooter.atSetpoint()
-                            && hood.atSetpoint()
-                            && DriveCommands.atShootingSetpoint(drive)),
+                new ParallelCommandGroup(
+                    Commands.waitSeconds(0.001), Commands.waitUntil(this::inShootingTolerance)),
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
@@ -151,5 +148,9 @@ public class Superstructure extends SubsystemBase {
             entryRoller.stopCommand()),
         shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
+  }
+
+  public boolean inShootingTolerance() {
+    return hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atShootingSetpoint(drive);
   }
 }
