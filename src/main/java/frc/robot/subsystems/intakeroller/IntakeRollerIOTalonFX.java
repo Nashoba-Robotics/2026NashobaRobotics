@@ -60,6 +60,15 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
     PhoenixUtil.tryUntilOk(5, () -> rollerLeader.getConfigurator().apply(rollerConfig));
     PhoenixUtil.tryUntilOk(5, () -> rollerFollower.getConfigurator().apply(rollerConfig));
+    // PhoenixUtil.tryUntilOk(
+    //     5,
+    //     () ->
+    //         rollerFollower
+    //             .getConfigurator()
+    //             .apply(
+    //                 rollerConfig.withMotorOutput(
+    //                     new MotorOutputConfigs()
+    //                         .withInverted(InvertedValue.CounterClockwise_Positive))));
 
     leaderTemp = rollerLeader.getDeviceTemp();
     leaderVelocity = rollerLeader.getVelocity();
@@ -148,10 +157,12 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   @Override
   public void runVoltage(double volts) {
     rollerLeader.setControl(voltageOut.withOutput(volts));
+    // rollerFollower.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
   public void stop() {
     rollerLeader.setControl(new NeutralOut());
+    // rollerFollower.setControl(new NeutralOut());
   }
 }

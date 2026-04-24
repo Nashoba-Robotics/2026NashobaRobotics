@@ -21,7 +21,7 @@ public class LEDSubsystem extends SubsystemBase {
   private final CANdle candle;
   // set to false to disable LEDs
   private final boolean periodicEnabled = true;
-  private int LEDCount = 50;
+  private int LEDCount = 75;
 
   private EmptyAnimation disabled = new EmptyAnimation(0);
   private RainbowAnimation rainbow = new RainbowAnimation(0, LEDCount);
@@ -148,6 +148,9 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    setRainbowCommand(50);
+
     if (periodicEnabled == false) return;
 
     boolean isHubActive = isHubActive();

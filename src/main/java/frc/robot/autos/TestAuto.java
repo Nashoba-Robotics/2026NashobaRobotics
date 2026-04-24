@@ -8,7 +8,7 @@ public class TestAuto extends AutoModeBase {
   public TestAuto(Drive drive, AutoFactory factory) {
     super(factory, "TestAuto");
 
-    AutoTrajectory tunePath = trajectory("TUNEPATH");
+    AutoTrajectory tunePath = trajectory("TUNEPATH", false);
     newRoutine(tunePath.resetOdometry(), cmdWithAccuracy(drive, tunePath));
   }
 }
