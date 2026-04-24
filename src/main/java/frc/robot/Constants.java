@@ -30,7 +30,7 @@ public final class Constants {
   public static final double loopTime = 0.02;
 
   public static final AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   public static enum Mode {
     /** Running on a real robot. */
