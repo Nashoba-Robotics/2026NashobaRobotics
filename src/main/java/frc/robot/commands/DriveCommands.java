@@ -56,7 +56,7 @@ public class DriveCommands {
   private static final LoggedTunableNumber HUB_SHOOTING_TOLERANCE =
       new LoggedTunableNumber("DriveCommands/HubShootingToleranceDeg", 3.0);
   private static final LoggedTunableNumber SHUTTLING_TOLERANCE =
-      new LoggedTunableNumber("DriveCommands/ShuttlingToleranceDeg", 7.5);
+      new LoggedTunableNumber("DriveCommands/ShuttlingToleranceDeg", 12.5);
   private static final LoggedTunableNumber DRIVE_TOLERANCE =
       new LoggedTunableNumber("DriveCommands/PositionToleranceMeters", 0.025);
 

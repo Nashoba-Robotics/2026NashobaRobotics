@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Presets;
 import frc.robot.autos.AutoConstants;
 import frc.robot.commands.DriveCommands;
@@ -151,6 +152,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean inShootingTolerance() {
-    return hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atShootingSetpoint(drive);
+    return hood.atSetpoint()
+        && (ShootingUtil.makeSetpoint(drive).isShuttling()
+            ? shooter.inTolerance(Constants.Shooter.SHUTTLE_VELOCITY_TOLERANCE.get())
+            : shooter.atSetpoint())
+        && DriveCommands.atShootingSetpoint(drive);
   }
 }

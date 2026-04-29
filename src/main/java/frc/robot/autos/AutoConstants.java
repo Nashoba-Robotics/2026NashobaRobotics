@@ -14,9 +14,9 @@ public final class AutoConstants {
 
   public static final Rotation2d beachAngleThreshold = Rotation2d.fromDegrees(8.0);
 
-  public static final Distance kBumpLinearEpsilon = Units.Centimeters.of(20.0);
+  public static final Distance kBumpLinearEpsilon = Units.Centimeters.of(25.0);
   public static final Angle kBumpAngleEpsilon = Units.Degree.of(15.0);
 
-  public static final Time kShootingTime = Units.Seconds.of(2.75);
-  public static final Time kDelayIntakeRetract = Units.Seconds.of(1.75);
+  public static final Time kShootingTime = Units.Seconds.of(2.65);
+  public static final Time kDelayIntakeRetract = Units.Seconds.of(1.5);
 }

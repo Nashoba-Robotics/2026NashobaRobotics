@@ -176,6 +176,8 @@ public final class Constants {
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 7.5);
+    public static final LoggedTunableNumber SHUTTLE_VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 40.0);
 
     public static final double GEAR_RATIO = 1.34;
   }

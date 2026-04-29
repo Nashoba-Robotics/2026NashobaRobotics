@@ -27,7 +27,7 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
                     T_NZSteal_B,
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
-                new SequentialCommandGroup(new WaitCommand(0.60), superstructure.autoRunIntake()))
+                new SequentialCommandGroup(new WaitCommand(0.50), superstructure.autoRunIntake()))
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
         new ParallelDeadlineGroup(
