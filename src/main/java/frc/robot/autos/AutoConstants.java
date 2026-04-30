@@ -18,5 +18,5 @@ public final class AutoConstants {
   public static final Angle kBumpAngleEpsilon = Units.Degree.of(15.0);
 
   public static final Time kShootingTime = Units.Seconds.of(2.65);
-  public static final Time kDelayIntakeRetract = Units.Seconds.of(1.5);
+  public static final Time kDelayIntakeRetract = Units.Seconds.of(1.65);
 }

@@ -10,12 +10,19 @@ import frc.robot.subsystems.drive.Drive;
 
 public class T_2NZSteal_Bump_Auto extends AutoModeBase {
   public T_2NZSteal_Bump_Auto(
-      Drive drive, Superstructure superstructure, AutoFactory factory, boolean isLeft) {
+      Drive drive,
+      Superstructure superstructure,
+      AutoFactory factory,
+      boolean isLeft,
+      boolean isGreedy) {
     super(factory, (isLeft ? "Left " : "Right ") + "Steal DoubleSweep Bump");
 
     AutoTrajectory T_NZSteal_B = trajectory("T_NZSteal_B", isLeft);
     AutoTrajectory safe_Bump = trajectory("Safe_Bump", isLeft);
-    AutoTrajectory second_T_NZ_B = trajectory("Second_T_NZ_B", isLeft);
+    AutoTrajectory second_T_NZ_B =
+        (isGreedy
+            ? trajectory("Greedy_Second_T_NZ_B", isLeft)
+            : trajectory("Second_T_NZ_B", isLeft));
     AutoTrajectory end_T_NZ = trajectory("End_T_NZ", isLeft);
     AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Bump", isLeft);
 

@@ -132,8 +132,8 @@ public class Superstructure extends SubsystemBase {
     return new ParallelCommandGroup(
             aimCommand(() -> 0.0, () -> 0.0),
             new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    Commands.waitSeconds(0.001), Commands.waitUntil(this::inShootingTolerance)),
+                new SequentialCommandGroup(
+                    Commands.waitSeconds(0.01), Commands.waitUntil(this::inShootingTolerance)),
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
