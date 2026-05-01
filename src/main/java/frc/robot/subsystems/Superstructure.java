@@ -50,6 +50,7 @@ public class Superstructure extends SubsystemBase {
     shooter.setDefaultCommand(shooter.stopCommand());
     entryRoller.setDefaultCommand(entryRoller.stopCommand());
     rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
+    intakeRoller.setDefaultCommand(intakeRoller.stopCommand());
   }
 
   @Override
@@ -105,7 +106,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command autoRunIntake() {
-    return deployIntake().alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    return deployIntake()
+        .alongWith(intakeRoller.runVelocityCommand(Presets.Intake.AUTO_INTAKE_SPEED));
   }
 
   public Command autoRetractIntake() {

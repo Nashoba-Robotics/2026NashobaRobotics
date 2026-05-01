@@ -8,7 +8,7 @@ public final class Presets {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuckAngleDeg", 1.5);
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
-        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 10.0);
+        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 0.5);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
@@ -26,20 +26,27 @@ public final class Presets {
 
   public static class Intake {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
-        new LoggedTunableNumber("Intake/Setpoints/DeployTuckAngleDeg", 0.0);
+        new LoggedTunableNumber("IntakeDeploy/Setpoints/DeployTuckAngleDeg", 0.0);
     public static final LoggedTunableNumber EXTEND_ANGLE_DEG =
-        new LoggedTunableNumber("Intake/Setpoints/DeployExtendAngleDeg", 0.0);
+        new LoggedTunableNumber("IntakeDeploy/Setpoints/DeployExtendAngleDeg", 0.0);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
-        new LoggedTunableNumber("Intake/Setpoints/DeployTuningAngleDeg", 0.0);
+        new LoggedTunableNumber("IntakeDeploy/Setpoints/DeployTuningAngleDeg", 0.0);
 
     public static final LoggedTunableNumber INTAKE_VOLTS =
-        new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 8.0);
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeVolts", 8.0);
     public static final LoggedTunableNumber SLOW_INTAKE_VOLTS =
-        new LoggedTunableNumber("Intake/Setpoints/RollerIntakeVolts", 3.5);
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeVolts", 3.5);
     public static final LoggedTunableNumber EXHAUST_VOLTS =
-        new LoggedTunableNumber("Intake/Setpoints/RollerExhaustVolts", -6.0);
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerExhaustVolts", -6.0);
     public static final LoggedTunableNumber TUNING_VOLTS =
-        new LoggedTunableNumber("Intake/Setpoints/RollerTuningVolts", 0.0);
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerTuningVolts", 0.0);
+
+    public static final LoggedTunableNumber INTAKE_SPEED =
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeSpeed", 240.0);
+    public static final LoggedTunableNumber AUTO_INTAKE_SPEED =
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeSpeed", 260.0);
+    public static final LoggedTunableNumber TUNING_SPEED =
+        new LoggedTunableNumber("IntakeRoller/Setpoints/TuningSpeed", 0.0);
   }
 
   public static class EntryRoller {
@@ -55,7 +62,7 @@ public final class Presets {
 
   public static class Shooter {
     public static final LoggedTunableNumber CLOSE_HUB_SPEED =
-        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 250.0);
+        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 240.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
         new LoggedTunableNumber("Shooter/Setpoints/ExhaustSpeedRadsPerSec", -100.0);
     public static final LoggedTunableNumber TUNING_SPEED =

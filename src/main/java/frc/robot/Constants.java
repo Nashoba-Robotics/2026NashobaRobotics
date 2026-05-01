@@ -116,17 +116,26 @@ public final class Constants {
     public static final double ROLLER_STATOR_LIMIT = 80.0;
     public static final double ROLLER_SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Intake/PID/kP", 0.0);
-    public static final LoggedTunableNumber kD = new LoggedTunableNumber("Intake/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Intake/PID/kS", 0.0);
-    public static final LoggedTunableNumber kG = new LoggedTunableNumber("Intake/PID/kG", 0.0);
-    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Intake/PID/kV", 0.0);
-    public static final LoggedTunableNumber kA = new LoggedTunableNumber("Intake/PID/kA", 0.0);
+    public static final LoggedTunableNumber kP =
+        new LoggedTunableNumber("IntakeRoller/PID/kP", 10.0);
+    public static final LoggedTunableNumber kD =
+        new LoggedTunableNumber("IntakeRoller/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS =
+        new LoggedTunableNumber("IntakeRoller/PID/kS", 6.0);
+    public static final LoggedTunableNumber kG =
+        new LoggedTunableNumber("IntakeRoller/PID/kG", 0.0);
+    public static final LoggedTunableNumber kV =
+        new LoggedTunableNumber("IntakeRoller/PID/kV", 0.0);
+    public static final LoggedTunableNumber kA =
+        new LoggedTunableNumber("IntakeRoller/PID/kA", 0.0);
 
     public static final Rotation2d GRAVITY_POSTION_OFFSET = Rotation2d.fromDegrees(0.0);
 
     public static final LoggedTunableNumber POSITION_TOLERANCE =
-        new LoggedTunableNumber("Intake/DeployToleranceDeg", 3.0);
+        new LoggedTunableNumber("IntakeDeploy/DeployToleranceDeg", 3.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("IntakeRoller/ToleranceRadsPerSec", 10.0);
 
     public static final double ROLLER_GEAR_RATIO = 2.0;
     // public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 0.0;
@@ -175,7 +184,7 @@ public final class Constants {
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Shooter/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
-        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 7.5);
+        new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 15.0);
     public static final LoggedTunableNumber SHUTTLE_VELOCITY_TOLERANCE =
         new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 40.0);
 

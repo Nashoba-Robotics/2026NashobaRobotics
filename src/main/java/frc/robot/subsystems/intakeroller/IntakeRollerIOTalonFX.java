@@ -5,11 +5,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -26,6 +28,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
   private final StatusSignal<Temperature> leaderTemp;
   private final StatusSignal<AngularVelocity> leaderVelocity;
+  private final StatusSignal<Double> velocitySetpoint;
   private final StatusSignal<Voltage> leaderAppliedVolts;
   private final StatusSignal<Current> leaderStatorCurrent;
   private final StatusSignal<Current> leaderSupplyCurrent;
@@ -37,6 +40,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   private final StatusSignal<Current> followerSupplyCurrent;
 
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
   public IntakeRollerIOTalonFX() {
     rollerLeader = new TalonFX(Constants.Intake.ROLLER_LEADER_MOTOR_ID, Constants.Intake.CANBUS);
@@ -55,6 +59,14 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     rollerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     rollerConfig.Feedback.SensorToMechanismRatio = Constants.Intake.ROLLER_GEAR_RATIO;
 
+    rollerConfig.Slot0.kP = Constants.Intake.kP.get();
+    rollerConfig.Slot0.kD = Constants.Intake.kD.get();
+    rollerConfig.Slot0.kS = Constants.Intake.kS.get();
+    rollerConfig.Slot0.kV = Constants.Intake.kV.get();
+    rollerConfig.Slot0.kA = Constants.Intake.kA.get();
+
+    rollerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+
     rollerConfig.MotorOutput.Inverted = Constants.Intake.ROLLER_INVERTED;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -72,6 +84,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
 
     leaderTemp = rollerLeader.getDeviceTemp();
     leaderVelocity = rollerLeader.getVelocity();
+    velocitySetpoint = rollerLeader.getClosedLoopReference();
     leaderAppliedVolts = rollerLeader.getMotorVoltage();
     leaderStatorCurrent = rollerLeader.getStatorCurrent();
     leaderSupplyCurrent = rollerLeader.getSupplyCurrent();
@@ -86,6 +99,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
         1 / Constants.loopTime,
         leaderTemp,
         leaderVelocity,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -102,6 +116,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
         false,
         leaderTemp,
         leaderVelocity,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -117,6 +132,7 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
     BaseStatusSignal.refreshAll(
         leaderTemp,
         leaderVelocity,
+        velocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -130,11 +146,14 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
         BaseStatusSignal.isAllGood(
             leaderTemp,
             leaderVelocity,
+            velocitySetpoint,
             leaderAppliedVolts,
             leaderStatorCurrent,
             leaderSupplyCurrent);
     inputs.leaderTempCelsius = leaderTemp.getValueAsDouble();
     inputs.leaderVelocityRadsPerSec = Units.rotationsToRadians(leaderVelocity.getValueAsDouble());
+    inputs.velocitySetpointRadsPerSec =
+        Units.rotationsToRadians(velocitySetpoint.getValueAsDouble());
     inputs.leaderAppliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.leaderStatorCurrentAmps = leaderStatorCurrent.getValueAsDouble();
     inputs.leaderSupplyCurrentAmps = leaderSupplyCurrent.getValueAsDouble();
@@ -161,8 +180,30 @@ public class IntakeRollerIOTalonFX implements IntakeRollerIO {
   }
 
   @Override
+  public void runVelocity(double velocityRadsPerSec) {
+    rollerLeader.setControl(
+        velocityTorqueCurrentFOC.withVelocity(Units.radiansToRotations(velocityRadsPerSec)));
+  }
+
+  @Override
   public void stop() {
     rollerLeader.setControl(new NeutralOut());
     // rollerFollower.setControl(new NeutralOut());
+  }
+
+  @Override
+  public void setPID(double kP, double kD) {
+    rollerConfig.Slot0.kP = kP;
+    rollerConfig.Slot0.kD = kD;
+    rollerLeader.getConfigurator().apply(rollerConfig);
+  }
+
+  @Override
+  public void setFeedForward(double kS, double kG, double kV, double kA) {
+    rollerConfig.Slot0.kS = kS;
+    rollerConfig.Slot0.kG = kG;
+    rollerConfig.Slot0.kV = kV;
+    rollerConfig.Slot0.kA = kA;
+    rollerLeader.getConfigurator().apply(rollerConfig);
   }
 }

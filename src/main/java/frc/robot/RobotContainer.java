@@ -164,7 +164,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED),
             rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED),
-            intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
+            intakeRoller.runVelocityCommand(Presets.Intake.TUNING_SPEED),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
             shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
@@ -286,7 +286,7 @@ public class RobotContainer {
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
-    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver.leftTrigger().whileTrue(intakeRoller.runVelocityCommand(Presets.Intake.INTAKE_SPEED));
 
     driver.leftBumper().onTrue(superstructure.retractIntake());
 
