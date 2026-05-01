@@ -23,6 +23,7 @@ import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
 import frc.robot.autos.T_2NZSafe_NoBump_Auto;
 import frc.robot.autos.T_2NZSteal_Bump_Auto;
 import frc.robot.autos.T_2NZSteal_NoBump_Auto;
+import frc.robot.autos.T_2NZSuperSafe_Bump_Auto;
 import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.LEDSubsystem;
@@ -207,6 +208,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Left Safe DoubleSweep Bump",
         new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
 
     autoChooser.addOption(
         "Right Steal Greedy DoubleSweep Bump",
@@ -220,6 +227,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Left Safe Greedy DoubleSweep Bump",
         new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
 
     autoChooser.addOption(
         "Middle Auto", new MiddleAuto(drive, superstructure, autoFactory).asCommand());
