@@ -9,6 +9,7 @@ public interface IntakeRollerIO {
     public boolean leaderConnected = false;
     public double leaderTempCelsius = 0.0;
     public double leaderVelocityRadsPerSec = 0.0;
+    public double velocitySetpointRadsPerSec = 0.0;
     public double leaderAppliedVolts = 0.0;
     public double leaderStatorCurrentAmps = 0.0;
     public double leaderSupplyCurrentAmps = 0.0;
@@ -25,5 +26,11 @@ public interface IntakeRollerIO {
 
   public default void runVoltage(double volts) {}
 
+  public default void runVelocity(double velocityRadsPerSec) {}
+
   public default void stop() {}
+
+  public default void setPID(double kP, double kD) {}
+
+  public default void setFeedForward(double kS, double kG, double kV, double kA) {}
 }

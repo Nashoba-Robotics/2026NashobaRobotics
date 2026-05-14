@@ -70,6 +70,11 @@ public class Shooter extends SubsystemBase {
         Constants.Shooter.VELOCITY_TOLERANCE.get());
   }
 
+  public boolean inTolerance(double tolerance) {
+    return Util.epsilonEquals(
+        inputs.velocitySetpointRadsPerSec, inputs.leaderVelocityRadsPerSec, tolerance);
+  }
+
   public Command runVelocityCommand(double velocityRadsPerSec) {
     return run(() -> io.runVelocity(velocityRadsPerSec)).until(this::atSetpoint);
   }

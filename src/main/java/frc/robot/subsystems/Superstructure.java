@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Presets;
 import frc.robot.autos.AutoConstants;
 import frc.robot.commands.DriveCommands;
@@ -49,6 +50,7 @@ public class Superstructure extends SubsystemBase {
     shooter.setDefaultCommand(shooter.stopCommand());
     entryRoller.setDefaultCommand(entryRoller.stopCommand());
     rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
+    intakeRoller.setDefaultCommand(intakeRoller.stopCommand());
   }
 
   @Override
@@ -90,7 +92,7 @@ public class Superstructure extends SubsystemBase {
         intakeDeploy
             .runVoltageCommand(() -> 8.0)
             .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(130)),
-        intakeDeploy.runVoltageCommand(() -> 0.30));
+        intakeDeploy.runVoltageCommand(() -> 0.40));
   }
 
   public Command retractIntake() {
@@ -104,7 +106,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command autoRunIntake() {
-    return deployIntake().alongWith(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    return deployIntake()
+        .alongWith(intakeRoller.runVelocityCommand(Presets.Intake.AUTO_INTAKE_SPEED));
   }
 
   public Command autoRetractIntake() {
@@ -131,8 +134,8 @@ public class Superstructure extends SubsystemBase {
     return new ParallelCommandGroup(
             aimCommand(() -> 0.0, () -> 0.0),
             new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    Commands.waitSeconds(0.001), Commands.waitUntil(this::inShootingTolerance)),
+                new SequentialCommandGroup(
+                    Commands.waitSeconds(0.01), Commands.waitUntil(this::inShootingTolerance)),
                 new ParallelCommandGroup(
                     entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
                     rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
@@ -151,6 +154,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean inShootingTolerance() {
-    return hood.atSetpoint() && shooter.atSetpoint() && DriveCommands.atShootingSetpoint(drive);
+    return hood.atSetpoint()
+        && (ShootingUtil.makeSetpoint(drive).isShuttling()
+            ? shooter.inTolerance(Constants.Shooter.SHUTTLE_VELOCITY_TOLERANCE.get())
+            : shooter.atSetpoint())
+        && DriveCommands.atShootingSetpoint(drive);
   }
 }
