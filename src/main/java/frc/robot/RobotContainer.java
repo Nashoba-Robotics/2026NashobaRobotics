@@ -17,11 +17,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.MiddleAuto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
 import frc.robot.autos.T_2NZSafe_NoBump_Auto;
 import frc.robot.autos.T_2NZSteal_Bump_Auto;
 import frc.robot.autos.T_2NZSteal_NoBump_Auto;
+import frc.robot.autos.T_2NZSuperSafe_Bump_Auto;
 import frc.robot.autos.TestAuto;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.LEDSubsystem;
@@ -163,7 +165,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
             entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED),
             rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED),
-            intakeRoller.runVoltageCommand(Presets.Intake.TUNING_VOLTS),
+            intakeRoller.runVelocityCommand(Presets.Intake.TUNING_SPEED),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
             shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
@@ -196,16 +198,44 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Right Steal DoubleSweep Bump",
-        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false).asCommand());
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
     autoChooser.addOption(
         "Left Steal DoubleSweep Bump",
-        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true).asCommand());
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
     autoChooser.addOption(
         "Right Safe DoubleSweep Bump",
-        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false).asCommand());
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
     autoChooser.addOption(
         "Left Safe DoubleSweep Bump",
-        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true).asCommand());
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+
+    autoChooser.addOption(
+        "Middle Auto", new MiddleAuto(drive, superstructure, autoFactory).asCommand());
 
     autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
 
@@ -269,7 +299,7 @@ public class RobotContainer {
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
-    driver.leftTrigger().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.INTAKE_VOLTS));
+    driver.leftTrigger().whileTrue(intakeRoller.runVelocityCommand(Presets.Intake.INTAKE_SPEED));
 
     driver.leftBumper().onTrue(superstructure.retractIntake());
 

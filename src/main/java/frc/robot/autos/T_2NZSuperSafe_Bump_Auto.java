@@ -8,16 +8,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 
-public class T_2NZSteal_Bump_Auto extends AutoModeBase {
-  public T_2NZSteal_Bump_Auto(
+public class T_2NZSuperSafe_Bump_Auto extends AutoModeBase {
+  public T_2NZSuperSafe_Bump_Auto(
       Drive drive,
       Superstructure superstructure,
       AutoFactory factory,
       boolean isLeft,
       boolean isGreedy) {
-    super(factory, (isLeft ? "Left " : "Right ") + "Steal DoubleSweep Bump");
+    super(factory, (isLeft ? "Left " : "Right ") + "Safe DoubleSweep Bump");
 
-    AutoTrajectory T_NZSteal_B = trajectory("T_NZSteal_B", isLeft);
+    AutoTrajectory T_NZSafe_B = trajectory("T_NZSuperSafe_B", isLeft);
     AutoTrajectory safe_Bump = trajectory("Safe_Bump", isLeft);
     AutoTrajectory second_T_NZ_B =
         (isGreedy
@@ -27,11 +27,11 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
     AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Bump", isLeft);
 
     newRoutine(
-        T_NZSteal_B.resetOdometry(),
+        T_NZSafe_B.resetOdometry(),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive,
-                    T_NZSteal_B,
+                    T_NZSafe_B,
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
                 new SequentialCommandGroup(new WaitCommand(0.35), superstructure.autoRunIntake()))
@@ -69,7 +69,7 @@ public class T_2NZSteal_Bump_Auto extends AutoModeBase {
             superstructure.autoShoot(),
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
-                superstructure.retractIntake())),
+                superstructure.autoRetractIntake())),
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive,
