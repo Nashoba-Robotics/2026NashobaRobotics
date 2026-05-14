@@ -44,7 +44,7 @@ public final class Presets {
     public static final LoggedTunableNumber INTAKE_SPEED =
         new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeSpeed", 240.0);
     public static final LoggedTunableNumber AUTO_INTAKE_SPEED =
-        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeSpeed", 260.0);
+        new LoggedTunableNumber("IntakeRoller/Setpoints/RollerIntakeSpeed", 275.0);
     public static final LoggedTunableNumber TUNING_SPEED =
         new LoggedTunableNumber("IntakeRoller/Setpoints/TuningSpeed", 0.0);
   }

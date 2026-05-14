@@ -92,7 +92,7 @@ public class Superstructure extends SubsystemBase {
         intakeDeploy
             .runVoltageCommand(() -> 8.0)
             .until(() -> intakeDeploy.getPosition() >= Units.degreesToRadians(130)),
-        intakeDeploy.runVoltageCommand(() -> 0.30));
+        intakeDeploy.runVoltageCommand(() -> 0.40));
   }
 
   public Command retractIntake() {
