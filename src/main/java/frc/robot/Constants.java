@@ -92,7 +92,7 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("RollerFloor/ToleranceRadsPerSec", 7.5);
 
-    public static final double GEAR_RATIO = 1.545;
+    public static final double GEAR_RATIO = 1.33;
   }
 
   public static class Intake {
