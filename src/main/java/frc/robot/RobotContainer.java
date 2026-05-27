@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.MiddleAuto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
+import frc.robot.autos.T_2NZSafe_Bump_Dot_Auto;
 import frc.robot.autos.T_2NZSafe_NoBump_Auto;
 import frc.robot.autos.T_2NZSteal_Bump_Auto;
+import frc.robot.autos.T_2NZSteal_Bump_Dot_Auto;
 import frc.robot.autos.T_2NZSteal_NoBump_Auto;
 import frc.robot.autos.T_2NZSuperSafe_Bump_Auto;
 import frc.robot.autos.TestAuto;
@@ -214,6 +216,38 @@ public class RobotContainer {
     autoChooser.addOption(
         "Left SuperSafe DoubleSweep Bump",
         new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right Steal DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Steal DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, false)
+            .asCommand());
 
     autoChooser.addOption(
         "Right Steal Greedy DoubleSweep Bump",
@@ -233,6 +267,38 @@ public class RobotContainer {
     autoChooser.addOption(
         "Left SuperSafe Greedy DoubleSweep Bump",
         new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, false)
+            .asCommand());
 
     autoChooser.addOption(
         "Middle Auto", new MiddleAuto(drive, superstructure, autoFactory).asCommand());
