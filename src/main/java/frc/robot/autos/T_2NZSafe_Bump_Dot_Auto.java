@@ -80,7 +80,11 @@ public class T_2NZSafe_Bump_Dot_Auto extends AutoModeBase {
                     end_T_NZ,
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
-                superstructure.autoRunIntake())
+                new SequentialCommandGroup(
+                    new WaitCommand(1.50),
+                    superstructure.autoRunIntake(),
+                    new WaitCommand(0.40),
+                    superstructure.autoRetractIntake()))
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe));
   }
