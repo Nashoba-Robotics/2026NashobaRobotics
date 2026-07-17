@@ -166,7 +166,7 @@ public class LEDSubsystem extends SubsystemBase {
         candle.setControl(color.withColor(new RGBWColor(255, 0, 0)));
       }
     } else {
-      // Inacttive hub we set color to white
+      // Inactive hub we set color to white
       candle.setControl(color.withColor(new RGBWColor(255, 255, 255)));
     }
   }

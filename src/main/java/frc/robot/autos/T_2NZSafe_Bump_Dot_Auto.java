@@ -38,7 +38,7 @@ public class T_2NZSafe_Bump_Dot_Auto extends AutoModeBase {
                     T_NZSafe_B,
                     AutoConstants.kBumpLinearEpsilon,
                     AutoConstants.kBumpAngleEpsilon),
-                new SequentialCommandGroup(new WaitCommand(0.35), superstructure.autoRunIntake()))
+                new SequentialCommandGroup(new WaitCommand(0.30), superstructure.autoRunIntake()))
             .until(drive::isBeached),
         antiBeach(drive, antiBeach_Safe),
         new ParallelDeadlineGroup(
