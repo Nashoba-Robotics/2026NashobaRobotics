@@ -95,7 +95,7 @@ This keeps complex robot actions centralized and predictable.
 This project builds on software and ideas from the broader FRC community, including:
 
 - WPILib
-- AdvantageKit
+- AdvantageKit/Mechanical Advantage
 - CTRE Phoenix
 - PhotonVision
 - PathPlanner
