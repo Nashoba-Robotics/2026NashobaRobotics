@@ -49,6 +49,7 @@ public class T_2NZSafe_Bump_Auto extends AutoModeBase {
             new SequentialCommandGroup(
                 new WaitCommand(AutoConstants.kDelayIntakeRetract),
                 superstructure.autoRetractIntake())),
+        // new WaitCommand(1.0), // For Match with OP
         new ParallelDeadlineGroup(
                 cmdWithAccuracy(
                     drive,

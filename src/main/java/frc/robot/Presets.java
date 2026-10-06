@@ -8,7 +8,7 @@ public final class Presets {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuckAngleDeg", 1.5);
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
-        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 22);
+        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 1.5);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
