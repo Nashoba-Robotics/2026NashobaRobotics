@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.Mid_2NZSafe_Bump_Auto;
 import frc.robot.autos.MiddleAuto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto;
 import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
@@ -210,6 +211,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Left Safe DoubleSweep Bump",
         new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right Mid Safe DoubleSweep Bump",
+        new Mid_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left Mid Safe DoubleSweep Bump",
+        new Mid_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
     autoChooser.addOption(
         "Right SuperSafe DoubleSweep Bump",
         new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());

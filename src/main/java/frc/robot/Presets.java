@@ -8,7 +8,7 @@ public final class Presets {
     public static final LoggedTunableNumber TUCK_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuckAngleDeg", 1.5);
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
-        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 0.5);
+        new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 1.5);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
@@ -51,7 +51,7 @@ public final class Presets {
 
   public static class EntryRoller {
     public static final LoggedTunableNumber FEED_SPEED =
-        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 225.0);
+        new LoggedTunableNumber("EntryRoller/Setpoints/FeedSpeed", 275.0);
     public static final LoggedTunableNumber EXHAUST_SPEED =
         new LoggedTunableNumber("EntryRoller/Setpoints/ExhaustSpeed", -70.0);
     public static final LoggedTunableNumber SLOW_EXHAUST_SPEED =
@@ -62,7 +62,7 @@ public final class Presets {
 
   public static class Shooter {
     public static final LoggedTunableNumber CLOSE_HUB_SPEED =
-        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 240.0);
+        new LoggedTunableNumber("Shooter/Setpoints/CloseHubSpeedRadsPerSec", 250);
     public static final LoggedTunableNumber EXHAUST_SPEED =
         new LoggedTunableNumber("Shooter/Setpoints/ExhaustSpeedRadsPerSec", -100.0);
     public static final LoggedTunableNumber TUNING_SPEED =

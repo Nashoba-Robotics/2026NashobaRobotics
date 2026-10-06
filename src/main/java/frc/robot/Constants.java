@@ -137,7 +137,7 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("IntakeRoller/ToleranceRadsPerSec", 10.0);
 
-    public static final double ROLLER_GEAR_RATIO = 2.0;
+    public static final double ROLLER_GEAR_RATIO = 2.2;
     // public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 0.0;
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 61.7;
   }
