@@ -96,24 +96,32 @@ public class VisionIOPhotonVision implements VisionIO {
           // Add tag ID
           tagIds.add((short) target.fiducialId);
 
-          // Add observation
-          if (!(target.fiducialId == 22
-              || target.fiducialId == 23
-              || target.fiducialId == 17
-              || target.fiducialId == 28
-              || target.fiducialId == 7
-              || target.fiducialId == 6
-              || target.fiducialId == 1
-              || target.fiducialId == 12)) {
-            poseObservations.add(
-                new PoseObservation(
-                    result.getTimestampSeconds(), // Timestamp
-                    robotPose, // 3D pose estimate
-                    target.poseAmbiguity, // Ambiguity
-                    1, // Tag count
-                    cameraToTarget.getTranslation().getNorm(), // Average tag distance
-                    PoseObservationType.PHOTONVISION)); // Observation type
-          }
+          // // Add observation
+          // if (!(target.fiducialId == 22
+          //     || target.fiducialId == 23
+          //     || target.fiducialId == 17
+          //     || target.fiducialId == 28
+          //     || target.fiducialId == 7
+          //     || target.fiducialId == 6
+          //     || target.fiducialId == 1
+          //     || target.fiducialId == 12)) {
+          //   poseObservations.add(
+          //       new PoseObservation(
+          //           result.getTimestampSeconds(), // Timestamp
+          //           robotPose, // 3D pose estimate
+          //           target.poseAmbiguity, // Ambiguity
+          //           1, // Tag count
+          //           cameraToTarget.getTranslation().getNorm(), // Average tag distance
+          //           PoseObservationType.PHOTONVISION)); // Observation type
+
+          poseObservations.add(
+              new PoseObservation(
+                  result.getTimestampSeconds(), // Timestamp
+                  robotPose, // 3D pose estimate
+                  target.poseAmbiguity, // Ambiguity
+                  1, // Tag count
+                  cameraToTarget.getTranslation().getNorm(), // Average tag distance
+                  PoseObservationType.PHOTONVISION)); // Observation type
         }
       }
     }

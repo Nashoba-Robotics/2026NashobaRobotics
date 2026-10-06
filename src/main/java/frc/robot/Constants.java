@@ -30,7 +30,7 @@ public final class Constants {
   public static final double loopTime = 0.02;
 
   public static final AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -113,7 +113,7 @@ public final class Constants {
     public static final double DEPLOY_STATOR_LIMIT = 60.0;
     public static final double DEPLOY_SUPPLY_LIMIT = 40.0;
 
-    public static final double ROLLER_STATOR_LIMIT = 80.0;
+    public static final double ROLLER_STATOR_LIMIT = 100.0;
     public static final double ROLLER_SUPPLY_LIMIT = 60.0;
 
     public static final LoggedTunableNumber kP =
@@ -137,7 +137,7 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("IntakeRoller/ToleranceRadsPerSec", 10.0);
 
-    public static final double ROLLER_GEAR_RATIO = 2.0;
+    public static final double ROLLER_GEAR_RATIO = 2.2;
     // public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 0.0;
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 61.7;
   }

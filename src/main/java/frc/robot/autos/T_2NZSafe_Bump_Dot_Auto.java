@@ -8,13 +8,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.Drive;
 
-public class T_2NZSafe_Bump_Auto extends AutoModeBase {
-  public T_2NZSafe_Bump_Auto(
+public class T_2NZSafe_Bump_Dot_Auto extends AutoModeBase {
+  public T_2NZSafe_Bump_Dot_Auto(
       Drive drive,
       Superstructure superstructure,
       AutoFactory factory,
       boolean isLeft,
-      boolean isGreedy) {
+      boolean isGreedy,
+      boolean outerDot) {
     super(factory, (isLeft ? "Left " : "Right ") + "Safe DoubleSweep Bump");
 
     AutoTrajectory T_NZSafe_B = trajectory("T_NZSafe_B", isLeft);
@@ -23,7 +24,10 @@ public class T_2NZSafe_Bump_Auto extends AutoModeBase {
         (isGreedy
             ? trajectory("Greedy_Second_T_NZ_B", isLeft)
             : trajectory("Second_T_NZ_B", isLeft));
-    AutoTrajectory end_T_NZ = trajectory("End_T_NZ", isLeft);
+    AutoTrajectory end_T_NZ =
+        (outerDot
+            ? trajectory("End_T_NZ_OuterDot", isLeft)
+            : trajectory("End_T_NZ_MiddleDot", isLeft));
     AutoTrajectory antiBeach_Safe = trajectory("AntiBeach_Bump", isLeft);
 
     newRoutine(
