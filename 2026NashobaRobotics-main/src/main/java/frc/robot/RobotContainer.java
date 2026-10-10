@@ -1,0 +1,405 @@
+package frc.robot;
+
+import static frc.robot.subsystems.vision.VisionConstants.*;
+
+import choreo.auto.AutoFactory;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.Mid_2NZSafe_Bump_Auto;
+import frc.robot.autos.MiddleAuto;
+import frc.robot.autos.T_2NZSafe_Bump_Auto;
+import frc.robot.autos.T_2NZSafe_Bump_Auto_AntiBeach;
+import frc.robot.autos.T_2NZSafe_Bump_Dot_Auto;
+import frc.robot.autos.T_2NZSafe_NoBump_Auto;
+import frc.robot.autos.T_2NZSteal_Bump_Auto;
+import frc.robot.autos.T_2NZSteal_Bump_Dot_Auto;
+import frc.robot.autos.T_2NZSteal_NoBump_Auto;
+import frc.robot.autos.T_2NZSuperSafe_Bump_Auto;
+import frc.robot.autos.TestAuto;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.drive.generated.TunerConstants;
+import frc.robot.subsystems.entryfloor.EntryFloor;
+import frc.robot.subsystems.entryfloor.EntryFloorIO;
+import frc.robot.subsystems.entryfloor.EntryFloorIOTalonFX;
+import frc.robot.subsystems.hood.Hood;
+import frc.robot.subsystems.hood.HoodIO;
+import frc.robot.subsystems.hood.HoodIOTalonFX;
+import frc.robot.subsystems.intakedeploy.IntakeDeploy;
+import frc.robot.subsystems.intakedeploy.IntakeDeployIO;
+import frc.robot.subsystems.intakedeploy.IntakeDeployIOTalonFX;
+import frc.robot.subsystems.intakeroller.IntakeRoller;
+import frc.robot.subsystems.intakeroller.IntakeRollerIO;
+import frc.robot.subsystems.intakeroller.IntakeRollerIOTalonFX;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.ShootingUtil;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+public class RobotContainer {
+  // Subsystems
+  private final Drive drive;
+  private final Vision vision;
+  private final Hood hood;
+  private final EntryFloor entryFloor;
+  private final IntakeDeploy intakeDeploy;
+  private final IntakeRoller intakeRoller;
+  private final Shooter shooter;
+  private final Superstructure superstructure;
+  private final LEDSubsystem leds = new LEDSubsystem();
+
+  private final AutoFactory autoFactory;
+
+  // Controllers
+  private final CommandXboxController driver = new CommandXboxController(0);
+
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
+
+  public RobotContainer() {
+    switch (Constants.currentMode) {
+      case REAL:
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera2Name, robotToCamera2));
+
+        // climber = new Climber(new ClimberIOTalonFX());
+        hood = new Hood(new HoodIOTalonFX());
+        entryFloor = new EntryFloor(new EntryFloorIOTalonFX());
+        intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
+        intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
+        shooter = new Shooter(new ShooterIOTalonFX());
+
+        break;
+
+      case SIM:
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(TunerConstants.FrontLeft),
+                new ModuleIOSim(TunerConstants.FrontRight),
+                new ModuleIOSim(TunerConstants.BackLeft),
+                new ModuleIOSim(TunerConstants.BackRight));
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
+                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+
+        hood = new Hood(new HoodIO() {});
+        entryFloor = new EntryFloor(new EntryFloorIO() {});
+        intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
+        intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
+        shooter = new Shooter(new ShooterIO() {});
+
+        break;
+
+      default:
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
+
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
+        hood = new Hood(new HoodIO() {});
+        entryFloor = new EntryFloor(new EntryFloorIO() {});
+        intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
+        intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
+        shooter = new Shooter(new ShooterIO() {});
+
+        break;
+    }
+
+    superstructure =
+        new Superstructure(drive, hood, entryFloor, intakeDeploy, intakeRoller, shooter);
+
+    autoFactory = drive.getAutoFactory();
+
+    SmartDashboard.putData(
+        "RunEverythingForTuning",
+        new ParallelCommandGroup(
+            entryFloor.runVelocityCommand(Presets.EntryFloor.TUNING_SPEED_Floor),
+            intakeRoller.runVelocityCommand(Presets.Intake.TUNING_SPEED),
+            intakeDeploy.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
+            shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+            hood.runTrackedPositionCommand(
+                () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0)));
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+
+    autoChooser.addOption("dumbShoot", superstructure.autoShoot());
+
+    autoChooser.addOption(
+        "Right Steal DoubleSweep NoBump",
+        new T_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory, false).asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep NoBump",
+        new T_2NZSteal_NoBump_Auto(drive, superstructure, autoFactory, true).asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep NoBump",
+        new T_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory, false).asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep NoBump",
+        new T_2NZSafe_NoBump_Auto(drive, superstructure, autoFactory, true).asCommand());
+
+    autoChooser.addOption(
+        "Right Steal DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right Mid Safe DoubleSweep Bump",
+        new Mid_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left Mid Safe DoubleSweep Bump",
+        new Mid_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, false).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, false).asCommand());
+    autoChooser.addOption(
+        "Right Steal DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Steal DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, false, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, false, false)
+            .asCommand());
+
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump",
+        new T_2NZSteal_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump",
+        new T_2NZSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, false, true).asCommand());
+    autoChooser.addOption(
+        "Left SuperSafe Greedy DoubleSweep Bump",
+        new T_2NZSuperSafe_Bump_Auto(drive, superstructure, autoFactory, true, true).asCommand());
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Steal Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Steal Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSteal_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump OuterDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, true)
+            .asCommand());
+    autoChooser.addOption(
+        "Right Safe Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, false, true, false)
+            .asCommand());
+    autoChooser.addOption(
+        "Left Safe Greedy DoubleSweep Bump InnerDot",
+        new T_2NZSafe_Bump_Dot_Auto(drive, superstructure, autoFactory, true, true, false)
+            .asCommand());
+
+    autoChooser.addOption(
+        "Middle Auto", new MiddleAuto(drive, superstructure, autoFactory).asCommand());
+
+    autoChooser.addOption("TESTAUTO", new TestAuto(drive, autoFactory).asCommand());
+
+    autoChooser.addOption(
+        "Left Safe DoubleSweep Bump Anti Beach",
+        new T_2NZSafe_Bump_Auto_AntiBeach(drive, superstructure, autoFactory, true).asCommand());
+
+    CommandScheduler.getInstance().schedule(autoFactory.warmupCmd());
+
+    // Configure the button bindings
+    configureButtonBindings();
+  }
+
+  private void configureButtonBindings() {
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+
+    driver
+        .start()
+        .and(driver.back())
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
+
+    Trigger inShootingTolerance = new Trigger(superstructure::inShootingTolerance);
+
+    // Shoot bindings
+    driver
+        .rightTrigger()
+        .whileTrue(superstructure.aimCommand(() -> -driver.getLeftY(), () -> -driver.getLeftX()))
+        .and(inShootingTolerance.debounce(0.20, DebounceType.kFalling))
+        .whileTrue(superstructure.shootCommand())
+        .onFalse(superstructure.endShootCommand());
+
+    // Force shoot
+    driver
+        .rightBumper()
+        .whileTrue(
+            new ParallelCommandGroup(
+                entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED_Floor)));
+
+    // Close shot fallback
+    driver
+        .b()
+        .whileTrue(
+            new ParallelCommandGroup(
+                shooter.runVelocityCommand(Presets.Shooter.CLOSE_HUB_SPEED.getAsDouble()),
+                hood.runPositionCommand(
+                    Units.degreesToRadians(Presets.Hood.CLOSE_HUB_ANGLE_DEG.getAsDouble())),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> shooter.atSetpoint() && hood.atSetpoint()),
+                    new ParallelCommandGroup(
+                        entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED_Floor)))));
+    // running both at 280, supposed to be 280 and 275
+
+    // Intake deploy and retract
+    driver.leftTrigger().onTrue(superstructure.deployIntake());
+    driver.leftTrigger().whileTrue(intakeRoller.runVelocityCommand(Presets.Intake.INTAKE_SPEED));
+
+    driver.leftBumper().onTrue(superstructure.retractIntake());
+
+    // Manual spit and feed
+    driver.x().whileTrue(intakeRoller.runVoltageCommand(Presets.Intake.EXHAUST_VOLTS));
+    driver
+        .y()
+        .whileTrue(
+            new ParallelCommandGroup(
+                entryFloor.runVelocityCommand(Presets.EntryFloor.EXHAUST_SPEED_Floor),
+                shooter.runTrackedVelocityCommand(Presets.Shooter.EXHAUST_SPEED)));
+    // running both at -75 instead of -70 and -75
+
+    driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
+
+    // Tune shot
+    driver
+        .povRight()
+        .whileTrue(
+            new ParallelCommandGroup(
+                DriveCommands.joystickDriveAtAngle(
+                    drive,
+                    () -> 0.0,
+                    () -> 0.0,
+                    () -> ShootingUtil.makeSetpoint(drive).driveAngleRads(),
+                    () -> ShootingUtil.makeSetpoint(drive).driveVelocityRadsPerSec()),
+                shooter.runTrackedVelocityCommand(Presets.Shooter.TUNING_SPEED),
+                hood.runTrackedPositionCommand(
+                    () -> Units.degreesToRadians(Presets.Hood.TUNING_ANGLE_DEG.get()), () -> 0.0),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(inShootingTolerance),
+                    new ParallelCommandGroup(
+                        entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED_Floor)))));
+    // running both at 280, supposed to be 280 and 275
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.get();
+  }
+}
