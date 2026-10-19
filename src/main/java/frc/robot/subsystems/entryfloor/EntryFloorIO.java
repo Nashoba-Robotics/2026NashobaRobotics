@@ -1,11 +1,11 @@
-package frc.robot.subsystems.rollerfloor;
+package frc.robot.subsystems.entryfloor;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface RollerFloorIO {
+public interface EntryFloorIO {
 
   @AutoLog
-  public static class RollerFloorIOInputs {
+  public static class EntryFloorIOInputs {
     public boolean leaderConnected = false;
     public double leaderTempCelsius = 0.0;
     public double leaderVelocityRadsPerSec = 0.0;
@@ -20,9 +20,16 @@ public interface RollerFloorIO {
     public double followerAppliedVolts = 0.0;
     public double followerStatorCurrentAmps = 0.0;
     public double followerSupplyCurrentAmps = 0.0;
+
+    public boolean entryConnected = false;
+    public double entryTempCelsius = 0.0;
+    public double entryVelocityRadsPerSec = 0.0;
+    public double entryAppliedVolts = 0.0;
+    public double entryStatorCurrentAmps = 0.0;
+    public double entrySupplyCurrentAmps = 0.0;
   }
 
-  public default void updateInputs(RollerFloorIOInputs inputs) {}
+  public default void updateInputs(EntryFloorIOInputs inputs) {}
 
   public default void runVoltage(double volts) {}
 

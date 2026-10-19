@@ -11,11 +11,10 @@ import frc.robot.Presets;
 import frc.robot.autos.AutoConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.entryroller.EntryRoller;
+import frc.robot.subsystems.entryfloor.EntryFloor;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intakedeploy.IntakeDeploy;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
-import frc.robot.subsystems.rollerfloor.RollerFloor;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.ShootingUtil;
 import java.util.function.DoubleSupplier;
@@ -23,33 +22,29 @@ import java.util.function.DoubleSupplier;
 public class Superstructure extends SubsystemBase {
   private final Drive drive;
   private final Hood hood;
-  private final RollerFloor rollerFloor;
+  private final EntryFloor entryFloor;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
-  private final EntryRoller entryRoller;
   private final Shooter shooter;
 
   public Superstructure(
       Drive drive,
       Hood hood,
-      RollerFloor rollerFloor,
+      EntryFloor entryFloor,
       IntakeDeploy intakeDeploy,
       IntakeRoller intakeRoller,
-      EntryRoller entryRoller,
       Shooter shooter) {
     this.drive = drive;
     this.hood = hood;
-    this.rollerFloor = rollerFloor;
+    this.entryFloor = entryFloor;
     this.intakeDeploy = intakeDeploy;
     this.intakeRoller = intakeRoller;
-    this.entryRoller = entryRoller;
     this.shooter = shooter;
 
     hood.setDefaultCommand(
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
     shooter.setDefaultCommand(shooter.stopCommand());
-    entryRoller.setDefaultCommand(entryRoller.stopCommand());
-    rollerFloor.setDefaultCommand(rollerFloor.stopCommand());
+    entryFloor.setDefaultCommand(entryFloor.stopCommand());
     intakeRoller.setDefaultCommand(intakeRoller.stopCommand());
   }
 
@@ -74,17 +69,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command shootCommand() {
-    return new ParallelCommandGroup(
-        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
-        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED));
+    return new ParallelCommandGroup(entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED));
   }
 
   public Command endShootCommand() {
     return new ParallelCommandGroup(
-        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED).withTimeout(0.25),
-            entryRoller.stopCommand()));
+            entryFloor.runVelocityCommand(Presets.EntryFloor.EXHAUST_SPEED).withTimeout(0.25),
+            entryFloor.stopCommand()));
   }
 
   public Command deployIntake() {
@@ -124,10 +116,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command stopAllRollersCommand() {
     return new ParallelCommandGroup(
-        intakeRoller.stopCommand(),
-        rollerFloor.stopCommand(),
-        entryRoller.stopCommand(),
-        shooter.stopCommand());
+        intakeRoller.stopCommand(), entryFloor.stopCommand(), shooter.stopCommand());
   }
 
   public Command autoShoot() {
@@ -137,18 +126,16 @@ public class Superstructure extends SubsystemBase {
                 new SequentialCommandGroup(
                     Commands.waitSeconds(0.01), Commands.waitUntil(this::inShootingTolerance)),
                 new ParallelCommandGroup(
-                    entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED),
-                    rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED))))
+                    entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED))))
         .withTimeout(AutoConstants.kShootingTime)
         .andThen(autoEndShootCommand());
   }
 
   public Command autoEndShootCommand() {
     return new ParallelCommandGroup(
-        rollerFloor.stopCommand(),
         new SequentialCommandGroup(
-            entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED).withTimeout(0.5),
-            entryRoller.stopCommand()),
+            entryFloor.runVelocityCommand(Presets.EntryFloor.EXHAUST_SPEED).withTimeout(0.5),
+            entryFloor.stopCommand()),
         shooter.stopCommand(),
         hood.runPositionCommand(Units.degreesToRadians(Presets.Hood.TUCK_ANGLE_DEG.get())));
   }

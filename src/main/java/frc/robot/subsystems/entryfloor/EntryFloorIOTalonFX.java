@@ -1,4 +1,4 @@
-package frc.robot.subsystems.rollerfloor;
+package frc.robot.subsystems.entryfloor;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -20,14 +20,13 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
 
-public class RollerFloorIOTalonFX implements RollerFloorIO {
-
-  private final TalonFX leader, follower;
+public class EntryFloorIOTalonFX implements EntryFloorIO {
+  private final TalonFX leader, follower, entry;
   private final TalonFXConfiguration config;
 
   private final StatusSignal<Temperature> leaderTemp;
   private final StatusSignal<AngularVelocity> leaderVelocity;
-  private final StatusSignal<Double> velocitySetpoint;
+  private final StatusSignal<Double> leadervelocitySetpoint;
   private final StatusSignal<Voltage> leaderAppliedVolts;
   private final StatusSignal<Current> leaderStatorCurrent;
   private final StatusSignal<Current> leaderSupplyCurrent;
@@ -38,42 +37,53 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
   private final StatusSignal<Current> followerStatorCurrent;
   private final StatusSignal<Current> followerSupplyCurrent;
 
+  private final StatusSignal<Temperature> entryTemp;
+  private final StatusSignal<AngularVelocity> entryVelocity;
+  private final StatusSignal<Double> entryVelocitySetpoint;
+  private final StatusSignal<Voltage> entryAppliedVolts;
+  private final StatusSignal<Current> entryStatorCurrent;
+  private final StatusSignal<Current> entrySupplyCurrent;
+
   private final VoltageOut voltageOut = new VoltageOut(0).withEnableFOC(false);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
 
-  public RollerFloorIOTalonFX() {
-    leader = new TalonFX(Constants.RollerFloor.LEADER_MOTOR_ID, Constants.RollerFloor.CANBUS);
-    follower = new TalonFX(Constants.RollerFloor.FOLLOWER_MOTOR_ID, Constants.RollerFloor.CANBUS);
+  public EntryFloorIOTalonFX() {
+    leader = new TalonFX(Constants.EntryFloor.LEADER_MOTOR_ID, Constants.EntryFloor.CANBUS);
+    follower = new TalonFX(Constants.EntryFloor.FOLLOWER_MOTOR_ID, Constants.EntryFloor.CANBUS);
+    entry = new TalonFX(Constants.EntryFloor.ENTRY_MOTOR_ID, Constants.EntryFloor.CANBUS);
     follower.setControl(
-        new Follower(Constants.RollerFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Aligned));
+        new Follower(Constants.EntryFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Opposed));
+    entry.setControl(
+        new Follower(Constants.EntryFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Aligned));
 
     config = new TalonFXConfiguration();
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.StatorCurrentLimit = Constants.RollerFloor.STATOR_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.EntryFloor.STATOR_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.RollerFloor.SUPPLY_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.EntryFloor.SUPPLY_LIMIT;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    config.Feedback.SensorToMechanismRatio = Constants.RollerFloor.GEAR_RATIO;
+    config.Feedback.SensorToMechanismRatio = Constants.EntryFloor.GEAR_RATIO;
 
-    config.Slot0.kP = Constants.RollerFloor.kP.get();
-    config.Slot0.kD = Constants.RollerFloor.kD.get();
-    config.Slot0.kS = Constants.RollerFloor.kS.get();
-    config.Slot0.kV = Constants.RollerFloor.kV.get();
-    config.Slot0.kA = Constants.RollerFloor.kA.get();
+    config.Slot0.kP = Constants.EntryFloor.kP.get();
+    config.Slot0.kD = Constants.EntryFloor.kD.get();
+    config.Slot0.kS = Constants.EntryFloor.kS.get();
+    config.Slot0.kV = Constants.EntryFloor.kV.get();
+    config.Slot0.kA = Constants.EntryFloor.kA.get();
 
     config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
-    config.MotorOutput.Inverted = Constants.RollerFloor.INVERTED;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.Inverted = Constants.EntryFloor.INVERTED_C;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     PhoenixUtil.tryUntilOk(5, () -> leader.getConfigurator().apply(config));
     PhoenixUtil.tryUntilOk(5, () -> follower.getConfigurator().apply(config));
+    PhoenixUtil.tryUntilOk(5, () -> entry.getConfigurator().apply(config));
 
     leaderTemp = leader.getDeviceTemp();
     leaderVelocity = leader.getVelocity();
-    velocitySetpoint = leader.getClosedLoopReference();
+    leadervelocitySetpoint = leader.getClosedLoopReference();
     leaderAppliedVolts = leader.getMotorVoltage();
     leaderStatorCurrent = leader.getStatorCurrent();
     leaderSupplyCurrent = leader.getSupplyCurrent();
@@ -84,11 +94,18 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
     followerStatorCurrent = follower.getStatorCurrent();
     followerSupplyCurrent = follower.getSupplyCurrent();
 
+    entryTemp = entry.getDeviceTemp();
+    entryVelocity = entry.getVelocity();
+    entryVelocitySetpoint = entry.getClosedLoopReference();
+    entryAppliedVolts = entry.getMotorVoltage();
+    entryStatorCurrent = entry.getStatorCurrent();
+    entrySupplyCurrent = entry.getSupplyCurrent();
+
     BaseStatusSignal.setUpdateFrequencyForAll(
         1 / Constants.loopTime,
         leaderTemp,
         leaderVelocity,
-        velocitySetpoint,
+        leadervelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -96,7 +113,13 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
         followerVelocity,
         followerAppliedVolts,
         followerStatorCurrent,
-        followerSupplyCurrent);
+        followerSupplyCurrent,
+        entryTemp,
+        entryVelocity,
+        entryVelocitySetpoint,
+        entryAppliedVolts,
+        entryStatorCurrent,
+        entrySupplyCurrent);
 
     leader.optimizeBusUtilization();
 
@@ -104,7 +127,7 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
         false,
         leaderTemp,
         leaderVelocity,
-        velocitySetpoint,
+        leadervelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -112,15 +135,22 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
         followerVelocity,
         followerAppliedVolts,
         followerStatorCurrent,
-        followerSupplyCurrent);
+        followerSupplyCurrent,
+        entryTemp,
+        entryVelocity,
+        entryVelocitySetpoint,
+        entryAppliedVolts,
+        entryStatorCurrent,
+        entrySupplyCurrent);
   }
 
   @Override
-  public void updateInputs(RollerFloorIOInputs inputs) {
+  public void updateInputs(EntryFloorIOInputs inputs) {
+
     BaseStatusSignal.refreshAll(
         leaderTemp,
         leaderVelocity,
-        velocitySetpoint,
+        leadervelocitySetpoint,
         leaderAppliedVolts,
         leaderStatorCurrent,
         leaderSupplyCurrent,
@@ -128,20 +158,26 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
         followerVelocity,
         followerAppliedVolts,
         followerStatorCurrent,
-        followerSupplyCurrent);
+        followerSupplyCurrent,
+        entryTemp,
+        entryVelocity,
+        entryVelocitySetpoint,
+        entryAppliedVolts,
+        entryStatorCurrent,
+        entrySupplyCurrent);
 
     inputs.leaderConnected =
         BaseStatusSignal.isAllGood(
             leaderTemp,
             leaderVelocity,
-            velocitySetpoint,
+            leadervelocitySetpoint,
             leaderAppliedVolts,
             leaderStatorCurrent,
             leaderSupplyCurrent);
     inputs.leaderTempCelsius = leaderTemp.getValueAsDouble();
     inputs.leaderVelocityRadsPerSec = Units.rotationsToRadians(leaderVelocity.getValueAsDouble());
     inputs.velocitySetpointRadsPerSec =
-        Units.rotationsToRadians(velocitySetpoint.getValueAsDouble());
+        Units.rotationsToRadians(leadervelocitySetpoint.getValueAsDouble());
     inputs.leaderAppliedVolts = leaderAppliedVolts.getValueAsDouble();
     inputs.leaderStatorCurrentAmps = leaderStatorCurrent.getValueAsDouble();
     inputs.leaderSupplyCurrentAmps = leaderSupplyCurrent.getValueAsDouble();
@@ -159,6 +195,22 @@ public class RollerFloorIOTalonFX implements RollerFloorIO {
     inputs.followerAppliedVolts = followerAppliedVolts.getValueAsDouble();
     inputs.followerStatorCurrentAmps = followerStatorCurrent.getValueAsDouble();
     inputs.followerSupplyCurrentAmps = followerSupplyCurrent.getValueAsDouble();
+
+    inputs.entryConnected =
+        BaseStatusSignal.isAllGood(
+            entryTemp,
+            entryVelocity,
+            entryVelocitySetpoint,
+            entryAppliedVolts,
+            entryStatorCurrent,
+            entrySupplyCurrent);
+    inputs.entryTempCelsius = entryTemp.getValueAsDouble();
+    inputs.entryVelocityRadsPerSec = Units.rotationsToRadians(entryVelocity.getValueAsDouble());
+    //
+
+    inputs.entryAppliedVolts = entryAppliedVolts.getValueAsDouble();
+    inputs.entryStatorCurrentAmps = entryStatorCurrent.getValueAsDouble();
+    inputs.entrySupplyCurrentAmps = entrySupplyCurrent.getValueAsDouble();
   }
 
   @Override

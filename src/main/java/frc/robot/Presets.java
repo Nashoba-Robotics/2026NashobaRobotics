@@ -13,6 +13,17 @@ public final class Presets {
         new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
   }
 
+  public static class EntryFloor {
+    public static final LoggedTunableNumber FEED_SPEED =
+        new LoggedTunableNumber("EntryFloor/Setpoints/FeedSpeed", 280.0);
+    public static final LoggedTunableNumber SLOW_FEED_SPEED =
+        new LoggedTunableNumber("EntryFloor/Setpoints/SlowFeedSpeed", 50.0);
+    public static final LoggedTunableNumber EXHAUST_SPEED =
+        new LoggedTunableNumber("EntryFloor/Setpoints/ExhaustSpeed", -75.0);
+    public static final LoggedTunableNumber TUNING_SPEED =
+        new LoggedTunableNumber("EntryFloor/Setpoints/TuningSpeed", 0.0);
+  }
+
   public static class RollerFloor {
     public static final LoggedTunableNumber FEED_SPEED =
         new LoggedTunableNumber("RollerFloor/Setpoints/FeedSpeed", 280.0);

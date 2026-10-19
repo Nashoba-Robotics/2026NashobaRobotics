@@ -137,7 +137,7 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("IntakeRoller/ToleranceRadsPerSec", 10.0);
 
-    public static final double ROLLER_GEAR_RATIO = 2.2;
+    public static final double ROLLER_GEAR_RATIO = 1.0;
     // public static final double DEPLOY_ROTOR_TO_SENSOR_GEAR_RATIO = 0.0;
     public static final double DEPLOY_SENSOR_TO_MECHANISM_GEAR_RATIO = 61.7;
   }
@@ -146,7 +146,7 @@ public final class Constants {
     public static final String CANBUS = "rio";
     public static final int MOTOR_ID = 14;
 
-    public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
     public static final double STATOR_LIMIT = 80.0;
     public static final double SUPPLY_LIMIT = 40.0;
@@ -162,7 +162,7 @@ public final class Constants {
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
         new LoggedTunableNumber("EntryRoller/ToleranceRadsPerSec", 15.0);
 
-    public static final double GEAR_RATIO = 2.0;
+    public static final double GEAR_RATIO = 1.0;
   }
 
   public static class Shooter {
@@ -188,7 +188,31 @@ public final class Constants {
     public static final LoggedTunableNumber SHUTTLE_VELOCITY_TOLERANCE =
         new LoggedTunableNumber("Shooter/ToleranceRadsPerSec", 40.0);
 
-    public static final double GEAR_RATIO = 1.34;
+    public static final double GEAR_RATIO = 1.674;
+  }
+
+  public static class EntryFloor {
+    public static final String CANBUS = "rio";
+    public static final int LEADER_MOTOR_ID = 17;
+    public static final int FOLLOWER_MOTOR_ID = 13;
+    public static final int ENTRY_MOTOR_ID = 14;
+
+    public static final InvertedValue INVERTED_C = InvertedValue.Clockwise_Positive;
+    public static final InvertedValue INVERTED_CC = InvertedValue.CounterClockwise_Positive;
+
+    public static final double STATOR_LIMIT = 80.0;
+    public static final double SUPPLY_LIMIT = 40.0;
+
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("EntryFloor/PID/kP", 16.0);
+    public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryFloor/PID/kD", 0.0);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryFloor/PID/kS", 6.5);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("EntryFloor/PID/kV", 0.05);
+    public static final LoggedTunableNumber kA = new LoggedTunableNumber("EntryFloor/PID/kA", 0.0);
+
+    public static final LoggedTunableNumber VELOCITY_TOLERANCE =
+        new LoggedTunableNumber("EntryFloor/ToleranceRadsPerSec", 7.5);
+
+    public static final double GEAR_RATIO = 1.0;
   }
 
   public static class Led {

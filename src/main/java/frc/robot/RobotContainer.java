@@ -38,9 +38,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.generated.TunerConstants;
-import frc.robot.subsystems.entryroller.EntryRoller;
-import frc.robot.subsystems.entryroller.EntryRollerIO;
-import frc.robot.subsystems.entryroller.EntryRollerIOTalonFX;
+import frc.robot.subsystems.entryfloor.EntryFloor;
+import frc.robot.subsystems.entryfloor.EntryFloorIO;
+import frc.robot.subsystems.entryfloor.EntryFloorIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIO;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
@@ -50,9 +50,6 @@ import frc.robot.subsystems.intakedeploy.IntakeDeployIOTalonFX;
 import frc.robot.subsystems.intakeroller.IntakeRoller;
 import frc.robot.subsystems.intakeroller.IntakeRollerIO;
 import frc.robot.subsystems.intakeroller.IntakeRollerIOTalonFX;
-import frc.robot.subsystems.rollerfloor.RollerFloor;
-import frc.robot.subsystems.rollerfloor.RollerFloorIO;
-import frc.robot.subsystems.rollerfloor.RollerFloorIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
@@ -68,10 +65,9 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Hood hood;
-  private final RollerFloor rollerFloor;
+  private final EntryFloor entryFloor;
   private final IntakeDeploy intakeDeploy;
   private final IntakeRoller intakeRoller;
-  private final EntryRoller entryRoller;
   private final Shooter shooter;
   private final Superstructure superstructure;
   private final LEDSubsystem leds = new LEDSubsystem();
@@ -104,10 +100,9 @@ public class RobotContainer {
 
         // climber = new Climber(new ClimberIOTalonFX());
         hood = new Hood(new HoodIOTalonFX());
-        rollerFloor = new RollerFloor(new RollerFloorIOTalonFX());
+        entryFloor = new EntryFloor(new EntryFloorIOTalonFX());
         intakeDeploy = new IntakeDeploy(new IntakeDeployIOTalonFX());
         intakeRoller = new IntakeRoller(new IntakeRollerIOTalonFX());
-        entryRoller = new EntryRoller(new EntryRollerIOTalonFX());
         shooter = new Shooter(new ShooterIOTalonFX());
 
         break;
@@ -128,10 +123,9 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
 
         hood = new Hood(new HoodIO() {});
-        rollerFloor = new RollerFloor(new RollerFloorIO() {});
+        entryFloor = new EntryFloor(new EntryFloorIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
-        entryRoller = new EntryRoller(new EntryRollerIO() {});
         shooter = new Shooter(new ShooterIO() {});
 
         break;
@@ -148,26 +142,23 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
         hood = new Hood(new HoodIO() {});
-        rollerFloor = new RollerFloor(new RollerFloorIO() {});
+        entryFloor = new EntryFloor(new EntryFloorIO() {});
         intakeDeploy = new IntakeDeploy(new IntakeDeployIO() {});
         intakeRoller = new IntakeRoller(new IntakeRollerIO() {});
-        entryRoller = new EntryRoller(new EntryRollerIO() {});
         shooter = new Shooter(new ShooterIO() {});
 
         break;
     }
 
     superstructure =
-        new Superstructure(
-            drive, hood, rollerFloor, intakeDeploy, intakeRoller, entryRoller, shooter);
+        new Superstructure(drive, hood, entryFloor, intakeDeploy, intakeRoller, shooter);
 
     autoFactory = drive.getAutoFactory();
 
     SmartDashboard.putData(
         "RunEverythingForTuning",
         new ParallelCommandGroup(
-            entryRoller.runVelocityCommand(Presets.EntryRoller.TUNING_SPEED),
-            rollerFloor.runVelocityCommand(Presets.RollerFloor.TUNING_SPEED),
+            entryFloor.runVelocityCommand(Presets.EntryFloor.TUNING_SPEED),
             intakeRoller.runVelocityCommand(Presets.Intake.TUNING_SPEED),
             intakeDeploy.runTrackedPositionCommand(
                 () -> Units.degreesToRadians(Presets.Intake.TUNING_ANGLE_DEG.getAsDouble())),
@@ -352,9 +343,7 @@ public class RobotContainer {
     driver
         .rightBumper()
         .whileTrue(
-            new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)));
+            new ParallelCommandGroup(entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED)));
 
     // Close shot fallback
     driver
@@ -367,8 +356,7 @@ public class RobotContainer {
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> shooter.atSetpoint() && hood.atSetpoint()),
                     new ParallelCommandGroup(
-                        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
-                        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)))));
+                        entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED)))));
 
     // Intake deploy and retract
     driver.leftTrigger().onTrue(superstructure.deployIntake());
@@ -382,8 +370,7 @@ public class RobotContainer {
         .y()
         .whileTrue(
             new ParallelCommandGroup(
-                rollerFloor.runVelocityCommand(Presets.RollerFloor.EXHAUST_SPEED),
-                entryRoller.runVelocityCommand(Presets.EntryRoller.EXHAUST_SPEED),
+                entryFloor.runVelocityCommand(Presets.EntryFloor.EXHAUST_SPEED),
                 shooter.runTrackedVelocityCommand(Presets.Shooter.EXHAUST_SPEED)));
 
     driver.a().whileTrue(intakeRoller.runVoltageCommand(() -> 12.0));
@@ -405,8 +392,7 @@ public class RobotContainer {
                 new SequentialCommandGroup(
                     new WaitUntilCommand(inShootingTolerance),
                     new ParallelCommandGroup(
-                        rollerFloor.runVelocityCommand(Presets.RollerFloor.FEED_SPEED),
-                        entryRoller.runVelocityCommand(Presets.EntryRoller.FEED_SPEED)))));
+                        entryFloor.runVelocityCommand(Presets.EntryFloor.FEED_SPEED)))));
   }
 
   public Command getAutonomousCommand() {
