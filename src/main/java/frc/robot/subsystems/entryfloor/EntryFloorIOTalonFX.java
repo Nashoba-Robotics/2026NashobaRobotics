@@ -52,7 +52,7 @@ public class EntryFloorIOTalonFX implements EntryFloorIO {
     follower = new TalonFX(Constants.EntryFloor.FOLLOWER_MOTOR_ID, Constants.EntryFloor.CANBUS);
     entry = new TalonFX(Constants.EntryFloor.ENTRY_MOTOR_ID, Constants.EntryFloor.CANBUS);
     follower.setControl(
-        new Follower(Constants.EntryFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Opposed));
+        new Follower(Constants.EntryFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Aligned));
     entry.setControl(
         new Follower(Constants.EntryFloor.LEADER_MOTOR_ID, MotorAlignmentValue.Aligned));
 

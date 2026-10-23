@@ -10,7 +10,7 @@ public final class Presets {
     public static final LoggedTunableNumber CLOSE_HUB_ANGLE_DEG =
         new LoggedTunableNumber("Hood/Setpoints/CloseHubAngleDeg", 1.5);
     public static final LoggedTunableNumber TUNING_ANGLE_DEG =
-        new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 0.0);
+        new LoggedTunableNumber("Hood/Setpoints/TuningAngleDeg", 1.5);
   }
 
   public static class EntryFloor {

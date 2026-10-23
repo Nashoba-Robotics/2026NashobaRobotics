@@ -152,11 +152,12 @@ public final class Constants {
     public static final double SUPPLY_LIMIT = 40.0;
 
     public static final LoggedTunableNumber kP =
-        new LoggedTunableNumber("EntryRoller/PID/kP", 17.0);
-    public static final LoggedTunableNumber kD = new LoggedTunableNumber("EntryRoller/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 2.5);
+        new LoggedTunableNumber("EntryRoller/PID/kP", 12.0);
+    public static final LoggedTunableNumber kD =
+        new LoggedTunableNumber("EntryRoller/PID/kD", 0.08);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("EntryRoller/PID/kS", 6.5);
     public static final LoggedTunableNumber kV =
-        new LoggedTunableNumber("EntryRoller/PID/kV", 0.0025);
+        new LoggedTunableNumber("EntryRoller/PID/kV", 0.05);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("EntryRoller/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
@@ -177,10 +178,10 @@ public final class Constants {
     public static final double STATOR_LIMIT = 120.0;
     public static final double SUPPLY_LIMIT = 60.0;
 
-    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 15.0);
+    public static final LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/PID/kP", 14.0);
     public static final LoggedTunableNumber kD = new LoggedTunableNumber("Shooter/PID/kD", 0.0);
-    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 4.5);
-    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.02);
+    public static final LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/PID/kS", 4.35);
+    public static final LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/PID/kV", 0.008);
     public static final LoggedTunableNumber kA = new LoggedTunableNumber("Shooter/PID/kA", 0.0);
 
     public static final LoggedTunableNumber VELOCITY_TOLERANCE =
